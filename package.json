@@ -4,7 +4,7 @@
   "description": "A server for collecting users' water quality data",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "db-migrate": "0.9.23",
