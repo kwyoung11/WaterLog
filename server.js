@@ -6,10 +6,20 @@ var os = require('os');
 
 //require custom dispatcher
 var dispatcher = require('./lib/dispatcher.js');
-
+var connection = {};
+if (process.env.NODE_ENV == "undefined") {
+  process.env.NODE_ENV = 'development';  
+  connection['port'] = 3000;
+  connection['domain'] = '127.0.0.1';
+} else {
+  process.env.NODE_ENV = 'development';  
+  connection['port'] = 80;
+  connection['domain'] = 'cryptic-bayou-3153.herokuapp.com';
+}
 console.log('Starting server @ http://127.0.0.1:1337/');
 var hostname = os.hostname();
 console.log('Hostname:' + hostname);
+console.log();
 http.createServer(function (req, res) {
   // wrap calls in a try catch
   // or the node js server will crash upon any code errors
@@ -30,7 +40,7 @@ http.createServer(function (req, res) {
       res.writeHead(500);
       res.end('Internal Server Error');
     }
-  }).listen(1337, "127.0.0.1", function() {
+  }).listen(connection['port'], connection['domain'], function() {
     //runs when our server is created
     console.log('Server running at http://127.0.0.1:1337/');
   });
