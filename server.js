@@ -14,7 +14,7 @@ if (process.env.NODE_ENV == "undefined") {
 } else {
   process.env.NODE_ENV = 'production';  
   connection['port'] = process.env.PORT;
-  connection['domain'] = '127.0.0.1';
+  connection['domain'] = '0.0.0.0';
 }
 console.log('Starting server @ http://127.0.0.1:1337/');
 var hostname = os.hostname();
