@@ -2,12 +2,14 @@
 var sys   = require('sys');
 var http  = require('http');
 var url   = require('url');
+var os = require('os');
 
 //require custom dispatcher
 var dispatcher = require('./lib/dispatcher.js');
 
 console.log('Starting server @ http://127.0.0.1:1337/');
-
+var hostname = os.hostname();
+console.log('Hostname:' + hostname);
 http.createServer(function (req, res) {
   // wrap calls in a try catch
   // or the node js server will crash upon any code errors
