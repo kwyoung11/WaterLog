@@ -40,7 +40,7 @@ http.createServer(function (req, res) {
       res.writeHead(500);
       res.end('Internal Server Error');
     }
-  }).listen(connection['port'], connection['domain'], function() {
+  }).listen(process.env.PORT || 3000, connection['domain'], function() {
     //runs when our server is created
     console.log('Server running at http://127.0.0.1:1337/');
   });
