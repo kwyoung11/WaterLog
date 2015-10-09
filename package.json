@@ -1,6 +1,6 @@
 {
   "name": "water-log",
-  "version": "0.1",
+  "version": "0.0.1",
   "description": "A server for collecting users' water quality data",
   "main": "server.js",
   "scripts": {
