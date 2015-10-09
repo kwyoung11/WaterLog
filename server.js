@@ -14,7 +14,7 @@ if (process.env.NODE_ENV == "undefined") {
 } else {
   process.env.NODE_ENV = 'development';  
   connection['port'] = 8080;
-  connection['domain'] = 'cryptic-bayou-3153.herokuapp.com';
+  connection['domain'] = '127.0.0.1';
 }
 console.log('Starting server @ http://127.0.0.1:1337/');
 var hostname = os.hostname();
