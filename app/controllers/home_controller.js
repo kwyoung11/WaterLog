@@ -2,7 +2,7 @@ var view = require('../../lib/view');
 var home_controller = function() {};
 home_controller.prototype = {
 	
-	// GET /users/new
+	// GET / (root)
 	index: function(params, callback) {
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			

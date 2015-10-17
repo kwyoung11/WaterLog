@@ -16,6 +16,7 @@ if (process.env.NODE_ENV == "undefined") {
   connection['port'] = process.env.PORT;
   connection['domain'] = '0.0.0.0';
 }
+console.log(process.env.NODE_ENV);
 console.log('Starting server @ http://127.0.0.1:1337/');
 var hostname = os.hostname();
 console.log('Hostname:' + hostname);
@@ -40,7 +41,7 @@ http.createServer(function (req, res) {
       res.writeHead(500);
       res.end('Internal Server Error');
     }
-  }).listen(process.env.PORT || 3000, connection['domain'], function() {
+  }).listen(3000, '127.0.0.1', function() {
     //runs when our server is created
     console.log('Server running at http://127.0.0.1:1337/');
   });

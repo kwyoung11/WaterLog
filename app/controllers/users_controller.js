@@ -1,3 +1,6 @@
+/* 
+* This controller will handle everything related to user management.
+*/
 var view = require('../../lib/view');
 var users_controller = function() {};
 users_controller.prototype = {
