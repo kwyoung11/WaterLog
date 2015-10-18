@@ -1,10 +1,18 @@
 {
     "dev": {
-    "host": "localhost",
-    "user": { "ENV" : "DB_USER" },
-    "password" : { "ENV" : "DB_PASS" },
-    "database": "water_log",
-    "driver": "pg",
-    "multipleStatements": true
-  }
+        "host": "localhost",
+        "user": "kevinyoung",
+        "database": "waterlogs",
+        "driver": "pg",
+        "multipleStatements": true
+  },
+
+    "prod": {
+        "host": "localhost",
+        "user": { "ENV" : "DB_USER" },
+        "password" : { "ENV" : "DB_PASS" },
+        "database": "waterlogs",
+        "driver": "pg",
+        "multipleStatements": true  
+    }
 }
