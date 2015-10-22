@@ -2,14 +2,17 @@
 * This controller will handle everything related to user management.
 */
 var view = require('../../lib/view');
+var db = require('../../lib/db');
+var crypto = require('crypto');
+var util = require('../../lib/util');
 var users_controller = function() {};
 users_controller.prototype = {
 	
 	// GET /users/new
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		
-		var data = null;
+		data = null;
+		// respond with login/registration page
 		view.renderView('users/new', data, function(data) {
 		  callback(data);
 		});
@@ -21,7 +24,7 @@ users_controller.prototype = {
 		
 		// load user data here
 		var data = null;
-		view.renderView('users/new', data, function(data) {
+		view.renderView('users/show', data, function(data) {
 		  callback(data);
 		});
 	},
@@ -33,6 +36,26 @@ users_controller.prototype = {
 
 	// POST /users
 	create: function(params, callback) {
+    var user = new User(params); // create new user object
+    user.save(function(err, user) { // store user info in database
+			// the user has now succesfully registered, lets initialize his cookie
+    	util.cookie = user.auth_token;
+			data = {'user': user}
+			view.renderView('users/show', data, function(data) {
+			  callback(data);
+			});				
+    });
+    	    
+		console.log("Params are: " + JSON.stringify(params));
+		var data = null;
+		view.renderView('users/show', data, function(data) {
+			callback(data);
+		});	
+
+		
+		// set the users auth token in a cookie
+
+		// respond with User Profile page
 
 	},
 
