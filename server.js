@@ -1,5 +1,4 @@
 //include our modules
-var sys   = require('sys');
 var http  = require('http');
 var https  = require('https');
 var url   = require('url');
@@ -8,7 +7,8 @@ var os = require('os');
 //require custom dispatcher
 var dispatcher = require('./lib/dispatcher.js');
 var connection = {};
-if (process.env.NODE_ENV == "undefined") {
+
+if (process.env.NODE_ENV == undefined) {
   process.env.NODE_ENV = 'development';  
   connection['port'] = 3000;
   connection['domain'] = '127.0.0.1';
@@ -18,7 +18,7 @@ if (process.env.NODE_ENV == "undefined") {
   connection['domain'] = '0.0.0.0';
 }
 console.log(process.env.NODE_ENV);
-console.log('Starting server @ http://127.0.0.1:1337/');
+console.log('Starting server @ http://127.0.0.1:' + connection['port'] + '/');
 var hostname = os.hostname();
 console.log('Hostname:' + hostname);
 console.log();
@@ -32,17 +32,17 @@ http.createServer(function (req, res) {
                 ' for href: ' + url.parse(req.url).href
     );
 
-
+	
   //dispatch our request
   dispatcher.dispatch(req, res);
 
   } catch (err) {
       //handle errors gracefully
-      sys.puts(err);
+      console.log(err);
       res.writeHead(500);
       res.end('Internal Server Error');
     }
   }).listen(3000, '127.0.0.1', function() {
     //runs when our server is created
-    console.log('Server running at http://127.0.0.1:1337/');
+    console.log('Server running at http://127.0.0.1:' + connection['port'] + '/');
   });
