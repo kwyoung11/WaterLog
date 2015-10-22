@@ -1,7 +1,8 @@
 {
     "dev": {
         "host": "localhost",
-        "user": "kevinyoung",
+        "user": "byedinak",
+		"password": "admin",
         "database": "waterlogs",
         "driver": "pg",
         "multipleStatements": true
