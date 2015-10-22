@@ -1,5 +1,6 @@
 //include our modules
 var http  = require('http');
+var https  = require('https');
 var url   = require('url');
 var os = require('os');
 
