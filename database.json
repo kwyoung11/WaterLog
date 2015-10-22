@@ -1,8 +1,7 @@
 {
     "dev": {
         "host": "localhost",
-        "user": "byedinak",
-		"password": "admin",
+        "user": "kevinyoung",
         "database": "waterlogs",
         "driver": "pg",
         "multipleStatements": true
@@ -10,10 +9,9 @@
 
     "prod": {
         "host": "localhost",
-        "user": { "ENV" : "DB_USER" },
-        "password" : { "ENV" : "DB_PASS" },
+        "user": "kevinyoung",
         "database": "waterlogs",
         "driver": "pg",
-        "multipleStatements": true  
+        "multipleStatements": true
     }
 }
