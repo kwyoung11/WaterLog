@@ -1,0 +1,19 @@
+<h1> Registering a new device </h1>
+<script>
+function validateForm() { //cannot proceed without entering a nickname
+    var x = document.forms["myForm"]["fname"].value;
+    if (x == null || x == "") {
+        alert("Must enter valid nickname");
+        return false;
+    }
+} //myForm needs to return to the my devices page which it doesn't right now
+</script>
+<form name="myForm" action="/devices/view" onsubmit="return validateForm()" method="post"> 
+Nickname:</br> <input type="text" name="fname"> </br>
+<select>
+  <option value="arduino" selected>Arduino compatible device</option>
+  <option value="tp" selected>Third Party Device</option>
+</select>
+<input type="submit" value="Enter">
+</form>
+
