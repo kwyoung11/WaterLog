@@ -18,10 +18,17 @@ users_controller.prototype = {
  	// GET /users/1
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		
+		var data =null;
+		id = params['id'];
 		// load user data here
-		var data = null;
-		view.renderView('users/new', data, function(data) {
+		var data = {
+			  'info' : {
+			  	'name': id,
+			  	'numdevice':'1',
+			  	'viewLink':'/devices/view'
+			  }
+		};
+		view.renderView('users/profile', data, function(data) {
 		  callback(data);
 		});
 	},
