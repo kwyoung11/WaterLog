@@ -5,7 +5,11 @@ var view = require('../../lib/view');
 var db = require('../../lib/db');
 var crypto = require('crypto');
 var util = require('../../lib/util');
-var users_controller = function() {};
+var User = require('../models/user');
+var users_controller = function(response_handler) {
+	this.response_handler = response_handler;
+};
+
 users_controller.prototype = {
 	
 	// GET /users/new
@@ -21,9 +25,9 @@ users_controller.prototype = {
  	// GET /users/1
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		
+		// user = User.findById(params['id']);
 		// load user data here
-		var data = null;
+		var data = user.data;
 		view.renderView('users/show', data, function(data) {
 		  callback(data);
 		});
@@ -36,27 +40,27 @@ users_controller.prototype = {
 
 	// POST /users
 	create: function(params, callback) {
-    var user = new User(params); // create new user object
+		var self = this;
+		// create new user object, passing in the email and password_digest from the post data as params
+    console.log("HERE1");
+    var user = new User(params); 
+		console.log("HERE2");
     user.save(function(err, user) { // store user info in database
 			// the user has now succesfully registered, lets initialize his cookie
-    	util.cookie = user.auth_token;
-			data = {'user': user}
-			view.renderView('users/show', data, function(data) {
-			  callback(data);
-			});				
+			user.data.id = 1;
+			data = user.data;
+			console.log("data is: " + JSON.stringify(data));
+			self.response_handler.redirectTo('user/' + user.data.id);
+			// view.renderView('users/show', data, function(data) {
+			//   callback(data, user);
+			// });				
     });
     	    
-		console.log("Params are: " + JSON.stringify(params));
-		var data = null;
-		view.renderView('users/show', data, function(data) {
-			callback(data);
-		});	
-
-		
-		// set the users auth token in a cookie
-
-		// respond with User Profile page
-
+		// console.log("Params are: " + JSON.stringify(params));
+		// var data = null;
+		// view.renderView('users/show', data, function(data) {
+		// 	callback(data, user);
+		// });	
 	},
 
 	// PATCH/PUT /users/1
@@ -71,4 +75,4 @@ users_controller.prototype = {
 
 };
 
-module.exports = new users_controller();
+module.exports = users_controller;
