@@ -27,7 +27,7 @@ devices_controller.prototype = {
 			var id = params['user_id'];
 			device.findById(id, function(error,device){
 				var data = { 'devices': {
-								'Id' : device.data.id
+								'Id' : device.data['user_id']
 							} };
 				/*var data = {
 			  		'devices' : [{
