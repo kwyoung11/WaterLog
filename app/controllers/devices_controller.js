@@ -26,9 +26,8 @@ devices_controller.prototype = {
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			var id = params['user_id'];
 			device.findById(id, function(error,device){
-				//var d= device.get()
 				var data = { 'devices': {
-								'Id' : device.get(id)
+								'Id' : device.data.id
 							} };
 				/*var data = {
 			  		'devices' : [{
@@ -68,16 +67,11 @@ devices_controller.prototype = {
 	create: function(params, callback) {
     	var device = new Device(params); // create new user object
     	device.save(function(error,device){
-    		data = {'id': device}
-    		view.renderView('devices/view',data,function(data){
-    			callback(data);
-    		});
+    		device.data.id = 1;
+			data = device.data;
+			console.log("data is: " + JSON.stringify(data));
+			self.response_handler.redirectTo('devices/' + device.data.id);
 
-    	});
-    	console.log("Params are: " +JSON.stringify(params));
-    	var data = null;
-    	view.renderView('devices/view',data,function(data){
-    		callback(data);
     	});
 
 	}
