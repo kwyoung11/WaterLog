@@ -13,6 +13,7 @@ var User = function (data) {
     // add it to the data hash
     data['auth_token'] = token;
     console.log("data is " + JSON.stringify(data));
+
     // remove unallowed parameters
     this.data = this.sanitize(data);
     console.log("sanitized data is " + JSON.stringify(this.data));
@@ -32,10 +33,12 @@ User.prototype.changeName = function (name) {
 
 // find user by ID and pass object instance of that user to cb
 User.findById = function(id, cb) {  
-    db.query('SELECT * from users WHERE id=$1', [id], function (err, result) {
-        if (err) return cb(err);
-        cb(null, new User(result));
-    });
+    // db.query('SELECT * from users WHERE id=$1', [id], function (err, result) {
+    //     if (err) return cb(err);
+    //     cb(null, new User(result.rows[0]));
+    // });
+    var user = new User({'id': 1, 'email': 'kyoung18@umd.edu'});
+    cb(null, user.data);
 }
 
 // save the user object to the database
@@ -82,11 +85,9 @@ User.prototype.sanitize = function(data) {
     data = data || {};
     schema = schemas.user;
     sanitized_data = {};
-    console.log(schema);
     // loop over the data hash
     for (var attr in data) {
-        console.log(attr);
-        console.log(schema[attr]);
+       
         // if the key in the data hash exists in the user schema hash
     	if (schema[attr] == null) {
             // then add it to the sanitized_data hash
