@@ -9,6 +9,7 @@ devices_controller.prototype = {
 	//GET /devices/new
 	add: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
+		var id = params['id'];
 		
 		var data = null;
 		view.renderView('/devices/new', data, function(data) {
@@ -20,7 +21,7 @@ devices_controller.prototype = {
 
 	view: function(params, callback) {
 			var callback = (typeof callback === 'function') ? callback : function() {};
-			
+
 			var data = {
 			  'devices' : [{
 			    'nickname'    : 'Device1',
