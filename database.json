@@ -3,8 +3,7 @@
         "host": "localhost",
         "user": "kevinyoung",
         "database": "waterlogs",
-        "driver": "pg",
-        "multipleStatements": true
+        "driver": "pg"
   },
 
     "prod": {
