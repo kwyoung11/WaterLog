@@ -3,7 +3,8 @@ schemas = {
         id: null,
         email: null,
         password_digest: null,
-        auth_token: null
+        auth_token: null,
+        salt: null
        }
 }
 
