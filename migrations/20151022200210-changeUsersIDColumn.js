@@ -2,13 +2,26 @@ var dbm = global.dbm || require('db-migrate');
 var type = dbm.dataType;
 
 exports.up = function(db, callback) {
-	db.changeColumn('users', 'id', { 
-		id: { type: 'int', primaryKey: true, autoIncrement: true }
-	}, callback);
+
+	db.dropTable('users', {'ifExists': true}, callback);
+	db.createTable('users', {
+  	id: { type: 'int', primaryKey: true, autoIncrement: true },
+  	email: 'string',
+  	password_digest: 'string',
+  	auth_token: 'string',
+  	salt: 'string'
+  }, callback);
+
+	
 };
 
 exports.down = function(db, callback) {
-	db.changeColumn('users', 'id', { 
-		id: { type: 'int', primaryKey: true, autoIncrement: false }
-	}, callback);
+	db.dropTable('users', {'ifExists': true}, callback);
+	db.createTable('users', {
+  	id: { type: 'int', primaryKey: true },
+  	email: 'string',
+  	password_digest: 'string',
+  	auth_token: 'string',
+  	salt: 'string'
+  }, callback);
 };
