@@ -1,15 +1,26 @@
 var schemas = require("../../schemas/schemas.js");
+var Application = require('./application');
+var response_handler = require('./response_handler');
 
 var Device = function (data) {
-	this.data = this.sanitize(data);
+    Application.call(this,data);
+    console.log("data is " + JSON.stringify(data));
+    this.data = this.sanitize(data);
+    console.log("sanitized data is " + JSON.stringify(this.data));
+    this.paramOrder = ['id', 'user_id'];
 }
 
-Device.prototype.data = {}
+Device.prototype = Object.create(Application.prototype);
+Device.prototype.constructor = Device;
+/* prototype properties */
+Device.prototype.data = {};
+Device.prototype.paramOrder = [];
 
 Device.findById = function(id, callback) {  
     db.query('SELECT * from devices WHERE user_id=$1', [id], function (err, result) {
         if (err) return callback(err);
-        callback(null, new Device(result));
+        data.push(renderJSON(result));
+        callback(null, new Device(response_handler.renderJSON(result)));
     });
 }
 
