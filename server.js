@@ -17,11 +17,8 @@ if (process.env.NODE_ENV == undefined) {
   connection['port'] = process.env.PORT;
   connection['domain'] = '0.0.0.0';
 }
-console.log(process.env.NODE_ENV);
 console.log('Starting server @ http://127.0.0.1:' + connection['port'] + '/');
-var hostname = os.hostname();
-console.log('Hostname:' + hostname);
-console.log();
+
 http.createServer(function (req, res) {
   // wrap calls in a try catch
   // or the node js server will crash upon any code errors

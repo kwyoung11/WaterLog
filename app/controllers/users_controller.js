@@ -25,12 +25,14 @@ users_controller.prototype = {
  	// GET /users/1
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		// user = User.findById(params['id']);
+		
 		// load user data here
-		var data = user.data;
-		view.renderView('users/show', data, function(data) {
-		  callback(data);
+		var data = User.findById(params['id'], function(err, user_data) {
+			view.renderView('users/show', user_data, function(content) {
+		  	callback(content);
+			});
 		});
+		
 	},
 
 	// GET /users/1/edit
@@ -47,10 +49,11 @@ users_controller.prototype = {
 		console.log("HERE2");
     user.save(function(err, user) { // store user info in database
 			// the user has now succesfully registered, lets initialize his cookie
+			console.log("IN SAVE callback");
 			user.data.id = 1;
 			data = user.data;
 			console.log("data is: " + JSON.stringify(data));
-			self.response_handler.redirectTo('user/' + user.data.id);
+			self.response_handler.redirectTo('users/' + user.data.id);
 			// view.renderView('users/show', data, function(data) {
 			//   callback(data, user);
 			// });				
