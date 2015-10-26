@@ -44,15 +44,11 @@ users_controller.prototype = {
 	create: function(params, callback) {
 		var self = this;
 		// create new user object, passing in the email and password_digest from the post data as params
-    console.log("HERE1");
     var user = new User(params); 
-		console.log("HERE2");
     user.save(function(err, user) { // store user info in database
 			// the user has now succesfully registered, lets initialize his cookie
-			console.log("IN SAVE callback");
 			user.data.id = 1;
 			data = user.data;
-			console.log("data is: " + JSON.stringify(data));
 			self.response_handler.redirectTo('users/' + user.data.id);
 			// view.renderView('users/show', data, function(data) {
 			//   callback(data, user);
