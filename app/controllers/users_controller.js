@@ -27,7 +27,7 @@ users_controller.prototype = {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		
 		// load user data here
-		var data = User.findById(params['id'], function(err, user_data) {
+		User.findById(params['id'], function(err, user_data) {
 			view.renderView('users/show', user_data, function(content) {
 		  	callback(content);
 			});
@@ -47,9 +47,11 @@ users_controller.prototype = {
     var user = new User(params); 
     user.save(function(err, user) { // store user info in database
 			// the user has now succesfully registered, lets initialize his cookie
-			user.data.id = 1;
-			data = user.data;
-			self.response_handler.redirectTo('users/' + user.data.id);
+			if (err) console.log('User Save Error');
+			if (user) {
+				self.response_handler.redirectTo('users/' + user.id);	
+			}
+			
 			// view.renderView('users/show', data, function(data) {
 			//   callback(data, user);
 			// });				

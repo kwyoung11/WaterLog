@@ -3,20 +3,15 @@ var schemas = require("../../schemas/schemas.js");
 var crypto = require('crypto');
 var bcrypt = require('bcrypt');
 var Application = require('./application');
+var db = require('../../lib/db');
 
 // constructor
 // @data is the params hash (e-mail and password)
 var User = function (data) {  
     Application.call(this, data);
-	// create the user authentication token, which will be stored in a cookie
-    var token = crypto.randomBytes(64).toString('hex');
-    // add it to the data hash
-    data['auth_token'] = token;
-    console.log("data is " + JSON.stringify(data));
 
     // remove unallowed parameters
     this.data = this.sanitize(data);
-    console.log("sanitized data is " + JSON.stringify(this.data));
     this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt'];
 }
 
@@ -31,44 +26,76 @@ User.prototype.changeName = function (name) {
     this.data.name = name;
 }
 
+User.authenticate = function(pwd, salt, cb) {
+    bcrypt.hash(pwd, salt, function(err, hash) {
+        if (err) return cb(err, false);
+        if (hash != pwd) {
+            return cb(null, false);
+        } else {
+            cb(null, true);
+        }
+
+    });
+}
+
+User.find = function(attr, val, cb) {
+    db.query('SELECT * from users WHERE '+attr+'=$1', [val], function (err, result) {
+        if (err) return cb(err);
+        if (result.rowCount == 0) return cb(null, undefined);
+        cb(null, new User(result.rows[0]));
+    });
+    
+}
 // find user by ID and pass object instance of that user to cb
 User.findById = function(id, cb) {  
-    // db.query('SELECT * from users WHERE id=$1', [id], function (err, result) {
-    //     if (err) return cb(err);
-    //     cb(null, new User(result.rows[0]));
-    // });
-    var user = new User({'id': 1, 'email': 'kyoung18@umd.edu'});
-    cb(null, user.data);
+    db.query('SELECT * from users WHERE id=$1', [id], function (err, result) {
+        if (err) return cb(err);
+        cb(null, result.rows[0]);
+    });
+    // var user = new User({'id': 1, 'email': 'kyoung18@umd.edu'});
+    // cb(null, user.data);
 }
 
 // save the user object to the database
 User.prototype.save = function(cb) {  
-    var self = this;
-    console.log(this.data['password_digest']);
-    // generate a salt, hash the inputted password along with that salt
+    var user = this;
+
+    // create the user authentication token, which will be stored in a cookie
+    var token = crypto.randomBytes(64).toString('hex');
+    user.data.auth_token = token;
+
+    // generate a salt 
     bcrypt.genSalt(10, function(err, salt) {
-    	bcrypt.hash(self.data.password_digest, salt, function(err, hash) {
-            console.log("Hash is: ");
-            console.log(hash);
-            console.log("Salt is: ");
-            console.log(salt);
+        if (err) console.log("salt err");
+        user.data.salt = salt;
+
+        // hash the user password with the salt
+    	bcrypt.hash(user.data.password_digest, salt, function(err, hash) {
+            if (err) { 
+                console.log("bcrypt hash err");
+                return cb(err);
+            }
+            
+            user.data.password_digest = hash;
+
             // insert user info into database
-            // $1 = email, $2 = password_digest $3 = auth_token, $4 = salt
-   			// db.query('INSERT INTO users VALUES($1, $2, $3)', this.getDataInArrayFormat(), function (err, result) {
-   			//     if (err) return cb(err);
-   			    cb(null, self); 
-   			// });
+   			db.query('INSERT INTO users (email, password_digest, auth_token, salt) VALUES($1, $2, $3, $4) returning *', user.getDataInArrayFormat(), function (err, result) {
+   			    if (err) return cb(err);
+   			    cb(null, result.rows[0]);
+   			});
    		});
    	});
 }
 
-// return user data hash as order array of values
+// return user data hash as ordered array of values
 User.prototype.getDataInArrayFormat = function() {
 	result = [];
+    console.log(this.data);
 	for (var attr in this.data) {
         var index = this.paramOrder.indexOf(attr);
 		result[index] = this.data[attr];
 	}
+    console.log(result);
 	return result;
 }
 
