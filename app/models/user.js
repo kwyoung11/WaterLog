@@ -69,21 +69,27 @@ User.prototype.save = function(cb) {
         if (err) console.log("salt err");
         user.data.salt = salt;
 
+        console.log("SALT is: " + salt);
         // hash the user password with the salt
-    	bcrypt.hash(user.data.password_digest, salt, function(err, hash) {
+        if (user.data.password_digest && salt) {
+            bcrypt.hash(user.data.password_digest, salt, function(err, hash) {
             if (err) { 
                 console.log("bcrypt hash err");
                 return cb(err);
             }
+
+            console.log("HASH is: " + hash);
             
             user.data.password_digest = hash;
 
             // insert user info into database
-   			db.query('INSERT INTO users (email, password_digest, auth_token, salt) VALUES($1, $2, $3, $4) returning *', user.getDataInArrayFormat(), function (err, result) {
-   			    if (err) return cb(err);
-   			    cb(null, result.rows[0]);
-   			});
-   		});
+            db.query('INSERT INTO users (email, password_digest, auth_token, salt) VALUES($1, $2, $3, $4) returning *', user.getDataInArrayFormat(), function (err, result) {
+                if (err) return cb(err);
+                cb(null, result.rows[0]);
+            });
+            });    
+        }
+    	
    	});
 }
 

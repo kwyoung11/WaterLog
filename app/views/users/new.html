@@ -1,6 +1,9 @@
 <h1> Registration </h1>
 
 <div id="register">
+	{{#err}}
+		{{err_msg}}
+	{{/err}}
 <form action="/users" method="POST"> 
 		<ul>
 			<li> Email: <input type="email" name="email"></input></li>

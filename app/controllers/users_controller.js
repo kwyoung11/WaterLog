@@ -15,9 +15,9 @@ users_controller.prototype = {
 	// GET /users/new
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		data = null;
+		var errors = {'err': false};
 		// respond with login/registration page
-		view.renderView('users/new', data, function(data) {
+		view.renderView('users/new', errors, function(data) {
 		  callback(data);
 		});
 	},
@@ -46,15 +46,29 @@ users_controller.prototype = {
 		// create new user object, passing in the email and password_digest from the post data as params
     var user = new User(params); 
     user.save(function(err, user) { // store user info in database
-			// the user has now succesfully registered, lets initialize his cookie
-			if (err) console.log('User Save Error');
-			if (user) {
-				self.response_handler.redirectTo('users/' + user.id);	
+
+			if (err) { // re-render login page, displaying any login errors
+				if (err.code == '23505') { // code 23505 is a unique constraint violation
+					var errors = {'err': true, 'err_msg': 'That e-mail is already registered. Please choose another e-mail'};
+					view.renderView('users/new', errors, function(data) {
+			  		return callback(data);
+					});					
+				} else { // there was an error, but we're not sure what it was exactly
+					var errors = {'err': true, 'err_msg': 'Something went wrong. Please contact us at support@envirohub.com for help.'};
+					view.renderView('users/new', errors, function(data) {
+			  		return callback(data);
+					});					
+				}
 			}
+
+			if (user) {
+				// the user is registered, set his cookie
+				self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
+				// redirect to users#show
+				self.response_handler.redirectTo('users/' + user.id);	
+			} 
 			
-			// view.renderView('users/show', data, function(data) {
-			//   callback(data, user);
-			// });				
+			
     });
     	    
 		// console.log("Params are: " + JSON.stringify(params));
