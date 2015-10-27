@@ -1,16 +1,16 @@
-<h1> Registration </h1>
+<h1> Login </h1>
+
 <div id="register">
 	{{#err}}
 		{{err_msg}}
 	{{/err}}
-<form action="/users" method="POST"> 
+<form action="/login" method="POST"> 
 		<ul>
 			<li> Email: <input type="email" name="email"></input></li>
 			<li> Password: <input type="password" name="password_digest"> </input></li>
 		</ul>
 
-		<input type="submit" value="Register">
+		<input type="submit" value="Login">
 	
 </form>
 </div>
-

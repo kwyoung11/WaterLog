@@ -15,9 +15,9 @@ users_controller.prototype = {
 	// GET /users/new
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		data = null;
+		var errors = {'err': false};
 		// respond with login/registration page
-		view.renderView('users/new', data, function(data) {
+		view.renderView('users/new', errors, function(data) {
 		  callback(data);
 		});
 	},
@@ -26,10 +26,12 @@ users_controller.prototype = {
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// load user data here
-		var data = user.data;
-		view.renderView('users/show', data, function(data) {
-		  callback(data);
+		User.findById(params['id'], function(err, user_data) {
+			view.renderView('users/show', user_data, function(content) {
+		  	callback(content);
+			});
 		});
+		
 	},
 
 	// GET /users/1/edit
@@ -41,18 +43,31 @@ users_controller.prototype = {
 	create: function(params, callback) {
 		var self = this;
 		// create new user object, passing in the email and password_digest from the post data as params
-    console.log("HERE1");
     var user = new User(params); 
-		console.log("HERE2");
     user.save(function(err, user) { // store user info in database
-			// the user has now succesfully registered, lets initialize his cookie
-			user.data.id = 1;
-			data = user.data;
-			console.log("data is: " + JSON.stringify(data));
-			self.response_handler.redirectTo('user/' + user.data.id);
-			// view.renderView('users/show', data, function(data) {
-			//   callback(data, user);
-			// });				
+
+			if (err) { // re-render login page, displaying any login errors
+				if (err.code == '23505') { // code 23505 is a unique constraint violation
+					var errors = {'err': true, 'err_msg': 'That e-mail is already registered. Please choose another e-mail'};
+					view.renderView('users/new', errors, function(data) {
+			  		return callback(data);
+					});					
+				} else { // there was an error, but we're not sure what it was exactly
+					var errors = {'err': true, 'err_msg': 'Something went wrong. Please contact us at support@envirohub.com for help.'};
+					view.renderView('users/new', errors, function(data) {
+			  		return callback(data);
+					});					
+				}
+			}
+
+			if (user) {
+				// the user is registered, set his cookie
+				self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
+				// redirect to users#show
+				self.response_handler.redirectTo('users/' + user.id);	
+			} 
+			
+			
     });
     	    
 		// console.log("Params are: " + JSON.stringify(params));

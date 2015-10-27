@@ -1,11 +1,7 @@
 {
     "dev": {
         "host": "localhost",
-<<<<<<< HEAD
         "user": "Christine Schroeder",
-=======
-        "user": "kevinyoung",
->>>>>>> 5cdda9ed00f2ba5c2a3bc510032f179fc509ed46
         "database": "waterlogs",
         "driver": "pg"
   },
