@@ -6,18 +6,30 @@ var db = require('../../lib/db');
 var crypto = require('crypto');
 var util = require('../../lib/util');
 var User = require('../models/user');
-var users_controller = function(response_handler) {
-	this.response_handler = response_handler;
-};
+var application_controller = require('./application_controller');
 
+/* constructor */
+var users_controller = function(response_handler, req, cb) {
+	var self = this;
+	application_controller.call(this, response_handler, req, function() {
+		self.response_handler = response_handler;
+		self.req = req;
+		cb();
+	});
+};
+// inherit properties and methods from application_controller
+users_controller.prototype = Object.create(application_controller.prototype);
+users_controller.prototype.constructor = users_controller;
+
+/* users_controller prototype methods below */
 users_controller.prototype = {
 	
 	// GET /users/new
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		var errors = {'err': false};
 		// respond with login/registration page
-		view.renderView('users/new', errors, function(data) {
+		console.log(this.view_data);
+		view.renderView('users/new', this.view_data, function(data) {
 		  callback(data);
 		});
 	},
@@ -25,7 +37,7 @@ users_controller.prototype = {
  	// GET /users/1
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		
+		console.log(this.view_data);
 		// load user data here
 		User.findById(params['id'], function(err, user_data) {
 			view.renderView('users/show', user_data, function(content) {
