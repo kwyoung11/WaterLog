@@ -1,6 +1,6 @@
 var schemas = require("../../schemas/schemas.js");
 var Application = require('./application');
-var response_handler = require('./response_handler');
+var db = require('../../lib/db');
 
 var Device = function (data) {
     Application.call(this,data);
@@ -16,21 +16,31 @@ Device.prototype.constructor = Device;
 Device.prototype.data = {};
 Device.prototype.paramOrder = [];
 
+Device.find = function(attr, val, cb) {
+    db.query('SELECT * from users WHERE '+attr+'=$1', [val], function (err, result) {
+        if (err) return cb(err);
+        if (result.rowCount == 0) return cb(null, undefined);
+        cb(null, new Device(result.rows[0]));
+    });
+    
+}
+
 Device.findById = function(id, callback) {  
     db.query('SELECT * from devices WHERE user_id=$1', [id], function (err, result) {
         if (err) return callback(err);
-        data.push(renderJSON(result));
-        callback(null, new Device(response_handler.renderJSON(result)));
+        callback(null, result.rows[0]);
     });
 }
 
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-   			db.query('INSERT INTO devices VALUES($1, $2)', this.getDataInArrayFormat(), function (err, result) {
-   			    if (err) return callback(err);
-   			    callback(null, self); 
-   			});
+   		db.query('INSERT INTO devices (user_id,id) VALUES($1, $2) returning *', [this.data['user_id'],this.data['id']], function (err, result) {
+   			if (err) return callback(err);
+                callback(null, result.rows[0]);
+        });
+                
+   			
 }
 
 Device.prototype.getDataInArrayFormat = function() {
@@ -38,6 +48,8 @@ Device.prototype.getDataInArrayFormat = function() {
 	for (attr in this.data) {
 		result.push(attr);
 	}
+    console.log("PRINTING DATA IN ARRAY");
+    console.log(result);
 	return result;
 }
 
@@ -50,12 +62,15 @@ Device.prototype.set = function(name, value) {
 }
 
 Device.prototype.sanitize = function(data) {  
+    console.log("SANITIZING DATA NOW")
     data = data || {};
-    schema = schemas.Device;
+    schema = schemas.device;
     sanitized_data = {};
-    
-    for (attr in data) {
-    	if (schemas[attr]) {
+
+    for (var attr in data) {
+        console.log("CURRENT ATTRIBUTE IN DATA IS "+attr);
+    	if (schema[attr]==null) {
+            console.log("FOUND SCHEMA");
     		sanitized_data[attr] = data[attr];
     	}
     }
