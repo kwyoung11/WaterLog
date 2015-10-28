@@ -7,12 +7,12 @@ exports.up = function(db, callback) {
 		device_id: { type: 'int' },
 		data_type: 'string'
 	}, callback);
-	
-	var addParametersColumn = 'ALTER TABLE "data" ADD COLUMN parameters text[]';
-	var addValuesColumn = 'ALTER TABLE "data" ADD COLUMN values text[]';
-	
-	db.runSql(addParametersColumn, [], callback);
-	db.runSql(addValuesColumn, [], callback); 
+	var addKeysColumn = 'ALTER TABLE "data" ADD COLUMN keys varchar[]';
+	var addValuesColumn = 'ALTER TABLE "data" ADD COLUMN values varchar[]';
+	var addTimeColumn = 'ALTER TABLE "data" ADD COLUMN date_time timestamp';
+	db.runSql(addKeysColumn, [], callback);
+	db.runSql(addValuesColumn, [], callback);  
+	db.runSql(addTimeColumn, [], callback); 
 };
 
 exports.down = function(db, callback) {

@@ -26,10 +26,17 @@ User.prototype.changeName = function (name) {
     this.data.name = name;
 }
 
-User.authenticate = function(pwd, salt, cb) {
-    bcrypt.hash(pwd, salt, function(err, hash) {
-        if (err) return cb(err, false);
-        if (hash != pwd) {
+User.prototype.authenticate = function(pwd, cb) {
+    var self = this;
+
+    bcrypt.hash(pwd, self.data.salt, function(err, hash) {
+        
+        if (err) {
+            console.log(err);
+            return cb(err, false);  
+        } 
+
+        if (hash != self.data.password_digest) {
             return cb(null, false);
         } else {
             cb(null, true);
@@ -40,8 +47,14 @@ User.authenticate = function(pwd, salt, cb) {
 
 User.find = function(attr, val, cb) {
     db.query('SELECT * from users WHERE '+attr+'=$1', [val], function (err, result) {
-        if (err) return cb(err);
-        if (result.rowCount == 0) return cb(null, undefined);
+        if (err) {
+            console.log(err);
+            return cb(err);  
+        } 
+        if (result.rowCount == 0) {
+            console.log("No user found with " + attr + " = to " + val);
+            return cb(null, undefined);  
+        } 
         cb(null, new User(result.rows[0]));
     });
     

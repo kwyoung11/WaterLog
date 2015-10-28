@@ -1,23 +1,37 @@
 var view = require('../../lib/view');
-var home_controller = function() {};
+var application_controller = require('./application_controller');
+
+var home_controller = function(response_handler, req, cb) {
+	var self = this;
+	application_controller.call(this, response_handler, req, function() {
+		self.response_handler = response_handler;
+		self.req = req;
+		cb();
+	});
+	
+}
+
+// inherit properties and methods from application_controller
+home_controller.prototype = Object.create(application_controller.prototype);
+home_controller.prototype.constructor = home_controller;
+
+/* home_controller prototype methods below */
+
 home_controller.prototype = {
 	
 	// GET / (root)
 	index: function(params, callback) {
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			
-			var data = {
-			  'users' : {
-			    'name'    : 'James',
-			    'viewLink': '/view/james/'
-			  }
-			};
+			var data = null;
+			console.log("outputting view_data");
+			console.log(this.view_data);
 			
-			view.renderView('home/index', data, function(data) {
+			view.renderView('home/index', this.view_data, function(data) {
 			  callback(data);
 			});
 	}
 
 };
 
-module.exports = new home_controller();
+module.exports = home_controller;
