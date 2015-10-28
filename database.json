@@ -1,9 +1,11 @@
 {
     "dev": {
         "host": "localhost",
-        "user": "kevinyoung",
+        "user": "byedinak",
+		"password": "admin",
         "database": "waterlogs",
-        "driver": "pg"
+        "driver": "pg",
+		"port": "5432"
   },
 
     "prod": {
@@ -11,6 +13,7 @@
         "user": "kevinyoung",
         "database": "waterlogs",
         "driver": "pg",
-        "multipleStatements": true
+        "multipleStatements": true,
+		"port": "5432"
     }
 }
