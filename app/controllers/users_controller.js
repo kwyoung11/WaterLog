@@ -49,7 +49,9 @@ users_controller.prototype = {
 
 	// GET /users/1/edit
 	edit: function(params, callback) {
-
+		view.renderView('users/edit', this.view_data, function(data) {
+			return callback(data);
+		});	
 	},
 
 	// POST /users

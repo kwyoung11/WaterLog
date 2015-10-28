@@ -1,7 +1,7 @@
 {
     "dev": {
         "host": "localhost",
-        "user": "Christine Schroeder",
+        "user": "kevinyoung",
         "database": "waterlogs",
         "driver": "pg",
 		"port": "5432"
@@ -9,7 +9,7 @@
 
     "prod": {
         "host": "localhost",
-        "user": "Christine Schroeder",
+        "user": "kevinyoung",
         "database": "waterlogs",
         "driver": "pg",
         "multipleStatements": true,
