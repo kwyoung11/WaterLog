@@ -1,8 +1,7 @@
 {
     "dev": {
-        "host": "localhost",
-        "user": "byedinak",
-		"password": "admin",
+        "host": "127.0.0.1",
+        "user": "kevinyoung",
         "database": "waterlogs",
         "driver": "pg",
 		"port": "5432"

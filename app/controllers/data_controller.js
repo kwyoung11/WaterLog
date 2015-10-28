@@ -33,4 +33,4 @@ data_controller.prototype = {
 
 };
 
-module.exports = new data_controller();
+module.exports = data_controller;
