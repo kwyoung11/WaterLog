@@ -4,11 +4,8 @@ var https  = require('https');
 var url   = require('url');
 var os = require('os');
 
-//require custom dispatcher
-var dispatcher = require('./lib/dispatcher.js');
 var connection = {};
-
-if (process.env.NODE_ENV == undefined) {
+if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == 'development') {
   process.env.NODE_ENV = 'development';  
   connection['port'] = 3000;
   connection['domain'] = '127.0.0.1';
@@ -17,7 +14,14 @@ if (process.env.NODE_ENV == undefined) {
   connection['port'] = process.env.PORT;
   connection['domain'] = '0.0.0.0';
 }
+
+//require custom dispatcher
+var dispatcher = require('./lib/dispatcher.js');
+
+
+
 console.log('Starting server @ http://127.0.0.1:' + connection['port'] + '/');
+
 
 http.createServer(function (req, res) {
   // wrap calls in a try catch
