@@ -27,7 +27,9 @@ data_controller.prototype = {
 	// POST /data/new
 	new: function(params, callback){
 		var data_model = new Data(params);
-		data_model.postToDatabase(function(){ });
+		data_model.postToDatabase(function(err){ 
+			
+		});
 	}
 
 };
