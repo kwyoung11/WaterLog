@@ -29,6 +29,7 @@ Data.prototype.postToDatabase = function(cb) {
 
 	 var callback = (typeof callback === 'function') ? callback : function() {};
 	 var errors = {'err': false};
+	 
 	 var sqlPost = 'INSERT INTO ';
 	 var columns = 'Data (';
 	 var values = ' VALUES (';
@@ -90,8 +91,11 @@ Data.prototype.get_ei_params = function(data){
 	else if(data.data_type == 'soil'){
 		return schema['data_params']['soil'];
 	}
-	else if()data.data_type == 'air'{
+	else if(data.data_type == 'air'){
 		return schema['data_params']['air'];
 	}
 	return {};
 }
+
+
+module.exports = Data;
