@@ -13,8 +13,9 @@ var User = function (data) {
 
     // remove unallowed parameters
     this.data = this.sanitize(data);
+    this.data.password_reset_token = null;
+    this.data.password_reset_sent_at = null;
     this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at'];
-    console.log(this.data);
 }
 
 User.prototype = Object.create(Application.prototype);
@@ -49,7 +50,6 @@ User.prototype.authenticate = function(pwd, cb) {
 
 User.find = function(attr, val, cb) {
     db.query('SELECT * from users WHERE '+attr+'=$1', [val], function (err, result) {
-        console.log(result);
         if (err) {
             console.log(err);
             return cb(err);  

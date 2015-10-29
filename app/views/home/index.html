@@ -1,4 +1,7 @@
 <h1> WaterHub </h1>
+{{#notice}}
+	<p> {{notice}} </p>
+{{/notice}}
 {{#current_user}}
 	<p> Welcome, {{current_user.data.email}}</p>
 	<p> <a href="/users/{{current_user.data.id}}"> My Profile </a></p>

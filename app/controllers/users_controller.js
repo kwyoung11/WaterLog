@@ -36,11 +36,12 @@ users_controller.prototype = {
  	
  	// GET /users/1
 	show: function(params, callback) {
+		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		console.log(this.view_data);
 		// load user data here
 		User.findById(params['id'], function(err, user_data) {
-			view.renderView('users/show', user_data, function(content) {
+			view.renderView('users/show', self.view_data, function(content) {
 		  	callback(content);
 			});
 		});
@@ -49,6 +50,7 @@ users_controller.prototype = {
 
 	// GET /users/1/edit
 	edit: function(params, callback) {
+
 		view.renderView('users/edit', this.view_data, function(data) {
 			return callback(data);
 		});	
@@ -78,6 +80,17 @@ users_controller.prototype = {
 			if (user) {
 				// the user is registered, set his cookie
 				self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
+				GLOBAL.flash.notice = 'Welcome to EnviroHub.com. Below are some steps new users may wish to do. ' +
+				'If you are an EnviroHub device owner: <ol> <li> Register your Device with the Device ID provided to you </li> ' +
+				'<li> Verify the Device\'s status light is green <li> ' +
+				'<li> Once the status light is green, your Device is succesfully collecting data </li> ' +
+				'</ol> If you are a third-party Device owner: <ol> ' +
+				'<li> Register your Device </li> <li> Configure your Device with the Device ID given upon registration </li> ' +
+				'<li> Verify green light status for that Device on EnviroHub.com </li> </ol>' + 
+				'If you wish to research EI data:' +
+				'<ol> <li> Explore the Map Display to find data in areas of interest </li>' + 
+				'<li> Click through to a specific Device to view all of that Device\'s data </li> ' +
+				'<li> Compare Device data with weather data and other Device data </li> </ol>';
 				// redirect to users#show
 				self.response_handler.redirectTo('users/' + user.id);	
 			} 
@@ -94,7 +107,9 @@ users_controller.prototype = {
 
 	// PATCH/PUT /users/1
 	update: function(params, callback) {
+		var user = User.findById(params['id'], function(err, result) {
 
+		});
 	},
 
 	// DELETE /users/1
