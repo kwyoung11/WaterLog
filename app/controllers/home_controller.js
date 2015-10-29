@@ -1,6 +1,6 @@
 var view = require('../../lib/view');
 var application_controller = require('./application_controller');
-
+var util = require('../../lib/util');
 var home_controller = function(response_handler, req, cb) {
 	var self = this;
 	application_controller.call(this, response_handler, req, function() {
@@ -24,9 +24,6 @@ home_controller.prototype = {
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			
 			var data = null;
-			console.log("outputting view_data");
-			console.log(this.view_data);
-			
 			view.renderView('home/index', this.view_data, function(data) {
 			  callback(data);
 			});

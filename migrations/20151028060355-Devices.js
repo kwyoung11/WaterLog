@@ -6,6 +6,9 @@ exports.up = function(db, callback) {
 		id: { type: 'int', primaryKey: true },
 		user_id: {type: 'int'}
 	}, callback);
+	
+	var addUserIdFK = 'ALTER TABLE "devices" ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id)';
+	db.runSql(addUserIdFK, [], callback);
 };
 
 

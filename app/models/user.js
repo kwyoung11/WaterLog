@@ -4,6 +4,7 @@ var crypto = require('crypto');
 var bcrypt = require('bcrypt');
 var Application = require('./application');
 var db = require('../../lib/db');
+var util = require('../../lib/util');
 
 // constructor
 // @data is the params hash (e-mail and password)
@@ -12,7 +13,9 @@ var User = function (data) {
 
     // remove unallowed parameters
     this.data = this.sanitize(data);
-    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt'];
+    this.data.password_reset_token = null;
+    this.data.password_reset_sent_at = null;
+    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at'];
 }
 
 User.prototype = Object.create(Application.prototype);
@@ -55,6 +58,7 @@ User.find = function(attr, val, cb) {
             console.log("No user found with " + attr + " = to " + val);
             return cb(null, undefined);  
         } 
+
         cb(null, new User(result.rows[0]));
     });
     
@@ -65,8 +69,6 @@ User.findById = function(id, cb) {
         if (err) return cb(err);
         cb(null, result.rows[0]);
     });
-    // var user = new User({'id': 1, 'email': 'kyoung18@umd.edu'});
-    // cb(null, user.data);
 }
 
 // save the user object to the database
@@ -96,7 +98,7 @@ User.prototype.save = function(cb) {
             user.data.password_digest = hash;
 
             // insert user info into database
-            db.query('INSERT INTO users (email, password_digest, auth_token, salt) VALUES($1, $2, $3, $4) returning *', user.getDataInArrayFormat(), function (err, result) {
+            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at) VALUES($1, $2, $3, $4, $5, $6) returning *', user.getDataInArrayFormat(), function (err, result) {
                 if (err) return cb(err);
                 cb(null, result.rows[0]);
             });
@@ -104,6 +106,62 @@ User.prototype.save = function(cb) {
         }
     	
    	});
+}
+
+// generate a hashed password from the original
+User.prototype.generatePassword = function(password_digest, cb) {
+   user = this;
+    bcrypt.hash(password_digest, user.data.salt, function(err, hash) {
+        if (err) { 
+            console.log("bcrypt hash err");
+            return cb(err);
+        }
+
+        console.log("HASH is: " + hash);
+        
+        // insert user info into database
+        db.query('UPDATE users SET password_digest = $1 WHERE id = $2 returning *', [hash, user.data.id], function (err, result) {
+            if (err) return cb(err);
+            cb(null, new User(result.rows[0]));
+        });
+    }); 
+};
+
+// update specific attributes of user object in database
+User.prototype.update = function(obj, cb) {
+    var user = this;
+    var count = util.size(obj);
+    var update_string = '';
+    var user_id_placeholder = count + 1;
+
+    var keys = [];
+    // get values array
+    var result = [];
+    for (var attr in obj) {
+        keys.push(attr);
+        if (attr == 'password_digest') {
+            user.generatePassword(obj[attr], function(err, user) {
+                result.push(user.data.password_digest);
+            });
+        }
+        result.push(obj[attr]);
+    }
+    result.push(user.data.id);
+
+    // generate placeholders
+    for (var i = 1; i <= keys.length; i++) {
+        update_string += keys[i-1] + '=$' + i + ',';
+    }
+    // remove trailing comma
+    update_string = update_string.substr(0, update_string.length-1);
+
+    db.query('UPDATE users SET '+update_string+' WHERE id=$'+user_id_placeholder + ' returning *', result, function (err, result) {
+        if (err) {
+            console.log("update error");
+            return cb(err);  
+        } 
+        cb(null, new User(result.rows[0]));
+    });
 }
 
 // return user data hash as ordered array of values
