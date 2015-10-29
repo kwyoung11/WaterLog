@@ -35,7 +35,7 @@ Device.findById = function(id, callback) {
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-   		db.query('INSERT INTO devices (user_id,id) VALUES($1, $2) returning *', [this.data['user_id'],this.data['id']], function (err, result) {
+   		db.query('INSERT INTO devices (user_id,id) VALUES($1, $2) returning *', device.getDataInArrayFormat(), function (err, result) {
    			if (err) return callback(err);
                 callback(null, result.rows[0]);
         });
