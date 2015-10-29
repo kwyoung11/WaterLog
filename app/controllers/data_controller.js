@@ -1,9 +1,26 @@
 /* 
-This controller will handle our API.
+* This controller will handle everything related to data management.
 */
-
 var view = require('../../lib/view');
-var data_controller = function() {};
+var db = require('../../lib/db');
+var crypto = require('crypto');
+var util = require('../../lib/util');
+var User = require('../models/user');
+var application_controller = require('./application_controller');
+
+/* constructor */
+var data_controller = function(response_handler, req, cb) {
+	var self = this;
+	application_controller.call(this, response_handler, req, function() {
+		self.response_handler = response_handler;
+		self.req = req;
+		cb();
+	});
+};
+
+data_controller.prototype = Object.create(application_controller.prototype);
+data_controller.prototype.constructor = data_controller;
+
 data_controller.prototype = {
 
 	// POST /data/new
@@ -26,8 +43,8 @@ data_controller.prototype = {
 		columns += ')';
 		values += ')';
 		sqlPost += columns + values + ';';
-		console.log('sql post is ' + sqlPost);
-	},
+		callback();
+	}
 
 
 
