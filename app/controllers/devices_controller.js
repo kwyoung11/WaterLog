@@ -5,6 +5,7 @@
 
 var view = require('../../lib/view');
 var db = require('../../lib/db');
+var crypto = require('crypto');
 var util = require('../../lib/util');
 var Device = require('../models/device');
 var application_controller = require('./application_controller');
