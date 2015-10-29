@@ -60,17 +60,20 @@ password_resets_controller.prototype = {
 					"<p> If not, you can jsut ignore this email.<p>" +
 					"<p> EnviroHub</p>";
 					// send password reset email
-					console.log(user);
     			mailer.deliver(user.data.email, "Reset your EnviroHub password", body);	
+    			GLOBAL.flash.notice = 'An e-mail has been sent to the e-mail address you provided. Check your e-mail for password reset instructions.';
+    			self.response_handler.redirectTo("/");
     		});
     		
+    	} else {
+    		// render password resets page again
+    		self.view_data.notice = 'An e-mail has been sent to the e-mail address you provided. Check your e-mail for password reset instructions.';
+    		view.renderView('password_resets/new', self.view_data, function(data) {
+				  return callback(data);
+				});	
     	}
     	
-    	// redirect to home page
-    	self.view_data.notice = 'Check your e-mail for password reset instructions';
-    	view.renderView('home/index', self.view_data, function(data) {
-			  return callback(data);
-			});
+    	
     });
 	},
 

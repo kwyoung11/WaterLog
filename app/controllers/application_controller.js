@@ -11,6 +11,7 @@ var application_controller = function(response_handler, req, cb) {
 	self.req = req;
 	self.current_user = undefined;
 	self.view_data = {'err': false, 'current_user': false};
+	self.view_data.notice = GLOBAL.flash.notice;
 	User.find('auth_token', util.parseCookies(self.req).envirohub_auth_token, function(err, user) {
 
 		if (user) {
