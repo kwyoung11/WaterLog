@@ -11,9 +11,10 @@ schemas = {
 		user_id:null
 	   },
 	data: {
+		/* 1 is used to mark a required field */
 		id: null,
-		device_id: null,
-		data_type: null,
+		device_id: 1,
+		data_type: 1,
 		created_at: null,
 		data_params: {
 			water:{
