@@ -2,12 +2,26 @@
 * This controller will handle the devices pages, including registration,
 * My Devices page, etc.
 */
+
 var view = require('../../lib/view');
+var db = require('../../lib/db');
 var util = require('../../lib/util');
 var Device = require('../models/device');
-var devices_controller = function(response_handler) {
-	this.response_handler = response_handler;
+var application_controller = require('./application_controller');
+
+/* constructor */
+var devices_controller = function(response_handler, req, cb) {
+	var self = this;
+	application_controller.call(this, response_handler, req, function() {
+		self.response_handler = response_handler;
+		self.req = req;
+		cb();
+	});
 };
+// inherit properties and methods from application_controller
+devices_controller.prototype = Object.create(application_controller.prototype);
+devices_controller.prototype.constructor = devices_controller;
+
 devices_controller.prototype = {
 
 	//GET /devices/new

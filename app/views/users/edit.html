@@ -1,0 +1,18 @@
+
+<h1> Edit </h1>
+
+<div id="register">
+	{{#err}}
+		{{err_msg}}
+	{{/err}}
+<form action="/users" method="POST">
+		<ul>
+			<li> Email: <input type="email" name="email"></input></li>
+			<li> Password: <a href="/password_resets/new"> Reset Password </a></li>
+		</ul>
+
+		<input type="submit" value="Update">
+	
+</form>
+</div>
+

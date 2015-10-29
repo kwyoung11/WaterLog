@@ -3,7 +3,7 @@ var http  = require('http');
 var https  = require('https');
 var url   = require('url');
 var os = require('os');
-
+GLOBAL.flash = {};
 var connection = {};
 if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == 'development') {
   process.env.NODE_ENV = 'development';  
@@ -34,7 +34,7 @@ http.createServer(function (req, res) {
     );
 
 	
-  //dispatch our request
+  // dispatch our request
   dispatcher.dispatch(req, res);
 
   } catch (err) {
