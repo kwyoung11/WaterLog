@@ -12,7 +12,6 @@ var Data = function (params) {
 
     // remove unallowed parameters
     this.params = this.sanitize(params);
-    this.paramOrder = ['TBD'];
 }
 
 var schema = schemas.data;
@@ -25,56 +24,58 @@ Data.prototype.constructor = Data;
 Data.prototype.params = {};
 Data.prototype.paramOrder = [];
 
-Data.prototype.postToDatabase = function(cb) {  
+Data.prototype.postToDatabase = function(cb) {
 
 	 var callback = (typeof callback === 'function') ? callback : function() {};
 	 var errors = {'err': false};
 	 
+	 this.enforceRequiredParameters(function(err){
+		 console.log(err);
+		 return;
+	 });
+	 
 	 var sqlPost = 'INSERT INTO ';
 	 var columns = 'Data (';
 	 var values = ' VALUES (';
-	 var size = Object.keys(params).length;
+	 var size = Object.keys(this.params).length;
 	 var counter = 1;
-	 for(key in params){
+	 for(key in this.params){
 	  columns += key;
-	  values += params[key]
+	  values += this.params[key]
 	  if(counter < size){
 	   columns += ', ';
 	   values += ', ';
 	  }
 	  counter++;
 	 }
+	 
 	 columns += ')';
 	 values += ')';
 	 sqlPost += columns + values + ';';
 	 
 	 
 	 console.log('sql post is ' + sqlPost);
-	 /*
-		db.query(sqlPost, [], function (err, result) {
-			if (err) return cb(err);
-			cb(null, result.rows[0]);
-		});
-	 */
 }
 
-Data.prototype.sanitize = function(data) {  
-    data = data || {};
-    sanitized_data = {};
-    // loop over the data hash
-	ei_data = {};
-	var ei_params = get_ei_params(data);
-    for (var attr in data) {
+Data.prototype.sanitize = function(params) {  
+    params = params || {};
+    var sanitized_data = {};
+    // loop over the params hash
+	var ei_data = {};
+	var ei_params = this.get_ei_params(params);
+	
+    for (var attr in params) {
        
      // if the key in the data hash exists in the user schema hash
-     if (schema[attr] == null) {
+     if (typeof schema[attr] != 'undefined') {
       // then add it to the sanitized_data hash
-      sanitized_data[attr] = data[attr];
+      sanitized_data[attr] = params[attr];
      }
+	 
 	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
 	 // then add it to the ei params
-	 if(ei_params[attr] == null){
-		 ei_data[attr] = data[attr];
+	 if(typeof ei_params[attr] != 'undefined'){
+		 ei_data[attr] = params[attr];
 	 }
     }
 	;
@@ -95,6 +96,14 @@ Data.prototype.get_ei_params = function(data){
 		return schema['data_params']['air'];
 	}
 	return {};
+}
+
+Data.prototype.enforceRequiredParameters = function(cb){
+	for(var attr in schema){
+		if(schema[attr] == 1 && typeof this.params[attr] == 'undefined'){
+			cb(attr + ' is required');
+		}
+	}
 }
 
 
