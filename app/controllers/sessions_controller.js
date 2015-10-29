@@ -25,7 +25,6 @@ sessions_controller.prototype = {
 
 	// login page
 	new: function(params, cb) {
-		
 			view.renderView("sessions/new", {'err': false}, function(content) {
 				cb(content);
 			}); 
