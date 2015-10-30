@@ -3,6 +3,7 @@
 * My Devices page, etc.
 */
 
+
 var view = require('../../lib/view');
 var db = require('../../lib/db');
 var crypto = require('crypto');
@@ -80,4 +81,4 @@ devices_controller.prototype = {
 
 }
 
-module.exports = new devices_controller();
+module.exports = devices_controller;

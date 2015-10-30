@@ -4,6 +4,7 @@ var https  = require('https');
 var url   = require('url');
 var os = require('os');
 GLOBAL.flash = {};
+
 var connection = {};
 if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == 'development') {
   process.env.NODE_ENV = 'development';  
