@@ -1,7 +1,8 @@
 {
     "dev": {
         "host": "localhost",
-        "user": "kevinyoung",
+        "user": "postgres",
+		"password": "admin",
         "database": "waterlogs",
         "driver": "pg",
 		"port": "5432"
