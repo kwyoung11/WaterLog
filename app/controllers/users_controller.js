@@ -42,8 +42,6 @@ users_controller.prototype = {
 		console.log(this.view_data);
 		// load user data here
 		Device.findById(params['id'], function(err, device_data) {
-			console.log("DEVICE DATA\n");
-			console.log(device_data);
 			if (device_data == null){ //i think this makes it so the id should match up with id in the other table
 				view.renderView('devices/view', this.view_data, function(content) {
 		  		callback(content);
