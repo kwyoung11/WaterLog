@@ -7,31 +7,20 @@ var db = require('../../lib/db');
 var crypto = require('crypto');
 var util = require('../../lib/util');
 var Data = require('../models/data');
-var application_controller = require('./application_controller');
 
 /* constructor */
 var data_controller = function(response_handler, req, cb) {
-	var self = this;
-	application_controller.call(this, response_handler, req, function() {
-		self.response_handler = response_handler;
-		self.req = req;
-		cb();
-	});
+	this.response_handler = response_handler;
+	this.req = req;
 };
-// inherit properties and methods from application_controller
-data_controller.prototype = Object.create(application_controller.prototype);
-data_controller.prototype.constructor = data_controller;
 
-data_controller.prototype = {
-
-	// POST /data/new
-	new: function(params, callback){
+data_controller.prototype.new = function(params, callback){
+		var self = this;
 		var data_model = new Data(params);
-		data_model.postToDatabase(function(err){ 
-			
+		data_model.postToDatabase(function(result){ 
+			var myJson = JSON.stringify(result);
+			self.response_handler.renderJSON(myJson, myJson);
 		});
-	}
-
-};
+	};
 
 module.exports = data_controller;
