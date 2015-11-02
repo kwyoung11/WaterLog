@@ -1,29 +1,14 @@
-<!DOCTYPE html>
+
 <h1> My Devices for {{id}}</h1>
 <a href="/devices/{{id}}/new"> Add a New Device </a>
 </br>
 </br>
 </br>
 
-{{device[0].id}}
+{{#device}}
+ <ul><li><a href="/devices/{{id}}/{{device_id}}"> {{nickname}}</a></li> </ul>
+{{/device}}
 
-
-<script type="text/javascript">
-function myfunction(data)
-{
-	document.write("In function\n");
-	document.write(data);
- // for(var i=0; i< data.length; i++){
-  	//document.write(data[i].nickname);
-  //}
-}
-</script>
-
-<body>
-	<script type="text/javascript">
-		myfunction({{device}});
-	</script>
-</body>
 
 
 

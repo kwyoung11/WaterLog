@@ -41,11 +41,9 @@ devices_controller.prototype = {
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			// load user data here
 			Device.findById(params['id'], function(err, device_data) {
-				console.log("DEVICE DATA \n");
+				//console.log("DEVICE DATA \n");
 				//console.log(device_data);
-				//console.log("data is: " + JSON.stringify(device_data));
 				var data= {'device' : device_data, 'id': params['id']};
-				console.log(data.device[0].id);
 				view.renderView('devices/view', data, function(content) {
 		  		callback(content);
 			});
@@ -68,6 +66,14 @@ devices_controller.prototype = {
 		
 		var data = null;
 		view.renderView('/devices/new', data, function(data) {
+		  callback(data);
+		});
+	},
+
+	show: function(params, callback) {
+		var callback = (typeof callback === 'function') ? callback : function() {};
+		
+		view.renderView('/devices/show', params, function(data) {
 		  callback(data);
 		});
 	},
