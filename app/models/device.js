@@ -17,7 +17,7 @@ Device.prototype.data = {};
 Device.prototype.paramOrder = [];
 
 Device.find = function(attr, val, cb) {
-    db.query('SELECT * from users WHERE '+attr+'=$1', [val], function (err, result) {
+    db.query('SELECT * from devices WHERE '+attr+'=$1', [val], function (err, result) {
         if (err) return cb(err);
         if (result.rowCount == 0) return cb(null, undefined);
         cb(null, new Device(result.rows[0]));
@@ -26,27 +26,28 @@ Device.find = function(attr, val, cb) {
 }
 
 Device.findById = function(id, callback) {  
-    db.query('SELECT * from devices WHERE user_id=$1', [id], function (err, result) {
+    db.query('SELECT * from devices WHERE id=$1', [id], function (err, result) {
         if (err) return callback(err);
-        callback(null, result.rows[0]);
+        callback(null, result.rows);
     });
 }
 
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-   		db.query('INSERT INTO devices (user_id,id) VALUES($1, $2) returning *', device.getDataInArrayFormat(), function (err, result) {
+   		db.query('INSERT INTO devices (id,nickname) VALUES($1, $2) returning *', self.getDataInArrayFormat(), function (err, result) {
    			if (err) return callback(err);
                 callback(null, result.rows[0]);
-        });
-                
+        });             
    			
 }
 
 Device.prototype.getDataInArrayFormat = function() {
 	result = []
-	for (attr in this.data) {
-		result.push(attr);
+    schema = schemas.device;
+	for (var attr in this.data) {
+		var index = this.paramOrder.indexOf(attr);
+        result.push(this.data[attr]);
 	}
     console.log("PRINTING DATA IN ARRAY");
     console.log(result);
@@ -68,9 +69,9 @@ Device.prototype.sanitize = function(data) {
     sanitized_data = {};
 
     for (var attr in data) {
-        console.log("CURRENT ATTRIBUTE IN DATA IS "+attr);
+        //console.log("CURRENT ATTRIBUTE IN DATA IS "+attr);
     	if (schema[attr]==null) {
-            console.log("FOUND SCHEMA");
+            //console.log("FOUND SCHEMA");
     		sanitized_data[attr] = data[attr];
     	}
     }

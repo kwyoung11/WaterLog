@@ -1,4 +1,4 @@
-<h1> Registering a new device for user {{user_id}}  </h1>
+<h1> Registering a new device for user {{id}}  </h1>
 <script>
 function validateForm() { //cannot proceed without entering a nickname
     var x = document.forms["myForm"]["devid"].value;
@@ -8,12 +8,10 @@ function validateForm() { //cannot proceed without entering a nickname
     }
 } //myForm needs to return to the my devices page which it doesn't right now
 </script>
-<form action="/devices/{{user_id}}/mydevices" onsubmit="return validateForm()" method="POST"> 
-Device ID:</br> <input type="text" name="id"> </br>
-<select>
-  <option value="arduino" selected>Arduino compatible device</option>
-  <option value="tp">manual insertion</option>
-</select>
+<form action="/devices/{{id}}" onsubmit="return validateForm()" method="POST"> 
+		<ul>
+			<li> Nickname: <input type="nickname" name="nickname"></input></li>
+		</ul>
 <input type="submit" value="Register">
 </form>
 

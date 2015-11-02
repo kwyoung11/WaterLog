@@ -3,12 +3,13 @@ var type = dbm.dataType;
 
 exports.up = function(db, callback) {
 	db.createTable('devices', {
-		id: { type: 'int', primaryKey: true },
-		user_id: {type: 'int'}
+		device_id: {type: 'int', primaryKey: true, autoIncrement: true },
+		//add_foriegn_key: id, : users,
+		nickname: 'string'
 	}, callback);
-	
-	var addUserIdFK = 'ALTER TABLE "devices" ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id)';
-	db.runSql(addUserIdFK, [], callback);
+
+	var addDeviceIdFK = 'ALTER TABLE "devices" ADD CONSTRAINT id_fk FOREIGN KEY (id) REFERENCES users(id)';
+	db.runSql(addDeviceIdFK, [], callback);
 };
 
 

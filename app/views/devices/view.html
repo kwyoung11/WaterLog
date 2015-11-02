@@ -1,3 +1,30 @@
-<h1> List All Devices for {{user_id}}</h1>
+<!DOCTYPE html>
+<h1> My Devices for {{id}}</h1>
+<a href="/devices/{{id}}/new"> Add a New Device </a>
+</br>
+</br>
+</br>
+
+{{device[0].id}}
+
+
+<script type="text/javascript">
+function myfunction(data)
+{
+	document.write("In function\n");
+	document.write(data);
+ // for(var i=0; i< data.length; i++){
+  	//document.write(data[i].nickname);
+  //}
+}
+</script>
+
+<body>
+	<script type="text/javascript">
+		myfunction({{device}});
+	</script>
+</body>
+
+
 
 
