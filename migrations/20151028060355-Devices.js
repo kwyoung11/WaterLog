@@ -5,8 +5,9 @@ exports.up = function(db, callback) {
 	db.createTable('devices', {
 		device_id: {type: 'int', primaryKey: true, autoIncrement: true },
 		//add_foriegn_key: id, : users,
+		id: { type: 'int'},
 		nickname: 'string'
-		id: { type: 'int', primaryKey: true, autoIncrement: true },
+		
 	}, callback);
 
 	var addDeviceIdFK = 'ALTER TABLE "devices" ADD CONSTRAINT id_fk FOREIGN KEY (id) REFERENCES users(id)';
