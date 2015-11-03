@@ -47,7 +47,7 @@ sessions_controller.prototype = {
 								self.response_handler.setCookie('envirohub_auth_token', user.data.auth_token);
 								
 								// redirect to user profile page
-								self.response_handler.redirectTo("/users/" + user.data.id);
+								self.response_handler.redirectTo("/devices/" + user.data.id);
 							} else {
 								// there is a user with this e-mail, but the pwd is wrong
 								var data = {'err': true, 'err_msg': 'Incorrect password.'};
