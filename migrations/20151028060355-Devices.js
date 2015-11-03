@@ -8,7 +8,7 @@ exports.up = function(db, callback) {
 		id: { type: 'int'},
 		nickname: 'string'
 		
-	}, callback);
+	}, function(){});
 
 	var addDeviceIdFK = 'ALTER TABLE "devices" ADD CONSTRAINT id_fk FOREIGN KEY (id) REFERENCES users(id)';
 	db.runSql(addDeviceIdFK, [], callback);

@@ -13,9 +13,9 @@ exports.up = function(db, callback) {
 	var addKeysColumn = 'ALTER TABLE "data" ADD COLUMN keys varchar[]';
 	var addValuesColumn = 'ALTER TABLE "data" ADD COLUMN values varchar[]';
 	var addTimeColumn = 'ALTER TABLE "data" ADD COLUMN created_at timestamp';
-	db.runSql(addKeysColumn, [], callback);
-	db.runSql(addValuesColumn, [], callback);  
-	db.runSql(addTimeColumn, [], callback); 
+	db.runSql(addKeysColumn, [], function(){});
+	db.runSql(addValuesColumn, [], function(){});  
+	db.runSql(addTimeColumn, [], function(){}); 
 	db.runSql(addDeviceIdFK, [], callback);
 };
 
