@@ -12,10 +12,6 @@ var Data = function (params) {
 
     // remove unallowed parameters
     this.params = this.sanitize(params);
-<<<<<<< HEAD
-    this.paramOrder = ['TBD'];
-=======
->>>>>>> 112855583e952a42893bc8af9b2fced72c3151f8
 }
 
 var schema = schemas.data;
@@ -23,63 +19,7 @@ var schema = schemas.data;
 Data.prototype = Object.create(Application.prototype);
 Data.prototype.constructor = Data;
 
-<<<<<<< HEAD
-/ prototype properties /
 
-Data.prototype.params = {};
-Data.prototype.paramOrder = [];
-
-Data.prototype.postToDatabase = function(cb) {  
-
-	 var callback = (typeof callback === 'function') ? callback : function() {};
-	 var errors = {'err': false};
-	 
-	 var sqlPost = 'INSERT INTO ';
-	 var columns = 'Data (';
-	 var values = ' VALUES (';
-	 var size = Object.keys(params).length;
-	 var counter = 1;
-	 for(key in params){
-	  columns += key;
-	  values += params[key]
-	  if(counter < size){
-	   columns += ', ';
-	   values += ', ';
-	  }
-	  counter++;
-	 }
-	 columns += ')';
-	 values += ')';
-	 sqlPost += columns + values + ';';
-	 
-	 
-	 console.log('sql post is ' + sqlPost);
-	 /*
-		db.query(sqlPost, [], function (err, result) {
-			if (err) return cb(err);
-			cb(null, result.rows[0]);
-		});
-	 */
-}
-
-Data.prototype.sanitize = function(data) {  
-    data = data || {};
-    sanitized_data = {};
-    // loop over the data hash
-	ei_data = {};
-	var ei_params = get_ei_params(data);
-    for (var attr in data) {
-       
-     // if the key in the data hash exists in the user schema hash
-     if (schema[attr] == null) {
-      // then add it to the sanitized_data hash
-      sanitized_data[attr] = data[attr];
-     }
-	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
-	 // then add it to the ei params
-	 if(ei_params[attr] == null){
-		 ei_data[attr] = data[attr];
-=======
 Data.prototype.params = {};
 
 Data.prototype.postToDatabase = function(cb) {
@@ -160,15 +100,13 @@ Data.prototype.sanitize = function(params) {
 	 // then add it to the ei params
 	 if(typeof ei_params[attr] != 'undefined'){
 		 ei_data[attr] = params[attr];
->>>>>>> 112855583e952a42893bc8af9b2fced72c3151f8
 	 }
     }
 	;
 	if(Object.keys(ei_data).length > 0){
 		sanitized_data['data'] = ei_data;
 	}
-<<<<<<< HEAD
-=======
+
 	
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
@@ -176,7 +114,6 @@ Data.prototype.sanitize = function(params) {
 		sanitized_data['created_at'] = date.toLocaleString();
 	}
 	
->>>>>>> 112855583e952a42893bc8af9b2fced72c3151f8
     return sanitized_data;
 }
 
@@ -193,8 +130,7 @@ Data.prototype.get_ei_params = function(data){
 	return {};
 }
 
-<<<<<<< HEAD
-=======
+
 // used to pass back validation errors - required fields not provided, etc
 Data.prototype.enforceRequiredParameters = function(){
 	var data_type = this.params['data_type'];
@@ -223,6 +159,6 @@ Data.prototype.enforceRequiredParameters = function(){
 		return "Error: No Environmental Indicator data values have been provided."
 	}
 }
->>>>>>> 112855583e952a42893bc8af9b2fced72c3151f8
+
 
 module.exports = Data;
