@@ -1,18 +1,20 @@
-
-<h1> Register </h1>
+{{#notice}}
+	<p> {{notice}} </p>
+{{/notice}}
+<h1> Login </h1>
 
 <div id="register">
 	{{#err}}
 		{{err_msg}}
 	{{/err}}
-<form action="/users" method="POST"> 
+<form action="/login" method="POST"> 
 		<ul>
 			<li> Email: <input type="email" name="email"></input></li>
 			<li> Password: <input type="password" name="password_digest"> </input></li>
 		</ul>
 
-		<input type="submit" value="Register">
+		<input type="submit" value="Login">
 	
 </form>
+<a href="/password_resets/new"> forgot password? </a>
 </div>
-

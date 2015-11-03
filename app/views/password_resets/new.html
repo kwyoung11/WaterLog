@@ -1,0 +1,11 @@
+{{#notice}}
+	<p> {{notice}} </p>
+{{/notice}}
+<h2> Forgot password? </h2>
+<form action='/password_resets' method="POST">
+	<ul>
+			<li> Email: <input type="email" name="email" placeholder="Email"></input></li>
+		</ul>
+
+		<input type="submit" value="Reset Password">
+</form>
