@@ -6,6 +6,7 @@ exports.up = function(db, callback) {
 		device_id: {type: 'int', primaryKey: true, autoIncrement: true },
 		//add_foriegn_key: id, : users,
 		nickname: 'string'
+		id: { type: 'int', primaryKey: true, autoIncrement: true },
 	}, callback);
 
 	var addDeviceIdFK = 'ALTER TABLE "devices" ADD CONSTRAINT id_fk FOREIGN KEY (id) REFERENCES users(id)';
