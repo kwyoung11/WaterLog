@@ -1,19 +1,20 @@
 {
     "dev": {
         "host": "localhost",
-        "user": "byedinak",
-		"password": "admin",
+        "user": "postgres",
         "database": "waterlogs",
         "driver": "pg",
-        "multipleStatements": true
+	"password": "1234hopf",
+		"port": "5432"
   },
 
     "prod": {
         "host": "localhost",
-        "user": { "ENV" : "DB_USER" },
-        "password" : { "ENV" : "DB_PASS" },
+        "user": "postgres",
         "database": "waterlogs",
         "driver": "pg",
-        "multipleStatements": true  
+	"password": "1234hopf",
+        "multipleStatements": true,
+		"port": "5432"
     }
 }
