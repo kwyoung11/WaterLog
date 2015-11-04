@@ -72,8 +72,13 @@ devices_controller.prototype = {
 
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		
 		view.renderView('/devices/show', params, function(data) {
+		  callback(data);
+		});
+	},
+	edit: function(params, callback) {
+		var callback = (typeof callback === 'function') ? callback : function() {};
+		view.renderView('/devices/edit', params, function(data) {
 		  callback(data);
 		});
 	},
