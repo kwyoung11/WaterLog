@@ -9,7 +9,7 @@ exports.up = function(db, callback) {
 		longitude: 'string',
 		name: 'string'
 		
-	}, callback);
+	}, function(){});
 
 	var addDeviceIdFK = 'ALTER TABLE "devices" ADD CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES users(id)';
 	db.runSql(addDeviceIdFK, [], callback);
