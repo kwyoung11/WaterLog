@@ -7,7 +7,7 @@ var Device = function (data) {
     console.log("data is " + JSON.stringify(data));
     this.data = this.sanitize(data);
     console.log("sanitized data is " + JSON.stringify(this.data));
-    this.paramOrder = ['id', 'user_id'];
+    this.paramOrder = ['user_id', 'name', 'latitude', 'longitude'];
 }
 
 Device.prototype = Object.create(Application.prototype);
@@ -28,16 +28,28 @@ Device.find = function(attr, val, cb) {
 Device.findById = function(id, callback) {  
     db.query('SELECT * from devices WHERE id=$1', [id], function (err, result) {
         if (err) return callback(err);
-        callback(null, result.rows);
+        callback(null, result.rows[0]);
     });
 }
+
+Device.findByUser = function(user_id, cb) {
+    console.log(user_id);
+    db.query('SELECT * from devices WHERE user_id=$1', [user_id], function (err, result) {
+        if (err) return callback(err);
+        console.log(result);
+        return cb(null, result.rows);
+    });   
+};
 
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-   		db.query('INSERT INTO devices (id,nickname) VALUES($1, $2) returning *', self.getDataInArrayFormat(), function (err, result) {
-   			if (err) return callback(err);
-                callback(null, result.rows[0]);
+   		db.query('INSERT INTO devices (user_id, name, latitude, longitude) VALUES($1, $2, $3, $4) returning *', self.getDataInArrayFormat(), function (err, result) {
+   			if (err) {
+                console.log(err);
+                return callback(err);
+            }
+                return callback(null, result.rows[0]);
         });             
    			
 }

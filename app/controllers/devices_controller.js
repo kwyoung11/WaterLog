@@ -30,27 +30,28 @@ devices_controller.prototype = {
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		var data = {'id': params['id']};
-		//console.log(params);
+		// console.log(params);
 		view.renderView('devices/new', data, function(data) {
 		  callback(data);
 		});
 	},
 
-	view: function(params, callback) {
+	index: function(params, callback) {
 			var self = this;
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			// load user data here
-			Device.findById(params['id'], function(err, device_data) {
-				//console.log("DEVICE DATA \n");
-				//console.log(device_data);
-				var data= {'device' : device_data, 'id': params['id']};
-				view.renderView('devices/view', data, function(content) {
+			console.log(self);
+			Device.findByUser(self.current_user.data.id, function(err, devices) {
+				console.log("DEVICE DATA \n");
+				console.log(devices);
+				var data = {'devices' : devices, 'id': self.current_user.data.id};
+				view.renderView('devices/index', data, function(content) {
 		  		callback(content);
 			});
 		});
 		
 	},
-	//GET update page which is same page as new but with the stuff already filled in
+	// GET update page which is same page as new but with the stuff already filled in
 	update: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		var id =params['user_id'];
@@ -73,25 +74,35 @@ devices_controller.prototype = {
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		
+		Device.findById(params['id'], function(err, device_data) {
+				console.log("DEVICE DATA \n");
+				console.log(device_data);
+				var data = {'device' : device_data, 'id': params['id']};
+				view.renderView('devices/index', data, function(content) {
+		  		callback(content);
+			});
+		});
+
 		view.renderView('/devices/show', params, function(data) {
 		  callback(data);
 		});
 	},
-	//POST new user
+
+	// POST new user
 	create: function(params, callback) {
 		var self = this;
-		var x= parseInt(params['id']);
-		params['id']=x;
-    	var device = new Device(params); // create new user object
-    	//var id = device.get('user_id');
-    	console.log("IN CREATE FUNCTION FOR DEVICE \n");
-    	console.log(params);
-    	//console.log(params);
-    	device.save(function(dev){
-			//if (dev) {
-				self.response_handler.redirectTo('/devices/' +params['id']);
-			//}
-    	});
+		var x = parseInt(params['id']);
+		params['id'] = x;
+    var device = new Device(params); // create new device object
+    //var id = device.get('user_id');
+    console.log("IN CREATE FUNCTION FOR DEVICE \n");
+    console.log(params);
+    //console.log(params);
+    device.save(function(dev) {
+		//if (dev) {
+			self.response_handler.redirectTo('/devices/' +params['id']);
+		//}
+    });
 
 	}
 
