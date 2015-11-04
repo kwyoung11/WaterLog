@@ -15,7 +15,10 @@ var User = function (data) {
     this.data = this.sanitize(data);
     this.data.password_reset_token = null;
     this.data.password_reset_sent_at = null;
-    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at'];
+	var keypair = this.generateKeyPair();
+	this.data.public_key = keypair[0];
+	this.data.private_key = keypair[1];
+    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key'];
 }
 
 User.prototype = Object.create(Application.prototype);
@@ -98,7 +101,7 @@ User.prototype.save = function(cb) {
             user.data.password_digest = hash;
 
             // insert user info into database
-            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at) VALUES($1, $2, $3, $4, $5, $6) returning *', user.getDataInArrayFormat(), function (err, result) {
+            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at, public_key, private_key) VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning *', user.getDataInArrayFormat(), function (err, result) {
                 if (err) return cb(err);
                 cb(null, result.rows[0]);
             });
@@ -199,6 +202,17 @@ User.prototype.sanitize = function(data) {
     	}
     }
     return sanitized_data;
+}
+
+User.prototype.generateKeyPair = function(){
+	var prime_length = 60;
+	var diffieHellman = crypto.createDiffieHellman(prime_length);
+
+	diffieHellman.generateKeys('base64');
+	var publicKey = diffieHellman.getPublicKey('base64');
+	var privateKey = diffieHellman.getPrivateKey('base64');
+	
+	return [publicKey, privateKey];
 }
 
 module.exports = User;

@@ -23,7 +23,7 @@ Data.prototype.constructor = Data;
 Data.prototype.params = {};
 
 Data.prototype.postToDatabase = function(cb) {
-
+	var self = this;
 	
 	 var callback = (typeof callback === 'function') ? callback : function() {};
 	 var errors = {'err': false};
@@ -34,18 +34,49 @@ Data.prototype.postToDatabase = function(cb) {
 		 return;
 	 }
 	 
-	 db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4, $5)', this.getSqlPostValues(), function (err, result) {
-        if (err) {
-            console.log(err);
-            return cb(err);  
-        } 
-    });
-	 
-	 
-	 cb('Post successful');
-	 
+	 this.getDeviceAndUser(
+		function(err){
+		 
+		},
+		function(result){
+			
+		}
+	 );
 	 
 }
+
+Data.prototype.getDeviceAndUser = function(callback, result){
+	var self = this;
+	db.query('SELECT * FROM devices WHERE id=$1', [self.params.device_id], function(err, result){
+		
+		if(err){
+			return callback(err);
+		}
+		else if (result.rowCount == 0) {
+			var myErr = "No device found with id = to " + self.params.device_id;
+			console.log(myErr);
+			return callback(myErr);  
+		} 
+		else{
+			var device = result.rows[0];
+			db.query('SELECT * FROM users WHERE id=$1', [device.id], function(err, result){
+				if(err){
+					return callback(err);
+				}
+				else if (result.rowCount == 0) {
+					var myErr = "No user connected to device with id = to " + device.id;
+					console.log(myErr);
+					return callback(myErr);  
+				}
+				else{
+					console.log('we found a user');
+				}
+			});
+		}
+	});
+	
+}
+
 
 Data.prototype.getSqlPostValues =  function(){
 	
