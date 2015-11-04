@@ -22,7 +22,6 @@ home_controller.prototype = {
 	// GET / (root)
 	index: function(params, callback) {
 			var callback = (typeof callback === 'function') ? callback : function() {};
-			
 			var data = null;
 			view.renderView('home/index', this.view_data, function(data) {
 			  callback(data);

@@ -14,7 +14,7 @@ var data_controller = function(response_handler, req, cb) {
 	this.req = req;
 };
 
-data_controller.prototype.new = function(params, callback){
+data_controller.prototype.new = function(params, callback) {
 		var self = this;
 		var data_model = new Data(params);
 		data_model.postToDatabase(function(result){ 

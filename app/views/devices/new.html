@@ -3,14 +3,20 @@
 function validateForm() { //cannot proceed without entering a nickname
     var x = document.forms["myForm"]["devid"].value;
     if (x == null || x == "") {
-        alert("Must enter valid device id");
+        alert("Must enter valid information");
         return false;
     }
 } //myForm needs to return to the my devices page which it doesn't right now
 </script>
 <form action="/devices/{{id}}" onsubmit="return validateForm()" method="POST"> 
 		<ul>
-			<li> Nickname: <input type="nickname" name="nickname"></input></li>
+			<li> Name: <input type="text" name="name"></input></li>
+		</ul>
+		<ul>
+			<li> Latitude: <input type="text" name="latitude"></input></li>
+		</ul>
+		<ul>
+			<li> Longitude: <input type="text" name="longitude"></input></li>
 		</ul>
 <input type="submit" value="Register">
 </form>
