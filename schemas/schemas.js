@@ -10,7 +10,7 @@ schemas = {
        },
     device: {
         id: null,
-        device_id:null,
+        device_id: null,
         nickname: null
        },
 	data: {

@@ -9,7 +9,7 @@ exports.up = function(db, callback) {
 	}, function(){});
 	
 
-	var addDeviceIdFK = 'ALTER TABLE "data" ADD CONSTRAINT device_id_fk FOREIGN KEY (device_id) REFERENCES devices(device_id)'; /////
+	var addDeviceIdFK = 'ALTER TABLE "data" ADD CONSTRAINT device_id_fk FOREIGN KEY (device_id) REFERENCES devices(id)';
 	var addKeysColumn = 'ALTER TABLE "data" ADD COLUMN keys varchar[]';
 	var addValuesColumn = 'ALTER TABLE "data" ADD COLUMN values varchar[]';
 	var addTimeColumn = 'ALTER TABLE "data" ADD COLUMN created_at timestamp';
