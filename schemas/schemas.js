@@ -1,5 +1,5 @@
 schemas = {  
-    user: {
+	user: {
         id: null,
         email: null,
         password_digest: null,
@@ -10,8 +10,26 @@ schemas = {
        },
     device: {
         id: null,
-        user_id:null
-       }
+        device_id: null,
+        nickname: null
+       },
+	data: {
+		/* 1 is used to mark a required field */
+		id: null,
+		device_id: 1,
+		data_type: 1,
+		created_at: null,
+		data_params: {
+			water:{
+				pH: null,
+				temperature: null,
+				water_flow: null,
+				turbidity: null
+			},
+			air:{},
+			soil:{}
+		}
+	}
 }
 
-module.exports = schemas;  
+module.exports = schemas; 

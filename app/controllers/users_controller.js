@@ -6,6 +6,7 @@ var db = require('../../lib/db');
 var crypto = require('crypto');
 var util = require('../../lib/util');
 var User = require('../models/user');
+var Device = require('../models/device'); 
 var application_controller = require('./application_controller');
 
 /* constructor */
@@ -28,7 +29,6 @@ users_controller.prototype = {
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// respond with login/registration page
-		console.log(this.view_data);
 		view.renderView('users/new', this.view_data, function(data) {
 		  callback(data);
 		});
@@ -38,12 +38,17 @@ users_controller.prototype = {
 	show: function(params, callback) {
 		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		console.log(this.view_data);
 		// load user data here
-		User.findById(params['id'], function(err, user_data) {
-			view.renderView('users/show', self.view_data, function(content) {
-		  	callback(content);
-			});
+		Device.findById(params['id'], function(err, device_data) {
+			if (device_data == null) { //i think this makes it so the id should match up with id in the other table
+				view.renderView('devices/view', this.view_data, function(content) {
+		  		callback(content);
+				});
+			} else {
+				view.renderView('devices/view', device_data, function(content) {
+		  		callback(content);
+				});
+			}
 		});
 		
 	},
@@ -92,7 +97,7 @@ users_controller.prototype = {
 				'<li> Click through to a specific Device to view all of that Device\'s data </li> ' +
 				'<li> Compare Device data with weather data and other Device data </li> </ol>';
 				// redirect to users#show
-				self.response_handler.redirectTo('users/' + user.id);	
+				self.response_handler.redirectTo('devices');	
 			} 
 			
 			
