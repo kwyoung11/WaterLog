@@ -44,14 +44,14 @@ Device.findByUser = function(user_id, cb) {
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-   		db.query('INSERT INTO devices (user_id, name, latitude, longitude) VALUES($1, $2, $3, $4) returning *', self.getDataInArrayFormat(), function (err, result) {
-   			if (err) {
+        db.query('INSERT INTO devices (user_id, name, latitude, longitude) VALUES($1, $2, $3, $4) returning *', self.getDataInArrayFormat(), function (err, result) {
+            if (err) {
                 console.log(err);
                 return callback(err);
             }
                 return callback(null, result.rows[0]);
         });             
-   			
+            
 }
 
 Device.prototype.update = function(callback) {  
@@ -71,15 +71,15 @@ Device.prototype.update = function(callback) {
 
 
 Device.prototype.getDataInArrayFormat = function() {
-	result = []
+    result = []
     schema = schemas.device;
-	for (var attr in this.data) {
-		var index = this.paramOrder.indexOf(attr);
+    for (var attr in this.data) {
+        var index = this.paramOrder.indexOf(attr);
         result.push(this.data[attr]);
-	}
+    }
     //console.log("PRINTING DATA IN ARRAY");
     //console.log(result);
-	return result;
+    return result;
 }
 
 Device.prototype.get = function(name) {  
@@ -98,10 +98,10 @@ Device.prototype.sanitize = function(data) {
 
     for (var attr in data) {
         //console.log("CURRENT ATTRIBUTE IN DATA IS "+attr);
-    	if (schema[attr]==null) {
+        if (schema[attr]==null) {
             //console.log("FOUND SCHEMA");
-    		sanitized_data[attr] = data[attr];
-    	}
+            sanitized_data[attr] = data[attr];
+        }
     }
     return sanitized_data;
 }
