@@ -54,6 +54,22 @@ Device.prototype.save = function(callback) {
    			
 }
 
+Device.prototype.update = function(callback) {  
+    var self = this;
+    this.data = this.sanitize(this.data);
+        db.query('UPDATE devices SET latitude=$1, longitude=$2 WHERE id=$3 returning *', [this.data.latitude,this.data.longitude,this.data.id], function (err, result) {
+            if (err) {
+                console.log(err);
+                return callback(err);
+            }
+                console.log("UPDATED CORRECTLY \n");
+                console.log(result.rows[0]);
+                return callback(null, result.rows[0]);
+        });             
+            
+}
+
+
 Device.prototype.getDataInArrayFormat = function() {
 	result = []
     schema = schemas.device;
@@ -61,8 +77,8 @@ Device.prototype.getDataInArrayFormat = function() {
 		var index = this.paramOrder.indexOf(attr);
         result.push(this.data[attr]);
 	}
-    console.log("PRINTING DATA IN ARRAY");
-    console.log(result);
+    //console.log("PRINTING DATA IN ARRAY");
+    //console.log(result);
 	return result;
 }
 
