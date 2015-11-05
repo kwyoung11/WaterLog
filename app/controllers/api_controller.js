@@ -28,19 +28,27 @@ api_controller.prototype = {
 	device: function (params, cb) {
 		var self = this;
 		if (params.location && params.radius) {
+			console.log("in clause");
 			var latitude = params.location.split(",")[0];
-			var longitude =params.location.split(",")[1];
-			var top = latitude + (params.radius/69);
+			var longitude = params.location.split(",")[1];
+			console.log(latitude);
+			var top = latitude - (params.radius/69) + (2*(params.radius/69));
 			var bot = latitude - (params.radius/69);
-			var right = longitude + (params.radius/54);
+			var right = longitude - (params.radius/54) + (2*(params.radius/54));
 			var left = longitude - (params.radius/54);
+			console.log(latitude);
+			console.log(longitude);
+			console.log(top);
+			console.log(bot);
+			console.log(right);
+			console.log(left);
 			db.query("SELECT * from devices WHERE longitude BETWEEN $1 AND $2 AND latitude BETWEEN $3 AND $4", [right, left, bot, top], function(err, result) {
 				if (err) {
 					console.log(err);
 					return cb(err);
 				}
-				return self.response_handler.renderJSON(200, result.rows[0])
 				console.log(result);
+				return self.response_handler.renderJSON(200, result.rows);
 			});
 		}
 	},

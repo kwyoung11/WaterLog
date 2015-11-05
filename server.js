@@ -11,23 +11,21 @@ if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == 'development') 
   connection['port'] = 3000;
   connection['domain'] = '127.0.0.1';
 } else {
-  process.env.NODE_ENV = 'production';  
+  process.env.NODE_ENV = 'production';
   connection['port'] = process.env.PORT;
   connection['domain'] = '0.0.0.0';
 }
 
-//require custom dispatcher
+// require custom dispatcher
 var dispatcher = require('./lib/dispatcher.js');
 
-
-
 console.log('Starting server @ http://127.0.0.1:' + connection['port'] + '/');
-
 
 http.createServer(function (req, res) {
   // wrap calls in a try catch
   // or the node js server will crash upon any code errors
   try {
+    
     // pipe some details to the node console
     console.log('Incoming Request from: ' +
                  req.connection.remoteAddress +
