@@ -6,21 +6,20 @@ var os = require('os');
 var fs = require('fs');
 
 GLOBAL.flash = {};
+
 var connection = {};
 if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == 'development') {
   process.env.NODE_ENV = 'development';  
-  connection['port'] = 5433;
+  connection['port'] = 3000;
   connection['domain'] = '127.0.0.1';
 } else {
-  process.env.NODE_ENV = 'production';  
+  process.env.NODE_ENV = 'production';
   connection['port'] = process.env.PORT;
   connection['domain'] = '0.0.0.0';
 }
 
 //require custom dispatcher
 var dispatcher = require('./lib/dispatcher.js');
-
-
 
 console.log('Starting server @ http://127.0.0.1:' + connection['port'] + '/');
 
@@ -30,9 +29,11 @@ var options = {
 };
 
 https.createServer(options, function (req, res) {
+
   // wrap calls in a try catch
   // or the node js server will crash upon any code errors
   try {
+    
     // pipe some details to the node console
     console.log('Incoming Request from: ' +
                  req.connection.remoteAddress +
@@ -49,7 +50,7 @@ https.createServer(options, function (req, res) {
       res.writeHead(500);
       res.end('Internal Server Error');
     }
-  }).listen(5433, '127.0.0.1', function() {
+  }).listen(3000, '127.0.0.1', function() {
     //runs when our server is created
     console.log('Server running at http://127.0.0.1:' + connection['port'] + '/');
   });
