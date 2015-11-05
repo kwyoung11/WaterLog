@@ -51,40 +51,25 @@ devices_controller.prototype = {
 		});
 		
 	},
-	// GET update page which is same page as new but with the stuff already filled in
-	update: function(params, callback) {
-		var callback = (typeof callback === 'function') ? callback : function() {};
-		var id =params['user_id'];
-		Device.findById(id, function(err,data){
-			view.renderView('/devices/new', data, function(data) {
-		  		callback(data);
-			});
-		});
-		
-	},
-	destroy: function(params, callback) {
-		var callback = (typeof callback === 'function') ? callback : function() {};
-		
-		var data = null;
-		view.renderView('/devices/new', data, function(data) {
-		  callback(data);
-		});
-	},
 
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		
+
 		Device.findById(params['id'], function(err, device_data) {
-				console.log("DEVICE DATA \n");
-				console.log(device_data);
-				var data = {'device' : device_data, 'id': params['id']};
-				view.renderView('devices/index', data, function(content) {
+				//console.log("DEVICE DATA\n");
+				//console.log(device_data);
+				view.renderView('devices/show', device_data, function(content) {
 		  		callback(content);
 			});
 		});
+	},
 
-		view.renderView('/devices/show', params, function(data) {
-		  callback(data);
+	edit: function(params, callback) {
+		var callback = (typeof callback === 'function') ? callback : function() {};
+		Device.findById(params['id'], function(err, device_data) {
+				view.renderView('devices/edit', device_data, function(content) {
+		  		callback(content);
+			});
 		});
 	},
 
@@ -93,17 +78,26 @@ devices_controller.prototype = {
 		var self = this;
 		var x = parseInt(params['id']);
 		params['id'] = x;
-    var device = new Device(params); // create new device object
-    //var id = device.get('user_id');
-    console.log("IN CREATE FUNCTION FOR DEVICE \n");
-    console.log(params);
-    //console.log(params);
-    device.save(function(dev) {
-		//if (dev) {
+    	var device = new Device(params); // create new device object
+    	device.save(function(dev) {
 			self.response_handler.redirectTo('/devices/' +params['id']);
-		//}
-    });
+    	});
+	},
 
+	update: function(params, callback) {
+		var self = this;
+		console.log("UPDATING DEVICE\n");
+		console.log(params);
+		Device.findById(params['id'], function(err,data){
+			data['latitude'] = params['latitude'];
+			data['longitude'] = params['longitude'];
+			var device = new Device(data);
+    		device.update(function(dev) {
+				self.response_handler.redirectTo('/devices/' +device.id);
+    		});
+		});
+		
+		
 	}
 
 
