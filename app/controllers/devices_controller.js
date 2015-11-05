@@ -86,8 +86,6 @@ devices_controller.prototype = {
 
 	update: function(params, callback) {
 		var self = this;
-		console.log("UPDATING DEVICE\n");
-		console.log(params);
 		Device.findById(params['id'], function(err,data){
 			data['latitude'] = params['latitude'];
 			data['longitude'] = params['longitude'];
@@ -96,10 +94,7 @@ devices_controller.prototype = {
 				self.response_handler.redirectTo('/devices/' +device.id);
     		});
 		});
-		
-		
 	}
-
 
 }
 
