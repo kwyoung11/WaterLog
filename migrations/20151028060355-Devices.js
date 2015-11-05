@@ -7,7 +7,8 @@ exports.up = function(db, callback) {
 		user_id: { type: 'int'},
 		latitude: 'string',
 		longitude: 'string',
-		name: 'string'
+		name: 'string',
+		mode: 'string'
 		
 	}, function(){});
 
