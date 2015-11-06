@@ -10,8 +10,11 @@ schemas = {
        },
     device: {
         id: null,
-        device_id: null,
-        nickname: null
+        user_id: null,
+        latitude: null,
+        longitude: null,
+        name: null,
+        mode: null
        },
 	data: {
 		/* 1 is used to mark a required field */

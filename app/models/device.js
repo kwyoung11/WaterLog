@@ -7,7 +7,7 @@ var Device = function (data) {
     console.log("data is " + JSON.stringify(data));
     this.data = this.sanitize(data);
     console.log("sanitized data is " + JSON.stringify(this.data));
-    this.paramOrder = ['user_id', 'name', 'latitude', 'longitude'];
+    this.paramOrder = ['id','user_id', 'latitude', 'longitude','name','mode'];
 }
 
 Device.prototype = Object.create(Application.prototype);
@@ -44,7 +44,7 @@ Device.findByUser = function(user_id, cb) {
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-        db.query('INSERT INTO devices (user_id, name, latitude, longitude) VALUES($1, $2, $3, $4) returning *', self.getDataInArrayFormat(), function (err, result) {
+        db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode) VALUES($1, $2, $3, $4, $5) returning *', self.getDataInArrayFormat(), function (err, result) {
             if (err) {
                 console.log(err);
                 return callback(err);
