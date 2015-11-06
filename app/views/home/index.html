@@ -1,12 +1,12 @@
 <h1> WaterHub </h1>
 {{#notice}}
-	<p> {{notice}} </p>
+  <p> {{notice}} </p>
 {{/notice}}
 {{#current_user}}
-	<p> Welcome, {{current_user.data.email}}</p>
-	<p> <a href="/devices/{{current_user.data.id}}"> My Profile </a></p>
+  <p> Welcome, {{current_user.data.email}}</p>
+  <p> <a href="/users/{{current_user.data.id}}"> My Profile </a></p>
 {{/current_user}}
 {{^current_user}}
-<p>	<a href="/login"> Login </a> </p>
+<p> <a href="/login"> Login </a> </p>
 <p> <a href="/users/new"> Register </a> </p>
 {{/current_user}}
