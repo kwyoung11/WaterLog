@@ -4,6 +4,18 @@
 <h1>Users#show<h1>
 
 		<h2> User e-mail is: {{current_user.data.email}} </h2>
+		<h1> My Devices for {{current_user.data.email}} </h1>
+		<a href="/devices/new"> Add a New Device </a>
+		</br>
+		</br>
+		</br>
 
+{{#devices}}
+ <ul>
+ 	<li><a href="/devices/{{id}}"> {{name}}</a></li> 
+ 	<li><a href="/devices/{{id}}"> {{latitude}}</a></li> 
+ 	<li><a href="/devices/{{id}}"> {{longitude}}</a></li> 
+ </ul>
+{{/devices}}
 		<a href="/logout"> Logout </a>
-		<a href='/' id="myLink" onLoad="alert('HELLO!');"> Edit </a>
+		<a href='/users/{{current_user.data.id}}/edit' id="myLink"> Edit </a>

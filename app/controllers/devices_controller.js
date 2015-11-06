@@ -76,11 +76,11 @@ devices_controller.prototype = {
 	// POST new user
 	create: function(params, callback) {
 		var self = this;
-		var x = parseInt(params['id']);
-		params['id'] = x;
-    	var device = new Device(params); // create new device object
+		console.log(self);
+		params['id'] = self.current_user.data.id;
+    var device = new Device(params); // create new device object
     	device.save(function(dev) {
-			self.response_handler.redirectTo('/devices/' +params['id']);
+				self.response_handler.redirectTo('/users/' + self.current_user.data.id);
     	});
 	},
 
@@ -88,12 +88,12 @@ devices_controller.prototype = {
 		var self = this;
 		console.log("UPDATING DEVICE\n");
 		console.log(params);
-		Device.findById(params['id'], function(err,data){
+		Device.findById(params['id'], function(err, data){
 			data['latitude'] = params['latitude'];
 			data['longitude'] = params['longitude'];
 			var device = new Device(data);
     		device.update(function(dev) {
-				self.response_handler.redirectTo('/devices/' +device.id);
+				self.response_handler.redirectTo('/devices/' + device.data.id);
     		});
 		});
 		
