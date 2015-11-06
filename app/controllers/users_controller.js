@@ -39,23 +39,25 @@ users_controller.prototype = {
 		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// load user data here
-		Device.findById(params['id'], function(err, device_data) {
-			if (device_data == null) { //i think this makes it so the id should match up with id in the other table
-				view.renderView('devices/view', this.view_data, function(content) {
-		  		callback(content);
-				});
-			} else {
-				view.renderView('devices/view', device_data, function(content) {
-		  		callback(content);
-				});
-			}
+		Device.findByUser(params['id'], function(err, devices) {
+			
+			var devices_obj = {'devices': []};
+			devices.forEach(function(obj) {
+				devices_obj['devices'].push(obj);
+			});
+			util.merge(self.view_data, devices_obj);
+
+		view.renderView('users/show', self.view_data, function(content) {
+		  callback(content);
+		});
+			
 		});
 		
 	},
 
 	// GET /users/1/edit
 	edit: function(params, callback) {
-
+		
 		view.renderView('users/edit', this.view_data, function(data) {
 			return callback(data);
 		});	
@@ -113,7 +115,7 @@ users_controller.prototype = {
 	// PATCH/PUT /users/1
 	update: function(params, callback) {
 		var user = User.findById(params['id'], function(err, result) {
-
+			
 		});
 	},
 
