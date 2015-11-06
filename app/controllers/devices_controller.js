@@ -88,7 +88,7 @@ devices_controller.prototype = {
 		var self = this;
 		console.log("UPDATING DEVICE\n");
 		console.log(params);
-		Device.findById(params['id'], function(err,data){
+		Device.findById(params['id'], function(err, data){
 			data['latitude'] = params['latitude'];
 			data['longitude'] = params['longitude'];
 			var device = new Device(data);
