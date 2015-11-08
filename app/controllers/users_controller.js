@@ -29,7 +29,7 @@ users_controller.prototype = {
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// respond with login/registration page
-		console.log(this.view_data);
+		// console.log(this.view_data);
 		view.renderView('users/new', this.view_data, function(data) {
 		  callback(data);
 		});
