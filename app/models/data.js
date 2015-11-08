@@ -11,6 +11,9 @@ var util = require('../../lib/util');
 var Data = function (params) {  
     Application.call(this, params);
 	this.params = params;
+	if(typeof params.encryptedData != 'undefined'){
+		this.encryptedData = true;
+	}
 }
 
 var schema = schemas.data;
@@ -20,6 +23,30 @@ Data.prototype.constructor = Data;
 
 
 Data.prototype.params = {};
+
+Data.prototype.encryptData = function(cb){
+	var self = this;
+	if(typeof this.params.device_id != 'undefined' && this.params.device_id != null){
+		
+		var deviceAndUser = util.getDeviceAndUser(this.params.device_id, 
+			function(err){
+				
+			},
+			function(deviceAndUser){
+				var stringToEncrypt = '';
+				for(var attr in self.params){
+					stringToEncrypt += attr + '=' + self.params[attr] + '&';
+				}
+				var device_id = self.params.device_id;
+				self.params = {};
+				self.params.device_id = device_id;
+				self.params.encryptedData = util.encrypt(deviceAndUser[1].private_key, stringToEncrypt);
+				this.encryptedData = true;
+				cb();
+			}
+		);
+	}
+}
 
 Data.prototype.postToDatabase = function(cb) {
 	var self = this;
@@ -31,24 +58,34 @@ Data.prototype.postToDatabase = function(cb) {
 			cb(err);
 		},
 		function(result){
-			self.decrypt(cb, result[1].private_key);
-			self.params = self.sanitize(self.params);
-			self.enforceRequiredParameters(
-				function(err){
-					cb(err);
-				},
-				function(){
-					db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4, $5)', self.getSqlPostValues(), function (err, result) {
-						if (err) {
-							console.log(err);
-							return cb(err);  
-						}
-						else{
-							cb('Post successful');
-						}
-					});
-				}
-			);
+			if(this.encryptedData == true){
+				self.decrypt(cb, result[1].private_key);
+			}
+			else{
+				self.params = self.sanitize(self.params);
+				self.enforceRequiredParameters(
+					function(err){
+						cb(err);
+					},
+					function(){
+						db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4, $5)', self.getSqlPostValues(), function (err, result) {
+							if (err) {
+								console.log(err);
+								return cb(err);  
+							}
+							else{
+								
+								if(this.encryptedData == true){	
+									cb('Post successful');
+								}
+								else{
+									cb('Unencrypted post successful');
+								}
+							}
+						});
+					}
+				);
+			}
 		});
 }
 
@@ -92,18 +129,20 @@ Data.prototype.decrypt = function(cb, private_key){
     var cipherEncoding = 'hex';
 	var decipher = crypto.createDecipher(algorithm, private_key);
 	
-	var unencryptedData = decipher.update(encryptedData, cipherEncoding, clearEncoding);
-	unencryptedData += decipher.final();
-	
-	var data = unencryptedData.split('&');
-	for(var i = 0 ; i < data.length; i++){
-		var keyAndValue = data[i].split('=');
-		var key = keyAndValue[0];
-		var value = keyAndValue[1];
-		this.params[key] = value;
+	if(typeof encryptedData == 'string'){
+		var unencryptedData = decipher.update(encryptedData, cipherEncoding, clearEncoding);
+		unencryptedData += decipher.final();
+		
+		var data = unencryptedData.split('&');
+		for(var i = 0 ; i < data.length; i++){
+			var keyAndValue = data[i].split('=');
+			var key = keyAndValue[0];
+			var value = keyAndValue[1];
+			this.params[key] = value;
+		}
+		
+		this.params.encryptedData = null;
 	}
-	
-	this.params.encryptedData = null;
 	
 }
 
