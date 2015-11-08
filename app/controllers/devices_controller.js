@@ -84,8 +84,8 @@ devices_controller.prototype = {
 		params['id']=x;
     	var device = new Device(params); // create new user object
     	//var id = device.get('user_id');
-    	console.log("IN CREATE FUNCTION FOR DEVICE \n");
-    	console.log(params);
+    	// console.log("IN CREATE FUNCTION FOR DEVICE \n");
+    	// console.log(params);
     	//console.log(params);
     	device.save(function(dev){
 			//if (dev) {
