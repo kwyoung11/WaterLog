@@ -11,6 +11,7 @@ var util = require('../../lib/util');
 var Data = function (params) {  
     Application.call(this, params);
 	this.params = params;
+	console.log(params);
 	if(typeof params.encryptedData != 'undefined'){
 		this.encryptedData = true;
 	}
@@ -41,7 +42,7 @@ Data.prototype.encryptData = function(cb){
 				self.params = {};
 				self.params.device_id = device_id;
 				self.params.encryptedData = util.encrypt(deviceAndUser[1].private_key, stringToEncrypt);
-				this.encryptedData = true;
+				self.encryptedData = true;
 				cb();
 			}
 		);
@@ -58,34 +59,40 @@ Data.prototype.postToDatabase = function(cb) {
 			cb(err);
 		},
 		function(result){
-			if(this.encryptedData == true){
-				self.decrypt(cb, result[1].private_key);
-			}
-			else{
-				self.params = self.sanitize(self.params);
-				self.enforceRequiredParameters(
-					function(err){
-						cb(err);
-					},
-					function(){
-						db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4, $5)', self.getSqlPostValues(), function (err, result) {
-							if (err) {
-								console.log(err);
-								return cb(err);  
-							}
-							else{
-								
-								if(this.encryptedData == true){	
-									cb('Post successful');
+			self.decrypt(
+				function(err){
+					console.log(err);
+					cb(err);
+				}, 
+				function(){
+					self.params = self.sanitize(self.params);
+					self.enforceRequiredParameters(
+						function(err){
+							console.log(err);
+							cb(err);
+						},
+						function(){
+							db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4, $5)', self.getSqlPostValues(), function (err, result) {
+								if (err) {
+									console.log(err);
+									return cb(err);  
 								}
 								else{
-									cb('Unencrypted post successful');
+									if(self.encryptedData == true){	
+										console.log('Successful post');
+										cb('Post successful');
+									}
+									else{
+										console.log('Successful unencrypted post');
+										cb('Unencrypted post successful');
+									}
 								}
-							}
-						});
-					}
-				);
-			}
+							});
+						}
+					);
+				},
+				result[1].private_key
+			);
 		});
 }
 
@@ -122,26 +129,39 @@ Data.prototype.getSqlPostValues =  function(){
 	return vals;
 }
 
-Data.prototype.decrypt = function(cb, private_key){
-	var encryptedData = this.params.encryptedData;
-	var algorithm = 'aes-128-cbc';
-	var clearEncoding = 'utf8';
-    var cipherEncoding = 'hex';
-	var decipher = crypto.createDecipher(algorithm, private_key);
+Data.prototype.decrypt = function(cb, result, private_key){
+	var errorEncountered = false;
 	
-	if(typeof encryptedData == 'string'){
-		var unencryptedData = decipher.update(encryptedData, cipherEncoding, clearEncoding);
-		unencryptedData += decipher.final();
+	if(this.encryptedData == true){
+		var encryptedData = this.params.encryptedData;
+		var algorithm = 'aes-128-cbc';
+		var clearEncoding = 'utf8';
+		var cipherEncoding = 'hex';
+		var decipher = crypto.createDecipher(algorithm, private_key);
 		
-		var data = unencryptedData.split('&');
-		for(var i = 0 ; i < data.length; i++){
-			var keyAndValue = data[i].split('=');
-			var key = keyAndValue[0];
-			var value = keyAndValue[1];
-			this.params[key] = value;
+		if(typeof encryptedData == 'string'){
+			try{
+				var unencryptedData = decipher.update(encryptedData, cipherEncoding, clearEncoding);
+				unencryptedData += decipher.final();
+				
+				var data = unencryptedData.split('&');
+				for(var i = 0 ; i < data.length; i++){
+					var keyAndValue = data[i].split('=');
+					var key = keyAndValue[0];
+					var value = keyAndValue[1];
+					this.params[key] = value;
+				}
+				this.params.encryptedData = null;
+			}
+			catch(err){
+				cb('Error decrypting data.  You may have encrypted data with the wrong secret key or supplied the wrong device_id.');
+				errorEncountered = true;
+			}
 		}
-		
-		this.params.encryptedData = null;
+	}
+	
+	if(errorEncountered == false){
+		result();
 	}
 	
 }
