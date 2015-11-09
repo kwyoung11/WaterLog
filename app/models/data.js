@@ -72,7 +72,7 @@ Data.prototype.postToDatabase = function(cb) {
 							cb(err);
 						},
 						function(){
-							db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4, $5)', self.getSqlPostValues(), function (err, result) {
+							db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4,$5)', self.getSqlPostValues(), function (err, result) {
 								if (err) {
 									console.log(err);
 									return cb(err);  
@@ -196,6 +196,7 @@ Data.prototype.sanitize = function(params) {
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
 		var date = new Date();
+		//
 		sanitized_data['created_at'] = date.toLocaleString();
 	}
 	

@@ -29,8 +29,17 @@ schemas = {
 				water_flow: null,
 				turbidity: null
 			},
-			air:{},
-			soil:{}
+			air:{
+				carbon_monoxide: null,
+				nitrogen_dioxide: null,
+				ozone: null,
+				sulphur_dioxide: null
+			},
+			soil:{
+				pH: null,
+				soil_nitrate: null,
+				electrical_conductivity: null
+			}
 		}
 	}
 }

@@ -78,7 +78,7 @@ devices_controller.prototype = {
 		var self = this;
 		console.log(self);
 		params['id'] = self.current_user.data.id;
-    var device = new Device(params); // create new device object
+    	var device = new Device(params); // create new device object
     	device.save(function(dev) {
 				self.response_handler.redirectTo('/users/' + self.current_user.data.id);
     	});
