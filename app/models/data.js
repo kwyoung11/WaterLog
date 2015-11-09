@@ -196,12 +196,37 @@ Data.prototype.sanitize = function(params) {
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
 		var date = new Date();
-		//
-		sanitized_data['created_at'] = date.toLocaleString();
+		if (this.checkTimeStamp(date)==0){
+			return {};
+		}else{
+			sanitized_data['created_at'] = date.toLocaleString();
+		}
 	}
 	
     return sanitized_data;
 }
+
+Data.prototype.checkTimeStamp = function(t) {  
+    var self = this;
+        
+        db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
+            [self.params.data_type,self.params.device_id], function (err, result) {
+            
+            if(result.rows[0] == null){
+            	return 1;
+            }else{
+                var x = result.rows.length;
+                var most_recent = result.rows[x-1].created_at;
+                var time = new Date(most_recent);
+                if((t.getTime() - time.getTime()) < 15*60*1000){
+                	console.log("cannot insert because of timestamp overlap\n");
+                	return 0;
+                }
+                return 1;
+            }
+        });            
+            
+},
 
 Data.prototype.get_ei_params = function(data){
 	if(data.data_type == 'water'){

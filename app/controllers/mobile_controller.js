@@ -47,19 +47,16 @@ mobile_controller.prototype = {
 		var self = this;
 
 		var mobile=new Mobile(params);
-		mobile.checkTimeStamp(function(err,data){
-
-
-		});
+		
 		params=mobile.data;
 
 		 	//console.log("ALL FIELDS HAVE BEEN SET\n");
 		 	//console.log(params);
 			var data=new Data(params);
     		//data.encryptData(function(cb) {
-    			//data.postToDatabase(function(data) {
+    			data.postToDatabase(function(data) {
 		  		self.response_handler.redirectTo('/mobile/' +params['device_id']+'/input');
-				//});
+				});
 			//});
 	}
 }
