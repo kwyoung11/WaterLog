@@ -10,6 +10,8 @@ var util = require('../../lib/util');
 var Data = require('../models/data');
 var application_controller = require('./application_controller');
 var Mobile = require('../models/mobile');
+var Data = require('../models/data');
+var Device = require('../models/device');
 
 /* constructor */
 var mobile_controller = function(response_handler, req, cb) {
@@ -28,24 +30,38 @@ mobile_controller.prototype = {
 
 	//GET /devices/new
 	input: function(params, callback) {
-		console.log("IN INPUT IN MOBILE CONTROLLER\n");
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		view.renderView('mobile/input', params, function(data) {
 		  callback(data);
 		});
-	}//,
+	},
 
-	/*update: function(params, callback) {
-		var self = this;
-		Device.findById(params['id'], function(err,data){
-			data['latitude'] = params['latitude'];
-			data['longitude'] = params['longitude'];
-			var device = new Device(data);
-    		device.update(function(dev) {
-				self.response_handler.redirectTo('/devices/' +device.id);
-    		});
+	input_type: function(params, callback) {
+		var callback = (typeof callback === 'function') ? callback : function() {};
+		view.renderView('mobile/'+params['data_type'], params, function(data) {
+		  callback(data);
 		});
-	}*/
+	},
+
+	create: function(params, callback) {
+		var self = this;
+
+		var mobile=new Mobile(params);
+		mobile.checkTimeStamp(function(err,data){
+
+
+		});
+		params=mobile.data;
+
+		 	//console.log("ALL FIELDS HAVE BEEN SET\n");
+		 	//console.log(params);
+			var data=new Data(params);
+    		//data.encryptData(function(cb) {
+    			//data.postToDatabase(function(data) {
+		  		self.response_handler.redirectTo('/mobile/' +params['device_id']+'/input');
+				//});
+			//});
+	}
 }
 
 module.exports = mobile_controller;
