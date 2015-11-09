@@ -9,7 +9,9 @@ exports.up = function(db, callback) {
   	auth_token: 'string',
   	salt: 'string',
   	password_reset_token: 'string',
-  	password_reset_sent_at: 'string'
+  	password_reset_sent_at: 'string',
+	public_key: 'string',
+	private_key: 'string'
   }, callback);
   
 };

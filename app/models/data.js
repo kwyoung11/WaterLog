@@ -3,15 +3,18 @@ var crypto = require('crypto');
 var bcrypt = require('bcrypt');
 var Application = require('./application');
 var db = require('../../lib/db');
+var util = require('../../lib/util');
 
 
 // constructor
 // params are all the params posted with the request
 var Data = function (params) {  
     Application.call(this, params);
-
-    // remove unallowed parameters
-    this.params = this.sanitize(params);
+	this.params = params;
+	console.log(params);
+	if(typeof params.encryptedData != 'undefined'){
+		this.encryptedData = true;
+	}
 }
 
 var schema = schemas.data;
@@ -22,30 +25,77 @@ Data.prototype.constructor = Data;
 
 Data.prototype.params = {};
 
-Data.prototype.postToDatabase = function(cb) {
-
-	
-	 var callback = (typeof callback === 'function') ? callback : function() {};
-	 var errors = {'err': false};
-	 
-	 var err = this.enforceRequiredParameters();
-	 if(typeof err != 'undefined' && err != null){
-		 cb(err);
-		 return;
-	 }
-	 
-	 db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4, $5)', this.getSqlPostValues(), function (err, result) {
-        if (err) {
-            console.log(err);
-            return cb(err);  
-        } 
-    });
-	 
-	 
-	 cb('Post successful');
-	 
-	 
+Data.prototype.encryptData = function(cb){
+	var self = this;
+	if(typeof this.params.device_id != 'undefined' && this.params.device_id != null){
+		
+		var deviceAndUser = util.getDeviceAndUser(this.params.device_id, 
+			function(err){
+				
+			},
+			function(deviceAndUser){
+				var stringToEncrypt = '';
+				for(var attr in self.params){
+					stringToEncrypt += attr + '=' + self.params[attr] + '&';
+				}
+				var device_id = self.params.device_id;
+				self.params = {};
+				self.params.device_id = device_id;
+				self.params.encryptedData = util.encrypt(deviceAndUser[1].private_key, stringToEncrypt);
+				self.encryptedData = true;
+				cb();
+			}
+		);
+	}
 }
+
+Data.prototype.postToDatabase = function(cb) {
+	var self = this;
+	
+	var deviceAndUser = util.getDeviceAndUser(
+		this.params.device_id,
+		function(err){
+			console.log(err);
+			cb(err);
+		},
+		function(result){
+			self.decrypt(
+				function(err){
+					console.log(err);
+					cb(err);
+				}, 
+				function(){
+					self.params = self.sanitize(self.params);
+					self.enforceRequiredParameters(
+						function(err){
+							console.log(err);
+							cb(err);
+						},
+						function(){
+							db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4, $5)', self.getSqlPostValues(), function (err, result) {
+								if (err) {
+									console.log(err);
+									return cb(err);  
+								}
+								else{
+									if(self.encryptedData == true){	
+										console.log('Successful post');
+										cb('Post successful');
+									}
+									else{
+										console.log('Successful unencrypted post');
+										cb('Unencrypted post successful');
+									}
+								}
+							});
+						}
+					);
+				},
+				result[1].private_key
+			);
+		});
+}
+
 
 Data.prototype.getSqlPostValues =  function(){
 	
@@ -53,8 +103,6 @@ Data.prototype.getSqlPostValues =  function(){
 	vals[0] = this.params['device_id'];
 	vals[1] = this.params['data_type']
 	vals[2] = this.params['created_at']
-	
-	
 	// EI data parameters
 	var data_param_size = Object.keys(this.params['data']).length;
 	var data_param_keys = '{';
@@ -81,7 +129,45 @@ Data.prototype.getSqlPostValues =  function(){
 	return vals;
 }
 
+Data.prototype.decrypt = function(cb, result, private_key){
+	var errorEncountered = false;
+	
+	if(this.encryptedData == true){
+		var encryptedData = this.params.encryptedData;
+		var algorithm = 'aes-128-cbc';
+		var clearEncoding = 'utf8';
+		var cipherEncoding = 'hex';
+		var decipher = crypto.createDecipher(algorithm, private_key);
+		
+		if(typeof encryptedData == 'string'){
+			try{
+				var unencryptedData = decipher.update(encryptedData, cipherEncoding, clearEncoding);
+				unencryptedData += decipher.final();
+				
+				var data = unencryptedData.split('&');
+				for(var i = 0 ; i < data.length; i++){
+					var keyAndValue = data[i].split('=');
+					var key = keyAndValue[0];
+					var value = keyAndValue[1];
+					this.params[key] = value;
+				}
+				this.params.encryptedData = null;
+			}
+			catch(err){
+				cb('Error decrypting data.  You may have encrypted data with the wrong secret key or supplied the wrong device_id.');
+				errorEncountered = true;
+			}
+		}
+	}
+	
+	if(errorEncountered == false){
+		result();
+	}
+	
+}
+
 Data.prototype.sanitize = function(params) {  
+
     params = params || {};
     var sanitized_data = {};
     // loop over the params hash
@@ -106,7 +192,6 @@ Data.prototype.sanitize = function(params) {
 	if(Object.keys(ei_data).length > 0){
 		sanitized_data['data'] = ei_data;
 	}
-
 	
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
@@ -132,7 +217,7 @@ Data.prototype.get_ei_params = function(data){
 
 
 // used to pass back validation errors - required fields not provided, etc
-Data.prototype.enforceRequiredParameters = function(){
+Data.prototype.enforceRequiredParameters = function(cbErr, cbSuccess){
 	var data_type = this.params['data_type'];
 	var number_of_data_types = Object.keys(schema['data_params']).length;
 	
@@ -146,17 +231,20 @@ Data.prototype.enforceRequiredParameters = function(){
 			}
 			count++;
 		}
-		return err;
+		cbErr(err);
 	}
 	
 	for(var attr in schema){
 		if(schema[attr] == 1 && typeof this.params[attr] == 'undefined'){
-			return "Error: " + attr + ' is required';
+			cbErr("Error: " + attr + ' is required');
 		}
 	}
 	
 	if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
-		return "Error: No Environmental Indicator data values have been provided."
+		cbErr("Error: No Environmental Indicator data values have been provided.");
+	}
+	else{
+		cbSuccess();
 	}
 }
 
