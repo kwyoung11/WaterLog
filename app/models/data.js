@@ -196,13 +196,18 @@ Data.prototype.sanitize = function(params) {
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
 		var date = new Date();
+		var x = this.checkTimeStamp(date);
+		console.log("Time stamp returns");
+		console.log(x);
 		if (this.checkTimeStamp(date)==0){
-			return {};
+			console.log("cannot insert because of timestamp overlap\n");
+			sanitized_data = {};
 		}else{
 			sanitized_data['created_at'] = date.toLocaleString();
 		}
 	}
-	
+	console.log("RETURNING SANITIZED DATA AS ");
+	console.log(sanitized_data);
     return sanitized_data;
 }
 
@@ -272,7 +277,22 @@ Data.prototype.enforceRequiredParameters = function(cbErr, cbSuccess){
 	else{
 		cbSuccess();
 	}
-}
+},
+
+Data.prototype.addCustomfields=function(){
+    curr_schema=schema['data_params'][this.params.data_type];
+    for (var attr in this.params){
+        if(attr!="device_id" && attr!="data_type"){
+            if(typeof curr_schema[attr] == 'undefined'){
+                console.log("ATTRIBUTE "+attr+" NOT DEFINED\n");
+                curr_schema[attr] = this.params[attr];
+                console.log(typeof curr_schema[attr]);
+                console.log(schema);
+            }
+        }
+    }
+
+},
 
 
 module.exports = Data;

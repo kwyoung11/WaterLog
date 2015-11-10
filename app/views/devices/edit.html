@@ -1,6 +1,9 @@
-<h1>Update {{name}} location</h1>
+<h1>Update {{name}}</h1>
 
 <form action="/devices/{{id}}/update" method="POST"> 
+		<ul>
+			<li> Name: <input type="text" name="name" value={{name}}></input></li>
+		</ul>
 		<ul>
 			<li> Latitude: <input type="text" name="latitude" value={{latitude}}></input></li>
 		</ul>
