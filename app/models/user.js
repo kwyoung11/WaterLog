@@ -212,11 +212,6 @@ User.prototype.generateKeyPair = function(){
 	var publicKey = diffieHellman.getPublicKey('base64');
 	var privateKey = diffieHellman.getPrivateKey('base64');
 	
-	console.log('public key is');
-	console.log(publicKey);
-	console.log('private key is');
-	console.log(privateKey);
-	
 	return [publicKey, privateKey];
 }
 
