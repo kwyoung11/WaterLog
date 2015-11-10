@@ -196,12 +196,9 @@ Data.prototype.sanitize = function(params) {
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
 		var date = new Date();
-		var x = this.checkTimeStamp(date);
-		console.log("Time stamp returns");
-		console.log(x);
-		if (this.checkTimeStamp(date)==0){
+		if (this.checkTimeStamp==0){
 			console.log("cannot insert because of timestamp overlap\n");
-			sanitized_data = {};
+			return {};
 		}else{
 			sanitized_data['created_at'] = date.toLocaleString();
 		}
@@ -211,12 +208,12 @@ Data.prototype.sanitize = function(params) {
     return sanitized_data;
 }
 
-Data.prototype.checkTimeStamp = function(t) {  
+Data.prototype.checkTimeStamp = function(t,x) {  
     var self = this;
         
         db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
             [self.params.data_type,self.params.device_id], function (err, result) {
-            
+            console.log("HERE\n");
             if(result.rows[0] == null){
             	return 1;
             }else{
