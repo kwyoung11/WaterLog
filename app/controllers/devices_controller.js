@@ -86,15 +86,13 @@ devices_controller.prototype = {
 
 	update: function(params, callback) {
 		var self = this;
-//<<<<<<< HEAD
-		//Device.findById(params['id'], function(err,data){
-//=======
 		console.log("UPDATING DEVICE\n");
 		console.log(params);
 		Device.findById(params['id'], function(err, data){
-//>>>>>>> 6630cc04199f2ff144a131ade06696efb76ede00
+			data['name'] = params['name'];
 			data['latitude'] = params['latitude'];
 			data['longitude'] = params['longitude'];
+
 			var device = new Device(data);
     		device.update(function(dev) {
 				self.response_handler.redirectTo('/devices/' + device.data.id);

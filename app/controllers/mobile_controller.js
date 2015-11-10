@@ -36,28 +36,18 @@ mobile_controller.prototype = {
 		});
 	},
 
-	input_type: function(params, callback) {
-		var callback = (typeof callback === 'function') ? callback : function() {};
-		view.renderView('mobile/'+params['data_type'], params, function(data) {
-		  callback(data);
-		});
-	},
-
 	create: function(params, callback) {
 		var self = this;
+		console.log(params);
 
 		var mobile=new Mobile(params);
 		
 		params=mobile.data;
-
-		 	//console.log("ALL FIELDS HAVE BEEN SET\n");
-		 	//console.log(params);
 			var data=new Data(params);
-    		//data.encryptData(function(cb) {
+			data.addCustomfields();
     			data.postToDatabase(function(data) {
 		  		self.response_handler.redirectTo('/mobile/' +params['device_id']+'/input');
 				});
-			//});
 	}
 }
 
