@@ -65,7 +65,10 @@ Data.prototype.postToDatabase = function(cb) {
 					cb(err);
 				}, 
 				function(){
-					self.params = self.sanitize(self.params);
+					p=self.params
+					self.sanitize(p,function(data){ /////
+						self.params=data;
+					
 					self.enforceRequiredParameters(
 						function(err){
 							console.log(err);
@@ -90,6 +93,7 @@ Data.prototype.postToDatabase = function(cb) {
 							});
 						}
 					);
+				});////
 				},
 				result[1].private_key
 			);
@@ -166,7 +170,7 @@ Data.prototype.decrypt = function(cb, result, private_key){
 	
 }
 
-Data.prototype.sanitize = function(params) {  
+Data.prototype.sanitize = function(params,cb) {  
 
     params = params || {};
     var sanitized_data = {};
@@ -196,38 +200,45 @@ Data.prototype.sanitize = function(params) {
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
 		var date = new Date();
-		if (this.checkTimeStamp==0){
-			console.log("cannot insert because of timestamp overlap\n");
-			return {};
-		}else{
-			sanitized_data['created_at'] = date.toLocaleString();
-		}
+		x=0;
+		var x = this.checkTimeStamp(date,function(res){
+			if(res == 0){
+				console.log("cannot input\n");
+				cb({});
+			}else{
+				sanitized_data['created_at'] = date.toLocaleString();
+				cb(sanitized_data);
+			}
+		});/////
+		//console.log(x);
+		//	sanitized_data['created_at'] = date.toLocaleString();
+		//}
 	}
-	console.log("RETURNING SANITIZED DATA AS ");
-	console.log(sanitized_data);
-    return sanitized_data;
+	//console.log("RETURN SANITIZE\n");
+    //return sanitized_data;
 }
 
-Data.prototype.checkTimeStamp = function(t,x) {  
+Data.prototype.checkTimeStamp = function(t, callback) {  
     var self = this;
+
         
-        db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
+        	db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
             [self.params.data_type,self.params.device_id], function (err, result) {
-            console.log("HERE\n");
+            //console.log(t);
             if(result.rows[0] == null){
-            	return 1;
+            	callback(1);
             }else{
                 var x = result.rows.length;
                 var most_recent = result.rows[x-1].created_at;
-                var time = new Date(most_recent);
-                if((t.getTime() - time.getTime()) < 15*60*1000){
+                var time2 = new Date(most_recent);
+                if((t.getTime() - time2.getTime()) < 15*60*1000){
                 	console.log("cannot insert because of timestamp overlap\n");
-                	return 0;
+                	callback(0);
+                }else{
+                	callback(1);
                 }
-                return 1;
             }
-        });            
-            
+        }); 
 },
 
 Data.prototype.get_ei_params = function(data){
