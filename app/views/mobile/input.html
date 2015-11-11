@@ -4,12 +4,12 @@
 <form action="/mobile/{{id}}/water/create" method="POST">
 <h2> Water Quality </h2>
 <ul>
-    <li> Temperature: <input type="text" name="temperature" id="water"></input> </li>
+    <li> Temperature: <input type="text" name="temperature" id="water"></input> &#8457;</li>
     <li> pH: <input type="text" name="pH" id="water"></input></li>
     <li> Waterflow: <input type="text" name="water_flow" id="water"></input></li>
     <li> Turbidity: <input type="text" name="turbidity" id="water"></input></li>
     <li> Custom: <input type="text" name="custom_key"></input> 
-    </br> value (with units):<input type="text" name="custom_value"></input> </li> 
+    </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li> 
    </ul> 
   </ul>
 
@@ -20,10 +20,10 @@
 <h2> Soil Quality </h2>
    <ul>
     <li> pH: <input type="text" name="pH" id="soil"></input></li>
-    <li> Soil Nitrate: <input type="text" name="soil_nitrate" id="soil"></input></li>
-    <li> Electrical Conductivity: <input type="text" name="electrical_conductivity" id="soil"></input></li>
+    <li> Soil Nitrate: <input type="text" name="soil_nitrate" id="soil"></input></li> ppm
+    <li> Electrical Conductivity: <input type="text" name="electrical_conductivity" id="soil"></input> milliSiemens per meter (mS/m)</li>
     <li> Custom: <input type="text" name="custom_key"></input> 
-    </br> value (with units):<input type="text" name="custom_value"></input> </li> 
+    </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li> 
    </ul> 
   </ul>
 <input type="submit" value="Submit Data">
@@ -32,12 +32,12 @@
 <form action="/mobile/{{id}}/air/create" method="POST">
 <h2> Air Quality </h2>
    <ul>
-    <li> Carbon Monoxide: <input type="text" name="carbon_monoxide" id="air"></input> </li>
-    <li> Nitrogen Dioxide: <input type="text" name="nitrogen_dioxide" id="air"></input></li>
-    <li> Ozone: <input type="text" name="ozone" id="air"></input></li>
-    <li> Sulphur Dioxide: <input type="text" name="sulphur_dioxide" id="air"></input></li>
+    <li> Carbon Monoxide: <input type="text" name="carbon_monoxide" id="air"></input> ppm</li>
+    <li> Nitrogen Dioxide: <input type="text" name="nitrogen_dioxide" id="air"></input>ppm</li>
+    <li> Ozone: <input type="text" name="ozone" id="air"></input>ppm</li>
+    <li> Sulphur Dioxide: <input type="text" name="sulphur_dioxide" id="air"></input>ppm</li>
     <li> Custom: <input type="text" name="custom_key"></input> 
-    </br> value (with units):<input type="text" name="custom_value"></input> </li>
+    </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li>
   </ul>
  <input type="submit" value="Submit Data">
 </form>

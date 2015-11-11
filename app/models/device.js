@@ -39,7 +39,7 @@ Device.findByUser = function(user_id, cb) {
         console.log(result);
         return cb(null, result.rows);
     });   
-};/////
+}////
 
 Device.prototype.save = function(callback) {  
     var self = this;

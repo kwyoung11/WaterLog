@@ -17,21 +17,6 @@ Mobile.prototype.data = {};
 var schema =schemas.data;
 
 
-Mobile.prototype.addCustomfields=function(){
-    curr_schema=schema['data_params'][this.data.data_type];
-    for (var attr in this.data){
-        if(attr!="device_id" && attr!="data_type"){
-            if(typeof curr_schema[attr] == 'undefined'){
-                console.log("ATTRIBUTE "+attr+" NOT DEFINED\n");
-                curr_schema[attr] = this.data[attr];
-                //console.log(typeof curr_schema[attr]);
-                //onsole.log(schema);
-            }
-        }
-    }
-
-},
-
 Mobile.prototype.sanitize = function(params) {  
     var x;
     var temp = {};
