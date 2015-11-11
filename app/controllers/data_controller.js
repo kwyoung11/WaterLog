@@ -12,6 +12,7 @@ var Data = require('../models/data');
 var data_controller = function(response_handler, req, cb) {
 	this.response_handler = response_handler;
 	this.req = req;
+	setTimeout(cb, 0);
 };
 
 data_controller.prototype.new = function(params, callback) {
