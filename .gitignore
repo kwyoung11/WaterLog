@@ -1,2 +1,9 @@
 node_modules
 database.json
+<<<<<<< HEAD
+=======
+server.key.org
+server.csr
+server.key
+server.crt
+>>>>>>> 9a4b7885b766ad9a0c399f2405ec5b2d405f7b48
