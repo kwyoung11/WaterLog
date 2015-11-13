@@ -7,7 +7,7 @@
 	{{/err}}
 <form action="/users" method="POST">
 		<ul>
-			<li> Email: <input type="email" name="email"></input></li>
+			<li> Email: <input type="email" name="email" value="{{current_user.data.email}}"></input></li>
 			<li> Password: <a href="/password_resets/new"> Reset Password </a></li>
 		</ul>
 

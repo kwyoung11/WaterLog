@@ -18,7 +18,7 @@ var User = function (data) {
 	var keypair = this.generateKeyPair();
 	this.data.public_key = keypair[0];
 	this.data.private_key = keypair[1];
-    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key'];
+    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'email_confirmation_token', 'email_confirmed'];
 }
 
 User.prototype = Object.create(Application.prototype);
@@ -75,14 +75,23 @@ User.findById = function(id, cb) {
 }
 
 // save the user object to the database
-User.prototype.save = function(cb) {  
+User.prototype.save = function(cb) {
     var user = this;
 
     // create the user authentication token, which will be stored in a cookie
     var token = crypto.randomBytes(64).toString('hex');
     user.data.auth_token = token;
 
-    // generate a salt 
+    // set public and private keys
+    user.data.public_key = null;
+    user.data.private_key = null;
+
+    // create an e-mail confimation token.
+    var token = crypto.randomBytes(64).toString('hex');
+    user.data.email_confirmation_token = token;
+    user.data.email_confirmed = false;
+
+    // generate a salt
     bcrypt.genSalt(10, function(err, salt) {
         if (err) console.log("salt err");
         user.data.salt = salt;
@@ -101,7 +110,7 @@ User.prototype.save = function(cb) {
             user.data.password_digest = hash;
 
             // insert user info into database
-            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at, public_key, private_key) VALUES($1, $2, $3, $4, $5, $6, $7, $8) returning *', user.getDataInArrayFormat(), function (err, result) {
+            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at, public_key, private_key, email_confirmation_token, email_confirmed) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning *', user.getDataInArrayFormat(), function (err, result) {
                 if (err) return cb(err);
                 cb(null, result.rows[0]);
             });
@@ -132,6 +141,7 @@ User.prototype.generatePassword = function(password_digest, cb) {
 
 // update specific attributes of user object in database
 User.prototype.update = function(obj, cb) {
+    console.log("in user update");
     var user = this;
     var count = util.size(obj);
     var update_string = '';
@@ -158,6 +168,8 @@ User.prototype.update = function(obj, cb) {
     // remove trailing comma
     update_string = update_string.substr(0, update_string.length-1);
 
+    console.log('UPDATE users SET '+update_string+' WHERE id=$'+user_id_placeholder + ' returning *');
+    console.log(result);
     db.query('UPDATE users SET '+update_string+' WHERE id=$'+user_id_placeholder + ' returning *', result, function (err, result) {
         if (err) {
             console.log("update error");

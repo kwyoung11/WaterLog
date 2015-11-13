@@ -6,7 +6,11 @@ schemas = {
         auth_token: null,
         salt: null,
         password_reset_token: null,
-        password_reset_sent_at: null
+        password_reset_sent_at: null,
+        public_key: null,
+        private_key: null,
+        email_confirmation_token: null,
+        email_confirmed: null,
        },
     device: {
         id: null,

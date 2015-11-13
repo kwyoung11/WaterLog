@@ -8,6 +8,7 @@ var util = require('../../lib/util');
 var User = require('../models/user');
 var Device = require('../models/device'); 
 var application_controller = require('./application_controller');
+var mailer = require('../../lib/mailer');
 
 /* constructor */
 var users_controller = function(response_handler, req, cb) {
@@ -85,21 +86,28 @@ users_controller.prototype = {
 			}
 
 			if (user) {
-				// the user is registered, set his cookie
-				self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
-				GLOBAL.flash.notice = 'Welcome to EnviroHub.com. Below are some steps new users may wish to do. ' +
-				'If you are an EnviroHub device owner: <ol> <li> Register your Device with the Device ID provided to you </li> ' +
-				'<li> Verify the Device\'s status light is green <li> ' +
-				'<li> Once the status light is green, your Device is succesfully collecting data </li> ' +
-				'</ol> If you are a third-party Device owner: <ol> ' +
-				'<li> Register your Device </li> <li> Configure your Device with the Device ID given upon registration </li> ' +
-				'<li> Verify green light status for that Device on EnviroHub.com </li> </ol>' + 
-				'If you wish to research EI data:' +
-				'<ol> <li> Explore the Map Display to find data in areas of interest </li>' + 
-				'<li> Click through to a specific Device to view all of that Device\'s data </li> ' +
-				'<li> Compare Device data with weather data and other Device data </li> </ol>';
+				// the user is registered, send verification email
+				var body = "Hey there," +
+					"<p>Welcome to EnviroHub. Please verify your e-mail by clicking on the following link: </p>" +
+					"<p><a href=\"https://127.0.0.1:3000/users/" + user.email_confirmation_token + "/confirm_email\">Click here to verify your e-mail</a></p>" +
+					"<p> If you did not register for EnviroHub, please ignore this e-mail.<p>" +
+					"<p> EnviroHub</p>";
+				mailer.deliver(user.email, "EnviroHub: Verify your e-mail", body);
+
+				// self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
+				// GLOBAL.flash.notice = 'Welcome to EnviroHub.com. Below are some steps new users may wish to do. ' +
+				// 'If you are an EnviroHub device owner: <ol> <li> Register your Device with the Device ID provided to you </li> ' +
+				// '<li> Verify the Device\'s status light is green <li> ' +
+				// '<li> Once the status light is green, your Device is succesfully collecting data </li> ' +
+				// '</ol> If you are a third-party Device owner: <ol> ' +
+				// '<li> Register your Device </li> <li> Configure your Device with the Device ID given upon registration </li> ' +
+				// '<li> Verify green light status for that Device on EnviroHub.com </li> </ol>' + 
+				// 'If you wish to research EI data:' +
+				// '<ol> <li> Explore the Map Display to find data in areas of interest </li>' + 
+				// '<li> Click through to a specific Device to view all of that Device\'s data </li> ' +
+				// '<li> Compare Device data with weather data and other Device data </li> </ol>';
 				// redirect to users#show
-				self.response_handler.redirectTo('devices');	
+				self.response_handler.redirectTo('users/' + user.id);	
 			} 
 			
 			
@@ -122,6 +130,28 @@ users_controller.prototype = {
 	// DELETE /users/1
 	destroy: function(params, callback) {
 
+	},
+
+	confirm_email: function(params, callback) {
+		var self = this;
+		// find the user by the confirmation code
+		User.find('email_confirmation_token', params['email_confirmation_token'], function(err, user) {
+			if (user) {
+				user.update({'email_confirmation_token': null, 'email_confirmed': true}, function(err, updated_user) {
+					if (updated_user) {
+						GLOBAL.flash.notice = "Email verification succesful. You can now login to EnviroHub.";
+						self.response_handler.redirectTo('/login');		
+					} else {
+						GLOBAL.flash.notice = "Email verification failed.";
+						self.response_handler.redirectTo('/login');		
+					}
+				});
+				
+			} else {
+				GLOBAL.flash.notice = "Email verification failed. The e-mail confirmation token you used was invalid. ";
+				self.response_handler.redirectTo('/login');	
+			}
+		});
 	}
 
 };
