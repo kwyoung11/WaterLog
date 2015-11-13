@@ -29,6 +29,7 @@ data_controller.prototype.new = function(params, callback) {
 			}
 		);
 		*/
+		
 		data_model.postToDatabase(function(result){
 			var myJson = JSON.stringify(result);
 			self.response_handler.renderJSON(myJson, myJson);

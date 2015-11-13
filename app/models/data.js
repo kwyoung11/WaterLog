@@ -51,7 +51,6 @@ Data.prototype.encryptData = function(cb){
 
 Data.prototype.postToDatabase = function(cb) {
 	var self = this;
-	
 	var deviceAndUser = util.getDeviceAndUser(
 		this.params.device_id,
 		function(err){

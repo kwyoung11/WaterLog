@@ -98,6 +98,13 @@ devices_controller.prototype = {
 				self.response_handler.redirectTo('/devices/' + device.data.id);
     		});
 		});
+	},
+
+	bulkupload: function(params, callback) {
+		var callback = (typeof callback === 'function') ? callback : function() {};
+		view.renderView('devices/bulk_upload', params, function(data) {
+		  callback(data);
+		});
 	}
 
 }
