@@ -1,5 +1,3 @@
-<script> 
-</script>
 <h1> Register </h1>
 
 <div id="register">
@@ -7,7 +5,7 @@
 		{{err_msg}}
 	{{/err}}
 <form action="/users" method="POST"> 
-	<input type="hidden" name="invitation_token" value="">
+	<input type="hidden" name="invitation_token" value="" id="invitation_token">
 		<ul>
 			<li> Email: <input type="email" name="email"></input></li>
 			<li> Password: <input type="password" name="password_digest"> </input></li>
@@ -17,4 +15,6 @@
 	
 </form>
 </div>
-
+<script>
+	document.getElementById("invitation_token").setAttribute('value', window.location.pathname.split("/")[3]);
+</script>

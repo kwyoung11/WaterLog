@@ -80,7 +80,7 @@ users_controller.prototype = {
 		// create new user object, passing in the email and password_digest from the post data as params
     var user = new User(params); 
     User.find('is_admin', true, function (err, admin_user) {
-    	if (!admin_user.data.invites_active) {
+    	if (!admin_user.data.invites_active || params['invitation_token']) {
     		user.save(function(err, user) { // store user info in database
 
 					if (err) { // re-render login page, displaying any login errors
@@ -125,7 +125,7 @@ users_controller.prototype = {
     		});
     	} else {
     		GLOBAL.flash.notice = "Sorry, you need to be invited to register.";
-    		self.response_handler.redirectTo('/login');
+    		self.response_handler.redirectTo('/login');	
     	}
     });
     	
