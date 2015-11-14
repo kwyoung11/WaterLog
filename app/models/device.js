@@ -33,7 +33,6 @@ Device.findById = function(id, callback) {
 }
 
 Device.findByUser = function(user_id, cb) {
-    console.log(user_id);
     db.query('SELECT * from devices WHERE user_id=$1', [user_id], function (err, result) {
         if (err) return callback(err);
         console.log(result);

@@ -26,6 +26,24 @@ users_controller.prototype.constructor = users_controller;
 /* users_controller prototype methods below */
 users_controller.prototype = {
 	
+	before_filter: function (action, params) {
+		var self = this;
+		if (action == "edit" || action == "update" || action == "destroy") {
+			if (self.current_user.data.id != params['id']) {
+				self.response_handler.serverError(403, "You do not have permission to perform this action.");
+			}
+		} else if (action == "show") {
+			User.findById(params['id'], function(err, user) {
+				console.log(user);
+					if (user && user.data.is_admin && user.data.private_profile && self.current_user.data.id != params['id']) {
+						self.response_handler.serverError(403, "This user has set their profile to private.");
+					} else if (!user.data.id) {
+						self.response_handler.serverError(404, "Could not find a user with that ID.");
+					}
+			});
+		}
+	},
+
 	// GET /users/new
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
@@ -60,7 +78,7 @@ users_controller.prototype = {
 	edit: function(params, callback) {
 		var self = this;
 		var user = User.findById(params['id'], function(err, user) {
-			if (user.is_admin) { 
+			if (user.data.is_admin) { 
 				self.view_data.admin = true;
 				view.renderView('users/edit', self.view_data, function(data) {
 					return callback(data);
@@ -134,17 +152,40 @@ users_controller.prototype = {
 
 	// PATCH/PUT /users/1
 	update: function(params, callback) {
+		var self = this;
+		console.log("in update function");
 		var user = User.findById(params['id'], function(err, user) {
-			if (params['email'] != user.email) { // user changed their e-mail
+			if (params['email'] != user.data.email) { // user changed their e-mail
 				// generate new confirmation token
 				
 			}
+			console.log(params);
+			user.update(params, function(err, user) {
+				if (user) {
+					GLOBAL.flash.notice = "Update succesfully";
+					self.response_handler.redirectTo('/users/' + user.data.id);		
+				}
+			});
 		});
 	},
 
-	// DELETE /users/1
+	// GET /users/1/destroy
 	destroy: function(params, callback) {
+		var self = this;
+			if (self.current_user.data.id == params['id']) {
+				db.query("DELETE FROM users WHERE id=$1", [params['id']], function(err, result) {
+					if (err) {
+						var data = {'err_code': 15, 'err_msg': 'There was an error in trying to delete your records from our database.'};
+						self.response_handler.renderJSON(200, data);
+					}
+					var data = {'msg': 'You been removed/deleted from our reecords.'};
+					self.response_handler.renderJSON(200, data);
 
+				});
+			} else {
+				var data = {'msg': 'Sorry, but you don\'t have permission to do that.'};
+				self.response_handler.renderJSON(200, data);
+			}
 	},
 
 	confirm_email: function(params, callback) {

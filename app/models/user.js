@@ -70,7 +70,7 @@ User.find = function(attr, val, cb) {
 User.findById = function(id, cb) {  
     db.query('SELECT * from users WHERE id=$1', [id], function (err, result) {
         if (err) return cb(err);
-        cb(null, result.rows[0]);
+        cb(null, new User(result.rows[0]));
     });
 }
 
