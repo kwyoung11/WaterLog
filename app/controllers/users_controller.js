@@ -71,16 +71,14 @@ users_controller.prototype = {
     user.save(function(err, user) { // store user info in database
 
 			if (err) { // re-render login page, displaying any login errors
-				if (err.code == '23505') { // code 23505 is a unique constraint violation
-					var errors = {'err': true, 'err_msg': 'That e-mail is already registered. Please choose another e-mail'};
-					view.renderView('users/new', errors, function(data) {
-			  		return callback(data);
-					});					
+				// unique constraint violation
+				if (err.code == '23505') { 
+					var errors = {'err_code': 10, 'err_msg': 'That e-mail is already registered. Please choose another e-mail'};
+					self.response_handler.renderJSON(200, errors);
+				// generic error
 				} else { // there was an error, but we're not sure what it was exactly
-					var errors = {'err': true, 'err_msg': 'Something went wrong. Please contact us at support@envirohub.com for help.'};
-					view.renderView('users/new', errors, function(data) {
-			  		return callback(data);
-					});					
+					var errors = {'err_code': 19, 'err_msg': 'Something went wrong. Please contact us at support@envirohub.com for help.'};
+					self.response_handler.renderJSON(200, errors);
 				}
 			}
 
@@ -98,18 +96,11 @@ users_controller.prototype = {
 				'<ol> <li> Explore the Map Display to find data in areas of interest </li>' + 
 				'<li> Click through to a specific Device to view all of that Device\'s data </li> ' +
 				'<li> Compare Device data with weather data and other Device data </li> </ol>';
-				// redirect to users#show
-				self.response_handler.redirectTo('devices');	
+				self.response_handler.renderJSON(200, user.data);
 			} 
 			
 			
     });
-    	    
-		// console.log("Params are: " + JSON.stringify(params));
-		// var data = null;
-		// view.renderView('users/show', data, function(data) {
-		// 	callback(data, user);
-		// });	
 	},
 
 	// PATCH/PUT /users/1
@@ -121,7 +112,24 @@ users_controller.prototype = {
 
 	// DELETE /users/1
 	destroy: function(params, callback) {
+		var self = this;
+		User.findById(params['id'], function(err, user) {
+			if (self.current_user.data.id == params['id']) {
+				db.query("DELETE FROM users WHERE id=$1", [params['id']], function(err, result) {
+					if (err) {
+						var data = {'err_code': 15, 'err_msg': 'There was an error in trying to delete your records from our database.'};
+						self.response_handler.renderJSON(200, data);
+					}
+					var data = {'msg': 'You been removed/deleted from our reecords.'};
+					self.response_handler.renderJSON(200, data);
 
+				});
+			} else {
+				var data = {'msg': 'Sorry, but you don\'t have permission to do that.'};
+				self.response_handler.renderJSON(200, data);
+			}
+			
+		});
 	}
 
 };

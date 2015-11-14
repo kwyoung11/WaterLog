@@ -8,7 +8,7 @@ var util = require('../../lib/util');
 
 // constructor
 // @data is the params hash (e-mail and password)
-var User = function (data) {  
+var User = function (data) {
     Application.call(this, data);
 
     // remove unallowed parameters
