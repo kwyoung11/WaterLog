@@ -28,7 +28,7 @@ var options = {
   cert: fs.readFileSync('server.crt')
 };
 
-https.createServer(options, function (req, res) {
+http.createServer(function (req, res) {
 
   // wrap calls in a try catch
   // or the node js server will crash upon any code errors
