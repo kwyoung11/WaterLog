@@ -58,10 +58,20 @@ users_controller.prototype = {
 
 	// GET /users/1/edit
 	edit: function(params, callback) {
+		var self = this;
+		var user = User.findById(params['id'], function(err, user) {
+			if (user.is_admin) { 
+				self.view_data.admin = true;
+				view.renderView('users/edit', self.view_data, function(data) {
+					return callback(data);
+				});			
+			} else {
+				view.renderView('users/edit', self.view_data, function(data) {
+					return callback(data);
+				});			
+			}
+		});
 		
-		view.renderView('users/edit', this.view_data, function(data) {
-			return callback(data);
-		});	
 	},
 
 	// POST /users
@@ -69,61 +79,66 @@ users_controller.prototype = {
 		var self = this;
 		// create new user object, passing in the email and password_digest from the post data as params
     var user = new User(params); 
-    user.save(function(err, user) { // store user info in database
+    User.find('is_admin', true, function (err, admin_user) {
+    	if (!admin_user.data.invites_active) {
+    		user.save(function(err, user) { // store user info in database
 
-			if (err) { // re-render login page, displaying any login errors
-				if (err.code == '23505') { // code 23505 is a unique constraint violation
-					var errors = {'err': true, 'err_msg': 'That e-mail is already registered. Please choose another e-mail'};
-					view.renderView('users/new', errors, function(data) {
-			  		return callback(data);
-					});					
-				} else { // there was an error, but we're not sure what it was exactly
-					var errors = {'err': true, 'err_msg': 'Something went wrong. Please contact us at support@envirohub.com for help.'};
-					view.renderView('users/new', errors, function(data) {
-			  		return callback(data);
-					});					
-				}
-			}
-
-			if (user) {
-				// the user is registered, send verification email
-				var body = "Hey there," +
-					"<p>Welcome to EnviroHub. Please verify your e-mail by clicking on the following link: </p>" +
-					"<p><a href=\"https://127.0.0.1:3000/users/" + user.email_confirmation_token + "/confirm_email\">Click here to verify your e-mail</a></p>" +
-					"<p> If you did not register for EnviroHub, please ignore this e-mail.<p>" +
-					"<p> EnviroHub</p>";
-				mailer.deliver(user.email, "EnviroHub: Verify your e-mail", body);
-
-				// self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
-				// GLOBAL.flash.notice = 'Welcome to EnviroHub.com. Below are some steps new users may wish to do. ' +
-				// 'If you are an EnviroHub device owner: <ol> <li> Register your Device with the Device ID provided to you </li> ' +
-				// '<li> Verify the Device\'s status light is green <li> ' +
-				// '<li> Once the status light is green, your Device is succesfully collecting data </li> ' +
-				// '</ol> If you are a third-party Device owner: <ol> ' +
-				// '<li> Register your Device </li> <li> Configure your Device with the Device ID given upon registration </li> ' +
-				// '<li> Verify green light status for that Device on EnviroHub.com </li> </ol>' + 
-				// 'If you wish to research EI data:' +
-				// '<ol> <li> Explore the Map Display to find data in areas of interest </li>' + 
-				// '<li> Click through to a specific Device to view all of that Device\'s data </li> ' +
-				// '<li> Compare Device data with weather data and other Device data </li> </ol>';
-				// redirect to users#show
-				self.response_handler.redirectTo('users/' + user.id);	
-			} 
+					if (err) { // re-render login page, displaying any login errors
+						if (err.code == '23505') { // code 23505 is a unique constraint violation
+							var errors = {'err': true, 'err_msg': 'That e-mail is already registered. Please choose another e-mail'};
+							view.renderView('users/new', errors, function(data) {
+					  		return callback(data);
+							});					
+						} else { // there was an error, but we're not sure what it was exactly
+							var errors = {'err': true, 'err_msg': 'Something went wrong. Please contact us at support@envirohub.com for help.'};
+							view.renderView('users/new', errors, function(data) {
+					  		return callback(data);
+							});					
+						}
+					}
+		
+					if (user) {
+						// the user is registered, send verification email
+						var body = "Hey there," +
+							"<p>Welcome to EnviroHub. Please verify your e-mail by clicking on the following link: </p>" +
+							"<p><a href=\"https://127.0.0.1:3000/users/confirm_email/" + user.email_confirmation_token + "\">Click here to verify your e-mail</a></p>" +
+							"<p> If you did not register for EnviroHub, please ignore this e-mail.<p>" +
+							"<p> EnviroHub</p>";
+						mailer.deliver(user.email, "EnviroHub: Verify your e-mail", body);
+		
+						// self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
+						// GLOBAL.flash.notice = 'Welcome to EnviroHub.com. Below are some steps new users may wish to do. ' +
+						// 'If you are an EnviroHub device owner: <ol> <li> Register your Device with the Device ID provided to you </li> ' +
+						// '<li> Verify the Device\'s status light is green <li> ' +
+						// '<li> Once the status light is green, your Device is succesfully collecting data </li> ' +
+						// '</ol> If you are a third-party Device owner: <ol> ' +
+						// '<li> Register your Device </li> <li> Configure your Device with the Device ID given upon registration </li> ' +
+						// '<li> Verify green light status for that Device on EnviroHub.com </li> </ol>' + 
+						// 'If you wish to research EI data:' +
+						// '<ol> <li> Explore the Map Display to find data in areas of interest </li>' + 
+						// '<li> Click through to a specific Device to view all of that Device\'s data </li> ' +
+						// '<li> Compare Device data with weather data and other Device data </li> </ol>';
+						// redirect to users#show
+						self.response_handler.redirectTo('users/' + user.id);
+					} 
 			
-			
+    		});
+    	} else {
+    		GLOBAL.flash.notice = "Sorry, you need to be invited to register.";
+    		self.response_handler.redirectTo('/login');
+    	}
     });
-    	    
-		// console.log("Params are: " + JSON.stringify(params));
-		// var data = null;
-		// view.renderView('users/show', data, function(data) {
-		// 	callback(data, user);
-		// });	
+    	
+    
 	},
 
 	// PATCH/PUT /users/1
 	update: function(params, callback) {
-		var user = User.findById(params['id'], function(err, result) {
-			
+		var user = User.findById(params['id'], function(err, user) {
+			if (params['email'] != user.email) { // user changed their e-mail
+				// generate new confirmation token
+				
+			}
 		});
 	},
 

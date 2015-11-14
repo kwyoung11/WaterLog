@@ -18,7 +18,7 @@ var User = function (data) {
 	var keypair = this.generateKeyPair();
 	this.data.public_key = keypair[0];
 	this.data.private_key = keypair[1];
-    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'email_confirmation_token', 'email_confirmed'];
+    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'email_confirmation_token', 'email_confirmed', 'private_profile', 'invites_active'];
 }
 
 User.prototype = Object.create(Application.prototype);

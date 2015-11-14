@@ -11,6 +11,9 @@ schemas = {
         private_key: null,
         email_confirmation_token: null,
         email_confirmed: null,
+        is_admin: null,
+        private_profile: null,
+        invites_active: null
        },
     device: {
         id: null,
@@ -20,6 +23,12 @@ schemas = {
         name: null,
         mode: null
        },
+    invitation: {
+    		id: null,
+      	user_id: null,
+        token: null,
+        recipient_email: null
+    },
 	data: {
 		/* 1 is used to mark a required field */
 		id: null,

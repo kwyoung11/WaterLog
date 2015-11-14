@@ -10,6 +10,13 @@
 			<li> Email: <input type="email" name="email" value="{{current_user.data.email}}"></input></li>
 			<li> Password: <a href="/password_resets/new"> Reset Password </a></li>
 		</ul>
+	<h2> Privacy Settings </h2>
+	{{#admin}}
+		<ul>
+			<li> Activate invitation-only registration system: <input type="checkbox" name="invites_active" value=""></input></li>
+			<li> Set your profile to private: <input type="checkbox" name="private_profile" value=""></input></li>
+		</ul>
+	{{/admin}}
 
 		<input type="submit" value="Update">
 	

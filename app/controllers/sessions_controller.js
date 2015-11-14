@@ -17,7 +17,7 @@ var sessions_controller = function(response_handler, req, cb) {
 };
 
 // inherit properties and methods from application_controller
-sessions_controller.prototype = Object.create(application_controller.prototype);
+sessions_controller.prototype = Object.create(application_controller.prototype);  
 sessions_controller.prototype.constructor = sessions_controller;
 
 /* sessions_controller prototype methods below */
@@ -25,7 +25,8 @@ sessions_controller.prototype = {
 
 	// login page
 	new: function(params, cb) {
-			view.renderView("sessions/new", {'err': false}, function(content) {
+
+			view.renderView("sessions/new", this.view_data, function(content) {
 				cb(content);
 			}); 
 		
