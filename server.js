@@ -23,11 +23,6 @@ var dispatcher = require('./lib/dispatcher.js');
 
 console.log('Starting server @ http://127.0.0.1:' + connection['port'] + '/');
 
-var options = {
-  key: fs.readFileSync('server.key'),
-  cert: fs.readFileSync('server.crt')
-};
-
 http.createServer(function (req, res) {
 
   // wrap calls in a try catch
