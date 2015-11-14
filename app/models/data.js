@@ -65,7 +65,7 @@ Data.prototype.postToDatabase = function(cb) {
 				}, 
 				function(){
 					p=self.params
-					self.sanitize(p,function(data){ /////
+					self.sanitize(p,function(data){
 						self.params=data;
 					
 					self.enforceRequiredParameters(
@@ -220,15 +220,16 @@ Data.prototype.sanitize = function(params,cb) {
 Data.prototype.checkTimeStamp = function(t, callback) {  
     var self = this;
 
-        
+        	console.log("IN TIMESTAMP\n");
         	db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
             [self.params.data_type,self.params.device_id], function (err, result) {
             //console.log(t);
             if(result.rows[0] == null){
             	callback(1);
+            }else if(self.params){ //need to check if Arduino device
             }else{
                 var x = result.rows.length;
-                var most_recent = result.rows[x-1].created_at;
+                var most_recent = result.rows[x-1].created_at; //gets last entry
                 var time2 = new Date(most_recent);
                 if((t.getTime() - time2.getTime()) < 15*60*1000){
                 	console.log("cannot insert because of timestamp overlap\n");
