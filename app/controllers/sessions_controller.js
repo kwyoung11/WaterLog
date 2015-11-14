@@ -17,7 +17,7 @@ var sessions_controller = function(response_handler, req, cb) {
 };
 
 // inherit properties and methods from application_controller
-sessions_controller.prototype = Object.create(application_controller.prototype);
+sessions_controller.prototype = Object.create(application_controller.prototype);  
 sessions_controller.prototype.constructor = sessions_controller;
 
 /* sessions_controller prototype methods below */
@@ -25,7 +25,8 @@ sessions_controller.prototype = {
 
 	// login page
 	new: function(params, cb) {
-			view.renderView("sessions/new", {'err': false}, function(content) {
+
+			view.renderView("sessions/new", this.view_data, function(content) {
 				cb(content);
 			}); 
 		
@@ -47,7 +48,7 @@ sessions_controller.prototype = {
 								self.response_handler.setCookie('envirohub_auth_token', user.data.auth_token);
 								
 								// redirect to user profile page
-								self.response_handler.redirectTo("/devices/" + user.data.id);
+								self.response_handler.redirectTo("/users/" + user.data.id);
 							} else {
 								// there is a user with this e-mail, but the pwd is wrong
 								var data = {'err': true, 'err_msg': 'Incorrect password.'};

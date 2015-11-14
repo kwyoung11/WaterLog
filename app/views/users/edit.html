@@ -5,11 +5,18 @@
 	{{#err}}
 		{{err_msg}}
 	{{/err}}
-<form action="/users" method="POST">
+<form action="/users/{{current_user.data.id}}" method="POST">
 		<ul>
-			<li> Email: <input type="email" name="email"></input></li>
+			<li> Email: <input type="email" name="email" value="{{current_user.data.email}}"></input></li>
 			<li> Password: <a href="/password_resets/new"> Reset Password </a></li>
 		</ul>
+	<h2> Privacy Settings </h2>
+	{{#admin}}
+		<ul>
+			<li> Activate invitation-only registration system: <input type="checkbox" name="invites_active"></input></li>
+			<li> Set your profile to private: <input type="checkbox" name="private_profile"></input></li>
+		</ul>
+	{{/admin}}
 
 		<input type="submit" value="Update">
 	
