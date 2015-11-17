@@ -1,0 +1,18 @@
+
+<h1> Send A Registration Invitation </h1>
+
+<div id="register">
+	{{#err}}
+		{{err_msg}}
+	{{/err}}
+<form action="/invitations" method="POST"> 
+		<input type="hidden" name="user_id" value="{{current_user.data.id}}">
+		<ul>
+			<li> Email: <input type="email" name="recipient_email"></input></li>
+		</ul>
+
+		<input type="submit" value="Send Registration Invitation">
+	
+</form>
+</div>
+

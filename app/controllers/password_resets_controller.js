@@ -57,7 +57,7 @@ password_resets_controller.prototype = {
     			var body = "Hey there," +
 					"<p>It looks like you forgot your password when trying to login to our app. Would you like to reset your password?</p>" +
 					"<p><a href=\"http://127.0.0.1:3000/password_resets/" + password_reset_token + "/edit\">Reset Password</a></p>" +
-					"<p> If not, you can jsut ignore this email.<p>" +
+					"<p> If not, you can just ignore this email.<p>" +
 					"<p> EnviroHub</p>";
 					// send password reset email
     			mailer.deliver(user.data.email, "Reset your EnviroHub password", body);	
