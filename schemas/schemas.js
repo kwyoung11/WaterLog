@@ -22,11 +22,11 @@ schemas = {
 		device_id: 1,
 		data_type: 1,
 		created_at: null,
+		time_stamp:null,
 		data_params: {
 			water:{
 				pH: null,
 				temperature: null,
-				water_flow: null,
 				turbidity: null
 			},
 			air:{

@@ -206,6 +206,10 @@ Data.prototype.sanitize = function(params,cb) {
 				cb({});
 			}else{
 				sanitized_data['created_at'] = date.toLocaleString();
+				if(typeof sanitized_data['time_stamp']=='undefined'){
+					console.log("TIME_STAMP NOT SET"); ///////////////////
+					sanitized_data['time_stamp'] = date.toLocaleString();
+				}
 				cb(sanitized_data);
 			}
 		});/////

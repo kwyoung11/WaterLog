@@ -27,7 +27,7 @@
             var temp = data[0];
             var pH = data[1];
             var turb = data[2];
-            var streamf = data[3];
+            var time_stamp = data[3];
             $.ajax({
               url:"/data/newData",
               type:"POST",
@@ -35,7 +35,7 @@
                     temperature : temp,
                     pH : pH,
                     turbidity: turb,
-                    water_flow: streamf,
+                    time_stamp : time_stamp,
                     data_type: 'water'},
               dataType:"json"
 

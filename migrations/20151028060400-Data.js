@@ -5,7 +5,7 @@ exports.up = function(db, callback) {
 	db.createTable('data', {
 		id: { type: 'int', primaryKey: true, autoIncrement: true },
 		device_id: { type: 'int' },
-		data_type: { type: 'string' }
+		data_type: { type: 'string'}
 	}, function(){});
 	
 
@@ -13,9 +13,11 @@ exports.up = function(db, callback) {
 	var addKeysColumn = 'ALTER TABLE "data" ADD COLUMN keys varchar[]';
 	var addValuesColumn = 'ALTER TABLE "data" ADD COLUMN values varchar[]';
 	var addTimeColumn = 'ALTER TABLE "data" ADD COLUMN created_at timestamp';
+	var addCollectedColumn = 'ALTER TABLE "data" ADD COLUMN time_stamp timestamp';
 	db.runSql(addKeysColumn, [], function(){});
 	db.runSql(addValuesColumn, [], function(){});  
-	db.runSql(addTimeColumn, [], function(){}); 
+	db.runSql(addTimeColumn, [], function(){});
+	db.runSql(addCollectedColumn, [], function(){}); 
 	db.runSql(addDeviceIdFK, [], callback);
 };
 
