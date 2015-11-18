@@ -1,0 +1,52 @@
+<!-- index.html -->
+    <!DOCTYPE html>
+     <html ng-app="enviroHubApp">
+    <head>
+      <!-- SCROLLS -->
+      <!-- load jquery -->
+      <script src="/libs/jquery/dist/jquery.min.js" charset="utf-8"></script>
+
+      <!-- load semantic -->
+      <script src="/libs/semantic/dist/semantic.min.js"> </script>
+      <link rel="stylesheet" href="/libs/semantic/dist/semantic.min.css" media="screen" title="no title" charset="utf-8">
+
+      <!-- SPELLS -->
+      <!-- load angular, angular animate, and angular route -->
+      <script src="/libs/angular/angular.min.js"></script>
+      <script src="/libs/angular-route/angular-route.js"></script>
+      <script src="/libs/angular-animate/angular-animate.js"></script>
+        
+      <script src="/js/application.js"></script>
+      <script src="/js/controllers/devices.js"></script>
+      <link rel="stylesheet" href="/css/style.css">
+      <link rel="stylesheet" href="/css/devices.css">
+    </head>
+    <body ng-controller="mainController">
+
+      <!-- HEADER AND NAVBAR -->
+      <div class="ui attached inverted segment" id="nav">
+        <div class="ui container">
+          <div class="ui inverted vertically fitted menu">
+            <a class="ui item inverted header" href="#/">
+              EnviroHub
+            </a>
+            <div class="right menu">
+              <div class="ui buttons">
+                <a class="ui red inverted button" href="#map"> Map </a>
+                <a class="ui blue inverted button" href="#devices"> Devices </a>
+                <a class="ui orange inverted button" href="#about"> About </a>
+                <a class="ui pink inverted button" href="#contact"> Contact </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT AND INJECTED VIEWS -->
+         <div id="main">
+             <!-- angular templating -->
+             <!-- this is where content will be injected -->
+              <div class="page {{ pageClass }}" ng-view></div>
+         </div>
+    </body>
+    </html>

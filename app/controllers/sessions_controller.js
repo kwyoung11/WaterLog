@@ -37,6 +37,7 @@ sessions_controller.prototype = {
 		var self = this;
 		User.find('email', params['email'], function(err, user) {
 			if (err) {
+				self.response_handler.renderJSON(200, {'err_code': 09, 'err_msg': 'Something went wrong. Please contact envirohubapp@gmail.com for help.'});
 				return cb(err);
 			} 
 			
@@ -77,7 +78,6 @@ sessions_controller.prototype = {
 								cb(content);
 							}); 			
 						}
-						
 				}
 					
 			});
@@ -86,14 +86,12 @@ sessions_controller.prototype = {
 	// /logout
 	destroy: function(params, cb) {
 		var self = this;
-		console.log("in sessions#destroy");
 		self.response_handler.setCookie('envirohub_auth_token', '');
 		if (self.response_handler.format == 'json') {
 			self.response_handler.renderJSON(200, 'Success');
 		} else {
 			self.response_handler.redirectTo('/');	
 		}
-		
 	}
 
 };
