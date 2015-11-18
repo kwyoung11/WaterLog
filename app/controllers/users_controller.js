@@ -146,8 +146,6 @@ users_controller.prototype = {
     		self.response_handler.redirectTo('/login');	
     	}
     });
-    	
-    
 	},
 
 	// PATCH/PUT /users/1
