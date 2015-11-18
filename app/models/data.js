@@ -74,7 +74,8 @@ Data.prototype.postToDatabase = function(cb) {
 							cb(err);
 						},
 						function(){
-							db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4,$5)', self.getSqlPostValues(), function (err, result) {
+							console.log(self.getSqlPostValues());
+							db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4,$5,$6)', self.getSqlPostValues(), function (err, result) {
 								if (err) {
 									console.log(err);
 									return cb(err);  
@@ -104,8 +105,9 @@ Data.prototype.getSqlPostValues =  function(){
 	
 	var vals = [];
 	vals[0] = this.params['device_id'];
-	vals[1] = this.params['data_type']
-	vals[2] = this.params['created_at']
+	vals[1] = this.params['data_type'];
+	vals[2] = this.params['created_at'];
+	vals[3] = this.params['collected_at'];
 	// EI data parameters
 	var data_param_size = Object.keys(this.params['data']).length;
 	var data_param_keys = '{';
@@ -126,8 +128,8 @@ Data.prototype.getSqlPostValues =  function(){
 	data_param_keys += '}';
 	data_param_values += '}';
 	
-	vals[3] = data_param_keys;
-	vals[4] = data_param_values;
+	vals[4] = data_param_keys;
+	vals[5] = data_param_values;
 	
 	return vals;
 }
@@ -206,19 +208,14 @@ Data.prototype.sanitize = function(params,cb) {
 				cb({});
 			}else{
 				sanitized_data['created_at'] = date.toLocaleString();
-				if(typeof sanitized_data['time_stamp']=='undefined'){
-					console.log("TIME_STAMP NOT SET"); ///////////////////
-					sanitized_data['time_stamp'] = date.toLocaleString();
+				if(typeof sanitized_data['collected_at']=='undefined'){
+					sanitized_data['collected_at'] = date.toLocaleString();
 				}
+				console.log(sanitized_data);
 				cb(sanitized_data);
 			}
-		});/////
-		//console.log(x);
-		//	sanitized_data['created_at'] = date.toLocaleString();
-		//}
+		});
 	}
-	//console.log("RETURN SANITIZE\n");
-    //return sanitized_data;
 }
 
 Data.prototype.checkTimeStamp = function(t, callback) {  

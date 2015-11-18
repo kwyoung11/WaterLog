@@ -9,6 +9,7 @@ var db = require('../../lib/db');
 var crypto = require('crypto');
 var util = require('../../lib/util');
 var Device = require('../models/device');
+var User = require('../models/user');
 var application_controller = require('./application_controller');
 
 /* constructor */
