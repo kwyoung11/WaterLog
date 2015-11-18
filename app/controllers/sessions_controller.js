@@ -48,21 +48,36 @@ sessions_controller.prototype = {
 								self.response_handler.setCookie('envirohub_auth_token', user.data.auth_token);
 								
 								// redirect to user profile page
-								self.response_handler.redirectTo("/users/" + user.data.id);
+								if (self.response_handler.format == 'json') {
+									self.response_handler.renderJSON(200, user.data);
+								} else {
+									self.response_handler.redirectTo("/users/" + user.data.id);	
+								}
+								
 							} else {
 								// there is a user with this e-mail, but the pwd is wrong
-								var data = {'err': true, 'err_msg': 'Incorrect password.'};
-								view.renderView("sessions/new", data, function(content) {
-									return cb(content);
-								}); 		
+								var data = {'err_code': 02, 'err_msg': 'Incorrect password.'};
+								if (self.response_handler.format == 'json') {
+									self.response_handler.renderJSON(200, data);
+								} else {
+									view.renderView("sessions/new", data, function(content) {
+										return cb(content);
+									}); 			
+								}
+								
 							}
 						}); 
 				} else {
 						// no user by that e-mail
-						var data = {'err': true, 'err_msg': 'Incorrect email/password combination.'};
-						view.renderView("sessions/new", data, function(content) {
-							cb(content);
-						}); 		
+						var data = {'err_code': 01, 'err_msg': 'Incorrect email.'};
+						if (self.response_handler.format == 'json') {
+							self.response_handler.renderJSON(200, data);
+						} else {
+							view.renderView("sessions/new", data, function(content) {
+								cb(content);
+							}); 			
+						}
+						
 				}
 					
 			});
@@ -73,7 +88,12 @@ sessions_controller.prototype = {
 		var self = this;
 		console.log("in sessions#destroy");
 		self.response_handler.setCookie('envirohub_auth_token', '');
-		self.response_handler.redirectTo('/');
+		if (self.response_handler.format == 'json') {
+			self.response_handler.renderJSON(200, 'Success');
+		} else {
+			self.response_handler.redirectTo('/');	
+		}
+		
 	}
 
 };
