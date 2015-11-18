@@ -1,4 +1,3 @@
-
 // script.js
 
     // create the module and name it enviroHubApp

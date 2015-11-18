@@ -1,0 +1,51 @@
+<input type="file" id="fileinput" />
+<script type="text/javascript">
+  function readSingleFile(evt) {
+    //Retrieve the first (and only!) File from the FileList object
+    var f = evt.target.files[0]; 
+
+    if (!f) {
+        alert("Failed to load file");
+    } else if (!f.type.match('text/plain')) {
+        alert(f.name + " is not a valid text file.");
+    } else {
+      var r = new FileReader();
+      r.onload = function(e) { 
+        var contents = e.target.result;
+        alert( "Got the file.n" 
+        +"name: " + f.name + "\n"
+        +"type: " + f.type + "\n"
+        +"size: " + f.size + " bytes\n"
+        + "contents: " + contents
+        );
+        var data_sets=contents.split(' ');
+        if(!data_sets[0].match(/[0-9]+\,[0-9]+\,[0-9]+\,[0-9]+/)){
+          alert("This file is not in the correct format\n");
+        }else{
+          for(var i = 0; i<data_sets.length; i++){
+            var data = data_sets[i].split(',');
+            var temp = data[0];
+            var pH = data[1];
+            var turb = data[2];
+            var streamf = data[3];
+            $.ajax({
+              url:"/data/newData",
+              type:"POST",
+              data: {device_id: {{id}},
+                    temperature : temp,
+                    pH : pH,
+                    turbidity: turb,
+                    water_flow: streamf,
+                    data_type: 'water'},
+              dataType:"json"
+
+            });
+          }
+        }
+      }
+      r.readAsText(f);
+    }
+  }
+
+  document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
+  </script>

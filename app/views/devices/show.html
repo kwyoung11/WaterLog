@@ -13,6 +13,8 @@ function checkMobile(data) { //cannot proceed without entering a nickname
     if(data.match("Manual")){
     	document.write("<a href=/mobile/{{id}}/input>Add data manually</a>")
     	//IF THE PAGE IS NOT IN A MOBILE BROWSER THEN THIS SHOULD NOT EXECUTE
+   	}else{
+   		document.write("<a href=/devices/{{id}}/bulkupload>Upload Data File</a>")
    	}
 }
 checkMobile('{{mode}}');

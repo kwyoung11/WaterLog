@@ -26,6 +26,38 @@ devices_controller.prototype.constructor = devices_controller;
 
 devices_controller.prototype = {
 
+	before_filter: function (action, params) {
+		var self = this;
+		if (["show", "edit", "update", "destroy"].indexOf(action) >= 0) {
+			Device.findById(params['id'], function(err1, device) {
+				User.findById(device.user_id, function(err2, user) {
+					if (!device.id) {
+						self.response_handler.serverError(404, "Resource not found.");
+					} else if (device.user_id != self.current_user.data.id && user.data.private_profile) {
+						self.response_handler.serverError(403, "This user has set their account data to be private.");
+					}
+				});
+				
+			});
+
+			Device.findByUser(self.current_user.data.id, function(err, devices){
+				var resource_found = false;
+				for (device in devices) {
+					if (device.id == params['id']) {
+						resource_found = true;
+					}
+				}
+				if (!resource_found) {
+					self.response_handler.serverError(404, "Resource not found");
+				}
+			});
+		}
+	},
+
+	before_action: function (action, params) {
+
+	},
+
 	//GET /devices/new
 	new: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
@@ -40,10 +72,7 @@ devices_controller.prototype = {
 			var self = this;
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			// load user data here
-			console.log(self);
 			Device.findByUser(self.current_user.data.id, function(err, devices) {
-				console.log("DEVICE DATA \n");
-				console.log(devices);
 				var data = {'devices' : devices, 'id': self.current_user.data.id};
 				view.renderView('devices/index', data, function(content) {
 		  		callback(content);
@@ -76,7 +105,6 @@ devices_controller.prototype = {
 	// POST new user
 	create: function(params, callback) {
 		var self = this;
-		console.log(self);
 		params['id'] = self.current_user.data.id;
     	var device = new Device(params); // create new device object
     	device.save(function(dev) {
@@ -86,8 +114,6 @@ devices_controller.prototype = {
 
 	update: function(params, callback) {
 		var self = this;
-		console.log("UPDATING DEVICE\n");
-		console.log(params);
 		Device.findById(params['id'], function(err, data){
 			data['name'] = params['name'];
 			data['latitude'] = params['latitude'];
@@ -97,6 +123,13 @@ devices_controller.prototype = {
     		device.update(function(dev) {
 				self.response_handler.redirectTo('/devices/' + device.data.id);
     		});
+		});
+	},
+
+	bulkupload: function(params, callback) {
+		var callback = (typeof callback === 'function') ? callback : function() {};
+		view.renderView('devices/bulk_upload', params, function(data) {
+		  callback(data);
 		});
 	}
 
