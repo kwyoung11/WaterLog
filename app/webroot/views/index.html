@@ -8,16 +8,33 @@
 
       <!-- load semantic -->
       <script src="/libs/semantic/dist/semantic.min.js"> </script>
-      <link rel="stylesheet" href="/libs/semantic/dist/semantic.min.css" media="screen" title="no title" charset="utf-8">
+      <link rel="stylesheet" href="/libs/semantic/dist/semantic2.min.css">
+
+      <!-- load HighCharts-->
+      <script src="/libs/highcharts/highcharts.js"></script>
 
       <!-- SPELLS -->
       <!-- load angular, angular animate, and angular route -->
       <script src="/libs/angular/angular.min.js"></script>
       <script src="/libs/angular-route/angular-route.js"></script>
       <script src="/libs/angular-animate/angular-animate.js"></script>
-        
+      <script src="/libs/angular-highcharts/dist/highcharts-ng.min.js"></script>
+
+      <script src="./libs/angular-leaflet/dist/angular-leaflet-directive.min.js"></script>
+      <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+      <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+      <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+      <link rel="stylesheet" href="/libs/leaflet-awesome-markers/dist/leaflet.awesome-markers.css">
+      <script src="/libs/leaflet-awesome-markers/dist/leaflet.awesome-markers.js"></script>
+
       <script src="/js/application.js"></script>
+      <script src="/js/controllers/login.js"></script>
       <script src="/js/controllers/devices.js"></script>
+      <script src="/js/controllers/deviceDetails.js"></script>
+      <script src="/js/controllers/map.js"></script>
+      <script src="/js/services/DataService.js"></script>
+      <script src="/js/services/DeviceDataService.js"></script>
+      <script src="/js/services/LoginService.js"></script>
       <link rel="stylesheet" href="/css/style.css">
       <link rel="stylesheet" href="/css/devices.css">
     </head>
@@ -48,5 +65,6 @@
              <!-- this is where content will be injected -->
               <div class="page {{ pageClass }}" ng-view></div>
          </div>
+
     </body>
     </html>

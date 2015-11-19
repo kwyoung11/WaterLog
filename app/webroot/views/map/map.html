@@ -1,0 +1,36 @@
+<!-- map.html -->
+    <h1> {{serviceValue}} </h1>
+    <div class="ui internally celled grid  text-center centered"> 
+      <div class="row">
+        <div class="two wide column">
+           <p>CONTROL PANEL</p>
+           <div class="ui selection dropdown">
+             <input name="Visualization Category" type="hidden">
+             <i class="dropdown icon"></i>
+             <div class="default text">Visualization Category</div>
+             <div class="menu">
+               <div class="item" data-value="1">Visualization Category1</div>
+               <div class="item" data-value="0">Visualization Category2</div>
+             </div>
+           </div>
+           <div class="ui checkbox">
+             <input name="allDevice" type="checkbox">
+             <label>Show All Devices</label>
+           </div>
+           <div class="ui checkbox">
+             <input name="myDevice" type="checkbox">
+             <label>Show My Devices</label>
+           </div>
+           <div class="ui input">
+             <input placeholder="Location" type="text">
+           </div>
+	           <p>Range (in Miles):</p>
+           </div>
+         
+         <div class="eight wide column" ng-controller="mapController">
+           <leaflet lf-center="center" markers="markers" height="480px" width="100%"></leaflet>
+         </div> 
+       </div>
+     </div>
+
+
