@@ -75,5 +75,4 @@ enviroHubApp.controller('devicesController', function($scope) {
     "temperature": 52,
     "id": 51596
   }];
-  console.log($scope);
 });

@@ -1,0 +1,18 @@
+<div class="ui attached segments" id="deviceDetails">
+  <div class="ui segment">
+    <div class="ui container">
+      <div class="ui grid">
+        <div class="ten wide column">
+          <highchart id="chart1" config="chartConfig" class="span10"></highchart>
+        </div>
+        <div class="six wide column">
+          <div class="ui button" ng-click="swapChartType()"> Line or Bar </div>
+          <div class="ui button" ng-click="randomizeData()"> Randomize Data </div>
+          <div class="ui button" ng-click="addRainFall()"> Add Rainfall Data </div>
+          <div class="ui button" ng-click="addTemperature()"> Add Temperature Data </div>
+          <div class="ui button" ng-click="addSeaLevelPressure()"> Add SeaLevelPressure Data </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
