@@ -64,34 +64,50 @@ Data.prototype.postToDatabase = function(cb) {
 				}, 
 				function(){
 					p=self.params
-					self.sanitize(p,function(data){
-						self.params=data;
-					var device = result[0];
-					self.enforceRequiredParameters(
-						device,
-						function(err){
-							console.log(err);
+					self.sanitize(p,function(err, data){
+						if(err){
 							cb(err);
-						},
-						function(){
-							db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4,$5)', self.getSqlPostValues(), function (err, result) {
-								if (err) {
-									console.log(err);
-									return cb(err);  
-								}
-								else{
-									if(self.encryptedData == true){	
-										console.log('Successful post');
-										cb('Post successful');
+						}else{
+						self.params=data;
+						var device = result[0];
+						self.enforceRequiredParameters(
+							device,
+							function(err){
+								console.log(err);
+								cb(err);
+							},
+							function(){
+								db.query('INSERT INTO Data (device_id, data_type, created_at, keys, values) VALUES($1, $2, $3, $4,$5)', self.getSqlPostValues(), function (err, result) {
+									if (err) {
+										console.log(err);
+										return cb(err);  
 									}
 									else{
-										console.log('Successful unencrypted post');
-										cb('Unencrypted post successful');
+										if(self.encryptedData == true){	
+											console.log('Successful post');
+											cb('Post successful');
+										}
+										else{
+											console.log('Successful unencrypted post');
+											cb('Unencrypted post successful');
+										}
+										
+										// Update device location if necessary
+										
+										
+										if(typeof self.params.latitude != 'undefined' && typeof self.params.longitude != 'undefined'){
+											console.log('i am here');
+											db.query('Update devices SET (latitude, longitude) = ($1, $2) where id = $3', [
+												self.params.latitude, self.params.longitude, device.id],
+												function(err, result){}
+												);
+											
+										}
 									}
-								}
-							});
+								});
+							}
+						);
 						}
-					);
 				});////
 				},
 				result[1].private_key
@@ -202,19 +218,15 @@ Data.prototype.sanitize = function(params,cb) {
 		x=0;
 		var x = this.checkTimeStamp(date,function(res){
 			if(res == 0){
-				console.log("cannot input\n");
-				cb({});
+				var err = "Error: Cannot insert because of timestamp overlay";
+				console.log(err);
+				cb(err, null);
 			}else{
 				sanitized_data['created_at'] = date.toLocaleString();
-				cb(sanitized_data);
+				cb(null, sanitized_data);
 			}
-		});/////
-		//console.log(x);
-		//	sanitized_data['created_at'] = date.toLocaleString();
-		//}
+		});
 	}
-	//console.log("RETURN SANITIZE\n");
-    //return sanitized_data;
 }
 
 Data.prototype.checkTimeStamp = function(t, callback) {  
@@ -226,8 +238,9 @@ Data.prototype.checkTimeStamp = function(t, callback) {
             //console.log(t);
             if(result.rows[0] == null){
             	callback(1);
-            }else if(self.params){ //need to check if Arduino device
-            }else{
+            } 
+			//else if(self.params){ //need to check if Arduino device }
+            else{
                 var x = result.rows.length;
                 var most_recent = result.rows[x-1].created_at; //gets last entry
                 var time2 = new Date(most_recent);
@@ -259,7 +272,7 @@ Data.prototype.get_ei_params = function(data){
 Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 	var data_type = this.params['data_type'];
 	var number_of_data_types = Object.keys(schema['data_params']).length;
-	
+	console.log(data_type);
 	if(typeof data_type == 'undefined' || typeof schema['data_params'][data_type] == 'undefined'){
 		var err = 'Error: data_type must be one of the following: ';
 		var count = 1;
