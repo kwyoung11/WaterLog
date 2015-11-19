@@ -8,12 +8,11 @@ exports.up = function(db, callback) {
 					'password_digest' : 'admin',
 					'is_admin' : true};
 		var user = new User(params);
-		user.save(callback);
+		user.save(function(err){callback();});
+		
 	});
-	
-	
 };
 
 exports.down = function(db, callback) {
-	db.runSql('', [], callback);
+	callback(null);
 };
