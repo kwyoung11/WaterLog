@@ -11,7 +11,6 @@ var util = require('../../lib/util');
 var Data = function (params) {  
     Application.call(this, params);
 	this.params = params;
-	console.log(params);
 	if(typeof params.encryptedData != 'undefined'){
 		this.encryptedData = true;
 	}
@@ -51,7 +50,7 @@ Data.prototype.encryptData = function(cb){
 
 Data.prototype.postToDatabase = function(cb) {
 	var self = this;
-	var deviceAndUser = util.getDeviceAndUser(
+	util.getDeviceAndUser(
 		this.params.device_id,
 		function(err){
 			console.log(err);
@@ -67,8 +66,9 @@ Data.prototype.postToDatabase = function(cb) {
 					p=self.params
 					self.sanitize(p,function(data){
 						self.params=data;
-					
+					var device = result[0];
 					self.enforceRequiredParameters(
+						device,
 						function(err){
 							console.log(err);
 							cb(err);
@@ -256,7 +256,7 @@ Data.prototype.get_ei_params = function(data){
 
 
 // used to pass back validation errors - required fields not provided, etc
-Data.prototype.enforceRequiredParameters = function(cbErr, cbSuccess){
+Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 	var data_type = this.params['data_type'];
 	var number_of_data_types = Object.keys(schema['data_params']).length;
 	
@@ -272,18 +272,24 @@ Data.prototype.enforceRequiredParameters = function(cbErr, cbSuccess){
 		}
 		cbErr(err);
 	}
-	
-	for(var attr in schema){
-		if(schema[attr] == 1 && typeof this.params[attr] == 'undefined'){
-			cbErr("Error: " + attr + ' is required');
-		}
-	}
-	
-	if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
-		cbErr("Error: No Environmental Indicator data values have been provided.");
-	}
 	else{
-		cbSuccess();
+		for(var attr in schema){
+			if(schema[attr] == 1 && typeof this.params[attr] == 'undefined'){
+				cbErr("Error: " + attr + ' is required');
+			}
+		}
+		
+		if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
+			cbErr("Error: No Environmental Indicator data values have been provided.");
+		}
+		else if((typeof this.params['latitude'] == 'undefined' || typeof this.params['longitude'] == 'undefined')
+				&& (typeof device['latitude'] == 'undefined' || typeof device['longitude'] == 'undefined' )){
+			cbErr('Error: No locational data has been provided');
+			
+		}
+		else{
+			cbSuccess();
+		}
 	}
 },
 

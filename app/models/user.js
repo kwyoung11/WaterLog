@@ -18,7 +18,7 @@ var User = function (data) {
 	var keypair = this.generateKeyPair();
 	this.data.public_key = keypair[0];
 	this.data.private_key = keypair[1];
-    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'email_confirmation_token', 'email_confirmed', 'private_profile', 'invites_active'];
+    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'email_confirmation_token', 'email_confirmed', 'is_admin', 'private_profile', 'invites_active'];
 }
 
 User.prototype = Object.create(Application.prototype);
@@ -110,7 +110,7 @@ User.prototype.save = function(cb) {
             user.data.password_digest = hash;
 
             // insert user info into database
-            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at, public_key, private_key, email_confirmation_token, email_confirmed) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning *', user.getDataInArrayFormat(), function (err, result) {
+            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at, public_key, private_key, email_confirmation_token, email_confirmed, is_admin, private_profile, invites_active) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *', user.getDataInArrayFormat(), function (err, result) {
                 if (err) return cb(err);
                 cb(null, result.rows[0]);
             });
@@ -182,12 +182,10 @@ User.prototype.update = function(obj, cb) {
 // return user data hash as ordered array of values
 User.prototype.getDataInArrayFormat = function() {
 	result = [];
-    console.log(this.data);
-	for (var attr in this.data) {
-        var index = this.paramOrder.indexOf(attr);
+	for (var attr in schema) {
+		var index = this.paramOrder.indexOf(attr);
 		result[index] = this.data[attr];
 	}
-    console.log(result);
 	return result;
 }
 
