@@ -1,1 +1,42 @@
+<div class="ui attached padded inverted tertiary green segment">
+  <div class="ui divided stackable grid container">
+    <div class="eight wide column">
+    <!-- Login -->
+      <h1 class="ui centered dividing header"> Login </h1>
+      <form class="ui form" action="/login" method="post">
+        <div class="field">
+          <label> Username </label>
+          <input type="text" ng-model="userID">
+        </div>
+        <div class="field">
+          <label style="font-family: Arial;"> Password </label>
+          <input type="text" ng-model="password">
+        </div>
+        <button class="ui button" type="submit">Submit</button>
+      </form>
+    </div>
 
+    <div class="eight wide column">
+      <!-- Register -->
+      <form class="ui form">
+        <h1 class="ui centered dividing header"> Register </h1>
+          <div class="field">
+            <label>First Name</label>
+            <input type="text" name="first-name" placeholder="First Name">
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text" name="last-name" placeholder="Last Name">
+          </div>
+          <div class="field">
+            <div class="ui checkbox">
+              <input type="checkbox" tabindex="0" class="hidden">
+              <label>I agree to the <a class="ui link"> Terms and Conditions </a> </label>
+            </div>
+          </div>
+          <button class="ui button" type="submit">Submit</button>
+      </form>
+
+    </div>
+  </div>
+</div>

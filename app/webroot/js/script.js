@@ -62,12 +62,6 @@
         $scope.message = 'Contact us! JK. This is just a demo.';
     });
 
-
-    enviroHubApp.controller('loginController', function($scope) {
-        $scope.pageClass = 'page-login';
-        $scope.message = 'Login page';
-    });
-
     enviroHubApp.controller('mapController', function($scope) {
         $scope.pageClass = 'page-map';
         $scope.message = 'Map page';
