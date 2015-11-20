@@ -1,3 +1,4 @@
+
 enviroHubApp.controller('loginController', function($scope, LoginService)  {
 	$scope.pageClass = 'page-login';
 	$scope.loginStatus = LoginService.success;
