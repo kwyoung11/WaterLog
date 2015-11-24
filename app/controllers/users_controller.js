@@ -79,15 +79,11 @@ users_controller.prototype = {
 		var self = this;
 		var user = User.findById(params['id'], function(err, user) {
 			if (user.data.is_admin) { 
-				self.view_data.admin = true;
-				view.renderView('users/edit', self.view_data, function(data) {
-					return callback(data);
-				});			
-			} else {
-				view.renderView('users/edit', self.view_data, function(data) {
-					return callback(data);
-				});			
+				self.view_data.admin = true;		
 			}
+			view.renderView('users/edit', self.view_data, function(data) {
+				return callback(data);
+			});	
 		});
 		
 	},
@@ -103,15 +99,26 @@ users_controller.prototype = {
 
 					if (err) { // re-render login page, displaying any login errors
 						if (err.code == '23505') { // code 23505 is a unique constraint violation
-							var errors = {'err': true, 'err_msg': 'That e-mail is already registered. Please choose another e-mail'};
-							view.renderView('users/new', errors, function(data) {
-					  		return callback(data);
-							});					
+							var errors = {'err_code': 15, 'err_msg': 'That e-mail is already registered. Please choose another e-mail'};
+							
+							if (self.response_handler.format == 'json') {
+								self.response_handler.renderJSON(200, errors);
+							} else {
+								view.renderView('users/new', errors, function(data) {
+					  			return callback(data);
+								});						
+							}
+							
 						} else { // there was an error, but we're not sure what it was exactly
-							var errors = {'err': true, 'err_msg': 'Something went wrong. Please contact us at support@envirohub.com for help.'};
-							view.renderView('users/new', errors, function(data) {
-					  		return callback(data);
-							});					
+							var errors = {'err_code': 99, 'err_msg': 'Something went wrong. Please contact us at support@envirohub.com for help.'};
+							if (self.response_handler.format == 'json') {
+								self.response_handler.renderJSON(200, errors);
+							} else {
+								view.renderView('users/new', errors, function(data) {
+					  			return callback(data);
+								});					
+							}
+							
 						}
 					}
 		
@@ -137,13 +144,23 @@ users_controller.prototype = {
 						// '<li> Click through to a specific Device to view all of that Device\'s data </li> ' +
 						// '<li> Compare Device data with weather data and other Device data </li> </ol>';
 						// redirect to users#show
-						self.response_handler.redirectTo('users/' + user.id);
+						if (self.response_handler.format == 'json') {
+							self.response_handler.renderJSON(200, {'msg': 'Success'});
+						} else {
+							self.response_handler.redirectTo('users/' + user.id);	
+						}
+						
 					} 
 			
     		});
     	} else {
-    		GLOBAL.flash.notice = "Sorry, you need to be invited to register.";
-    		self.response_handler.redirectTo('/login');	
+    		if (self.response_handler.format == 'json') {
+					self.response_handler.renderJSON(200, {'err_code': 13, 'err_msg': 'Sorry, you need to be invited to register'});
+				} else {
+					GLOBAL.flash.notice = "Sorry, you need to be invited to register.";
+    			self.response_handler.redirectTo('/login');	
+				}
+    		
     	}
     });
 	},
@@ -157,11 +174,24 @@ users_controller.prototype = {
 				// generate new confirmation token
 				
 			}
-			console.log(params);
 			user.update(params, function(err, user) {
+				if (err) {
+					if (self.response_handler.format == 'json') {
+						self.response_handler.renderJSON(200, {'err_code': 12, 'err_msg': 'Update failed. Please contact envirohubapp@gmail.com for support.'});
+					} else {
+						GLOBAL.flash.notice = "Update failed. Please contact envirohubapp@gmail.com for support.";
+						self.response_handler.redirectTo('/users/' + user.data.id);			
+					}
+				}
+
 				if (user) {
-					GLOBAL.flash.notice = "Update succesfully";
-					self.response_handler.redirectTo('/users/' + user.data.id);		
+					if (self.response_handler.format == 'json') {
+						self.response_handler.renderJSON(200, {'msg': 'Updated successfully'});
+					} else {
+						GLOBAL.flash.notice = "Update successfully";
+						self.response_handler.redirectTo('/users/' + user.data.id);
+					}
+					
 				}
 			});
 		});
@@ -172,17 +202,39 @@ users_controller.prototype = {
 		var self = this;
 			if (self.current_user.data.id == params['id']) {
 				db.query("DELETE FROM users WHERE id=$1", [params['id']], function(err, result) {
+					
 					if (err) {
-						var data = {'err_code': 15, 'err_msg': 'There was an error in trying to delete your records from our database.'};
-						self.response_handler.renderJSON(200, data);
+						var data = {'err_code': 99, 'err_msg': 'There was an error in trying to delete your records from our database.'};	
+						if (self.response_handler.format == 'json') {
+							self.response_handler.renderJSON(200, data);
+						} else {
+							view.renderView("/users/" + self.current_user.data.id, data, function(data) {
+								callback(data);
+							});	
+						}	
 					}
-					var data = {'msg': 'You been removed/deleted from our reecords.'};
-					self.response_handler.renderJSON(200, data);
+
+					if (self.response_handler.format == 'json') {
+						var data = {'msg': 'You have been removed/deleted from our records.'};
+						self.response_handler.renderJSON(200, data);
+					} else {
+						GLOBAL.flash.notice = 'You have been removed/deleted from our reecords.';
+						self.repsonse_handler.redirecTo("/");
+					}
+					
 
 				});
 			} else {
-				var data = {'msg': 'Sorry, but you don\'t have permission to do that.'};
-				self.response_handler.renderJSON(200, data);
+				var data = {'err_code': 10, 'err_msg': 'Sorry, but you don\'t have permission to do that.'};
+				if (self.response_handler.format == 'json') {
+					self.response_handler.renderJSON(200, data);
+				} else {
+					view.renderView("/users/" + self.current_user.data.id, data, function(data) {
+						callback(data);
+					});	
+				}
+
+				
 			}
 	},
 
@@ -193,17 +245,35 @@ users_controller.prototype = {
 			if (user) {
 				user.update({'email_confirmation_token': null, 'email_confirmed': true}, function(err, updated_user) {
 					if (updated_user) {
-						GLOBAL.flash.notice = "Email verification succesful. You can now login to EnviroHub.";
-						self.response_handler.redirectTo('/login');		
+						if (self.response_handler.format == 'json') {
+							var data = {'msg': 'Email verification succesful. You can now login to EnviroHub.'};
+						  self.response_handler.renderJSON(200, data);
+						} else {
+							GLOBAL.flash.notice = "Email verification succesful. You can now login to EnviroHub.";
+							self.response_handler.redirectTo('/login');			
+						}
+						
 					} else {
-						GLOBAL.flash.notice = "Email verification failed.";
-						self.response_handler.redirectTo('/login');		
+						if (self.response_handler.format == 'json') {
+							var data = {'err_code': 16, 'err_msg': 'Email verification failed.'};
+						  self.response_handler.renderJSON(200, data);
+						} else {
+							GLOBAL.flash.notice = "Email verification failed.";
+							self.response_handler.redirectTo('/login');		
+						}
+						
 					}
 				});
 				
 			} else {
-				GLOBAL.flash.notice = "Email verification failed. The e-mail confirmation token you used was invalid. ";
-				self.response_handler.redirectTo('/login');	
+				if (self.response_handler.format == 'json') {
+					var data = {'err_code': 17, 'err_msg': "Email verification failed. The e-mail confirmation token you used was invalid."};
+				  self.response_handler.renderJSON(200, data);
+				} else {
+					GLOBAL.flash.notice = "Email verification failed. The e-mail confirmation token you used was invalid. ";
+					self.response_handler.redirectTo('/login');			
+				}
+				
 			}
 		});
 	}
