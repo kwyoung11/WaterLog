@@ -9,14 +9,18 @@ enviroHubApp.controller('menuController', function($scope, LoginService)  {
   var logged_in_buttons = [map_button, devices_button, about_button, contact_button, logout_button];
   var other_buttons = [login_button, about_button, contact_button];
 
-  if (LoginService.status == LoginService.success){
+  $scope.$watch('LoginService.status', function(){
+
+  });
+
+  if (LoginService.status == LoginService.success) {
     $scope.buttons = logged_in_buttons;
   } else {
     $scope.buttons = other_buttons;
   }
 
   var colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal', 'blue', 'violet', 'purple', 'pink'];
-  $scope.getRandomColor = function(){
+  $scope.getRandomColor = function () {
     return colors[Math.floor(Math.random() * colors.length)];
   }
 });

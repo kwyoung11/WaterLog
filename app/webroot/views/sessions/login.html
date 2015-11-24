@@ -1,42 +1,60 @@
-<div class="ui attached padded inverted tertiary green segment">
+<div class="ui attached padded segment">
   <div class="ui divided stackable grid container">
     <div class="eight wide column">
     <!-- Login -->
       <h1 class="ui centered dividing header"> Login </h1>
-      <form class="ui form" action="/login" method="post">
+
+      <form login-from class="ui form segment" ng-model="login_form">
+
+        <div class="ui error message"></div>
+
         <div class="field">
-          <label> Username </label>
-          <input type="text" ng-model="userID">
+          <label> E-Mail </label>
+          <input type="text" name="email" ng-model="login_form.email">
         </div>
+
         <div class="field">
-          <label style="font-family: Arial;"> Password </label>
-          <input type="text" ng-model="password">
+          <label> Password </label>
+          <input name="password_digest" type="password" ng-model="login_form.password_digest">
         </div>
-        <button class="ui button" type="submit">Submit</button>
+
+        <button class="ui button" type="submit" ng-click="doLogin()"> Submit </button>
+
       </form>
     </div>
 
     <div class="eight wide column">
       <!-- Register -->
-      <form class="ui form">
-        <h1 class="ui centered dividing header"> Register </h1>
-          <div class="field">
-            <label>First Name</label>
-            <input type="text" name="first-name" placeholder="First Name">
-          </div>
-          <div class="field">
-            <label>Last Name</label>
-            <input type="text" name="last-name" placeholder="Last Name">
-          </div>
-          <div class="field">
-            <div class="ui checkbox">
-              <input type="checkbox" tabindex="0" class="hidden">
-              <label>I agree to the <a class="ui link"> Terms and Conditions </a> </label>
-            </div>
-          </div>
-          <button class="ui button" type="submit">Submit</button>
-      </form>
+      <h1 class="ui centered dividing header"> Register </h1>
 
+      <form register-form class="ui form segment" ng-model="register_form">
+
+        <div class="ui error message"></div>
+
+        <div class="field">
+          <label> E-Mail </label>
+          <input type="text" name="email" ng-model="register_form.email">
+        </div>
+
+        <div class="field">
+          <label> Password </label>
+          <input type="password" name="password_digest" ng-model="register_form.password_digest">
+        </div>
+
+        <div class="field">
+          <label> Confirm Password </label>
+          <input class="ui input" type="password" ng-model="register_form.password_confirm">
+        </div>
+
+        <div class="field">
+          <div class="ui checkbox">
+            <input type="checkbox" name="terms" ng-model="register_form.terms">
+            <label> I agree to the <a class="ui link"> Terms and Conditions </a> </label>
+          </div>
+        </div>
+
+        <button class="ui button" ng-click="doRegister()" type="submit">Submit</button>
+      </form>
     </div>
   </div>
 </div>
