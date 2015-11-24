@@ -1,79 +1,60 @@
-<!DOCTYPE html>
-<html ng-app>
-<head>
-<title>login page</title>
-</head>
-<body>
+<div class="ui attached padded segment">
+  <div class="ui divided stackable grid container">
+    <div class="eight wide column">
+    <!-- Login -->
+      <h1 class="ui centered dividing header"> Login </h1>
 
-<div align="center">
-   <div style="border: 2px solid #73AD21; width: 720px; height: 110px;border-radius: 25px"
-align="left">
-<br>
-<br>
-   <hd3 style="font-family: Arial; font-size: 40px;">&nbsp;&nbsp;&nbsp;
-	EnviroHub<hd3></hd3></hd3>
-   </div>
+      <form login-from class="ui form segment" ng-model="login_form">
 
-   <div style="width: 720px; height: 400px; display: table;" >
+        <div class="ui error message"></div>
 
-      <div style="display: table-row">
-	   <div style="border-left: 2px solid #73AD21;border-right: 2px solid #73AD21;border-radius: 25px; 
-		float: left; width: 360px; height: 400px; display:table-cell;"> <br>
-		<p style="font-family: Arial; text-align: center; font-size: 24px;"> Login</p>
-		   <hr size="2" width="300">
-			<div align="center">
-			   <label style="font-family: Arial;"> Username </label>
-				&nbsp;
-			   <input type="text" ng-model="userID"><br><br>
-			   <label style="font-family: Arial;"> Password </label>
-				&nbsp;&nbsp;
-			   <input type="text" ng-model="password"><br>
-			   <hr size="1" width="300">
-			</div>
-			<div align="center">
-				<button style="font-family: Arial; width: 100px;border-radius: 25px;
-				border: 2px solid #73AD21" ng-click="login()">Login</button>
-			</div>
+        <div class="field">
+          <label> E-Mail </label>
+          <input type="text" name="email" ng-model="login_form.email">
+        </div>
 
-	   </div>
-	
-	   <div style="border-left: 2px solid #73AD21; border-right: 2px solid #73AD21; float: right; 
-		width: 360px; height: 400px; display:table-cell; border-radius: 25px" align="center"><br>
-	      <p style="font-family: Arial; font-size: 24px;">Register</p>
-		<hr size="2" width="300">
-		<div align="center">
-		   <label style="font-family: Arial;"> Name </label>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;
-		   <input type="text"><br><br>
-		   <label style="font-family: Arial;"> Username </label>
-			&nbsp;&nbsp;
-		   <input type="text"><br><br>
-		   <label style="font-family: Arial;"> Password </label>
-			&nbsp;&nbsp;&nbsp;
-		   <input type="text"><br><br>
-		   <label style="font-family: Arial;"> Confirm </label>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-		   <input type="text"><br>
-		   <hr size="1" width="300">				
-	      	   <div align="center">
-		  	<button style="font-family: Arial; width: 100px;">Register</button>
-	      	   </div>
-	   	</div>
-	   </div>
-	</div>
-   </div>
+        <div class="field">
+          <label> Password </label>
+          <input name="password_digest" type="password" ng-model="login_form.password_digest">
+        </div>
 
-	<div style="border: 2px solid #73AD21; width: 720px; height: 110px;
-		border-radius: 25px" align="center"><br>
-	<button style="font-family: Arial; width: 100px;">About</button>
- 		&nbsp;&nbsp;&nbsp;
-	<button style="font-family: Arial; width: 100px;">Inquire</button><br>
-		<p style="font-family: Arial;">Copyright</p><p></p>
-	</div>
+        <button class="ui button" type="submit" ng-click="doLogin()"> Submit </button>
 
+      </form>
+    </div>
+
+    <div class="eight wide column">
+      <!-- Register -->
+      <h1 class="ui centered dividing header"> Register </h1>
+
+      <form register-form class="ui form segment" ng-model="register_form">
+
+        <div class="ui error message"></div>
+
+        <div class="field">
+          <label> E-Mail </label>
+          <input type="text" name="email" ng-model="register_form.email">
+        </div>
+
+        <div class="field">
+          <label> Password </label>
+          <input type="password" name="password_digest" ng-model="register_form.password_digest">
+        </div>
+
+        <div class="field">
+          <label> Confirm Password </label>
+          <input class="ui input" type="password" ng-model="register_form.password_confirm">
+        </div>
+
+        <div class="field">
+          <div class="ui checkbox">
+            <input type="checkbox" name="terms" ng-model="register_form.terms">
+            <label> I agree to the <a class="ui link"> Terms and Conditions </a> </label>
+          </div>
+        </div>
+
+        <button class="ui button" ng-click="doRegister()" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
 </div>
-
-</body>
-
-</html>

@@ -62,6 +62,11 @@
                 controller  : 'uploadSingleController'
             })
 
+            .when('/test', {
+                templateUrl : '/views/test/test.html',
+                controller  : 'testController'
+            })
+
             ;
     });
 
