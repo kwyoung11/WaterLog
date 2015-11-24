@@ -64,9 +64,11 @@ devices_controller.prototype = {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		var data = {'id': params['id']};
 		// console.log(params);
-		view.renderView('devices/new', data, function(data) {
-		  callback(data);
-		});
+			view.renderView('devices/new', data, function(data) {
+		  		callback(data);
+			});			
+		
+		
 	},
 
 	index: function(params, callback) {
