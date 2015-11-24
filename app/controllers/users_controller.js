@@ -124,7 +124,7 @@ users_controller.prototype = {
 							"<p> EnviroHub</p>";
 						mailer.deliver(user.email, "EnviroHub: Verify your e-mail", body);
 		
-						// self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
+						self.response_handler.setCookie('envirohub_auth_token', user.auth_token);
 						// GLOBAL.flash.notice = 'Welcome to EnviroHub.com. Below are some steps new users may wish to do. ' +
 						// 'If you are an EnviroHub device owner: <ol> <li> Register your Device with the Device ID provided to you </li> ' +
 						// '<li> Verify the Device\'s status light is green <li> ' +

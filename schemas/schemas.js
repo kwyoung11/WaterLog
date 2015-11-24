@@ -9,11 +9,12 @@ schemas = {
         password_reset_sent_at: null,
         public_key: null,
         private_key: null,
+		shared_private_key: null,
         email_confirmation_token: null,
         email_confirmed: null,
-        is_admin: null,
         private_profile: null,
-        invites_active: null
+        invites_active: null,
+		is_admin: null
        },
     device: {
         id: null,
@@ -53,7 +54,9 @@ schemas = {
 				soil_nitrate: null,
 				electrical_conductivity: null
 			}
-		}
+		},
+		latitude: null,
+		longitude: null
 	}
 }
 

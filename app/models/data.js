@@ -11,8 +11,7 @@ var util = require('../../lib/util');
 var Data = function (params) {  
     Application.call(this, params);
 	this.params = params;
-	console.log(params);
-	if(typeof params.encryptedData != 'undefined'){
+	if(typeof params.signedData != 'undefined'){
 		this.encryptedData = true;
 	}
 }
@@ -25,33 +24,10 @@ Data.prototype.constructor = Data;
 
 Data.prototype.params = {};
 
-Data.prototype.encryptData = function(cb){
-	var self = this;
-	if(typeof this.params.device_id != 'undefined' && this.params.device_id != null){
-		
-		var deviceAndUser = util.getDeviceAndUser(this.params.device_id, 
-			function(err){
-				
-			},
-			function(deviceAndUser){
-				var stringToEncrypt = '';
-				for(var attr in self.params){
-					stringToEncrypt += attr + '=' + self.params[attr] + '&';
-				}
-				var device_id = self.params.device_id;
-				self.params = {};
-				self.params.device_id = device_id;
-				self.params.encryptedData = util.encrypt(deviceAndUser[1].private_key, stringToEncrypt);
-				self.encryptedData = true;
-				cb();
-			}
-		);
-	}
-}
 
 Data.prototype.postToDatabase = function(cb) {
 	var self = this;
-	var deviceAndUser = util.getDeviceAndUser(
+	util.getDeviceAndUser(
 		this.params.device_id,
 		function(err){
 			console.log(err);
@@ -65,37 +41,53 @@ Data.prototype.postToDatabase = function(cb) {
 				}, 
 				function(){
 					p=self.params
-					self.sanitize(p,function(data){
-						self.params=data;
-					
-					self.enforceRequiredParameters(
-						function(err){
-							console.log(err);
+					self.sanitize(p,function(err, data){
+						if(err){
 							cb(err);
-						},
-						function(){
-							console.log(self.getSqlPostValues());
-							db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4,$5,$6)', self.getSqlPostValues(), function (err, result) {
-								if (err) {
-									console.log(err);
-									return cb(err);  
-								}
-								else{
-									if(self.encryptedData == true){	
-										console.log('Successful post');
-										cb('Post successful');
+						}else{
+						self.params=data;
+						var device = result[0];
+						self.enforceRequiredParameters(
+							device,
+							function(err){
+								console.log(err);
+								cb(err);
+							},
+							function(){
+								db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4,$5,$6)', self.getSqlPostValues(), function (err, result) {
+									if (err) {
+										console.log(err);
+										return cb(err);  
 									}
 									else{
-										console.log('Successful unencrypted post');
-										cb('Unencrypted post successful');
+										if(self.encryptedData == true){	
+											console.log('Successful post');
+											cb('Post successful');
+										}
+										else{
+											console.log('Successful unencrypted post');
+											cb('Unencrypted post successful');
+										}
+										
+										// Update device location if necessary
+										
+										
+										if(typeof self.params.latitude != 'undefined' && typeof self.params.longitude != 'undefined'){
+											db.query('Update devices SET (latitude, longitude) = ($1, $2) where id = $3', [
+												self.params.latitude, self.params.longitude, device.id],
+												function(err, result){}
+												);
+											
+										}
 									}
-								}
-							});
+								});
+							}
+						);
 						}
-					);
 				});////
 				},
-				result[1].private_key
+				result[1].public_key,
+				result[1].shared_private_key
 			);
 		});
 }
@@ -134,35 +126,49 @@ Data.prototype.getSqlPostValues =  function(){
 	return vals;
 }
 
-Data.prototype.decrypt = function(cb, result, private_key){
+Data.prototype.decrypt = function(cbErr, result, public_key, shared_private_key){
 	var errorEncountered = false;
 	
 	if(this.encryptedData == true){
-		var encryptedData = this.params.encryptedData;
-		var algorithm = 'aes-128-cbc';
-		var clearEncoding = 'utf8';
-		var cipherEncoding = 'hex';
-		var decipher = crypto.createDecipher(algorithm, private_key);
 		
-		if(typeof encryptedData == 'string'){
-			try{
-				var unencryptedData = decipher.update(encryptedData, cipherEncoding, clearEncoding);
-				unencryptedData += decipher.final();
-				
-				var data = unencryptedData.split('&');
-				for(var i = 0 ; i < data.length; i++){
-					var keyAndValue = data[i].split('=');
-					var key = keyAndValue[0];
-					var value = keyAndValue[1];
-					this.params[key] = value;
+		// verify that the signed data could have been generated from the unsigned data
+		var signedData = this.params.signedData;
+		var verify = crypto.createVerify('RSA-SHA256');
+		verify.update(this.params.unsignedData);
+		var validSignature = verify.verify(public_key, signedData, 'hex');
+		if(validSignature == true){
+			
+			// proceed to decrypt the unsigned data
+			var algorithm = 'aes-128-cbc';
+			var clearEncoding = 'utf8';
+			var cipherEncoding = 'hex';
+			var decipher = crypto.createDecipher(algorithm, shared_private_key);
+			
+			if(typeof this.params.unsignedData == 'string'){
+				try{
+					var unencryptedData = decipher.update(this.params.unsignedData, cipherEncoding, clearEncoding);
+					unencryptedData += decipher.final();
+					
+					var data = unencryptedData.split('&');
+					for(var i = 0 ; i < data.length; i++){
+						var keyAndValue = data[i].split('=');
+						var key = keyAndValue[0];
+						var value = keyAndValue[1];
+						this.params[key] = value;
+					}
+					this.params.encryptedData = null;
 				}
-				this.params.encryptedData = null;
-			}
-			catch(err){
-				cb('Error decrypting data.  You may have encrypted data with the wrong secret key or supplied the wrong device_id.');
-				errorEncountered = true;
+				catch(err){
+					cbErr('Error decrypting data.  You may have encrypted data with the wrong secret key or supplied the wrong device_id.');
+					errorEncountered = true;
+				}
 			}
 		}
+		else{
+			errorEncountered = true;
+			cbErr('Error verifying signature.  Make sure you have signed in hex format.');
+		}
+		
 	}
 	
 	if(errorEncountered == false){
@@ -204,15 +210,17 @@ Data.prototype.sanitize = function(params,cb) {
 		x=0;
 		var x = this.checkTimeStamp(date,function(res){
 			if(res == 0){
-				console.log("cannot input\n");
-				cb({});
+				var err = "Error: Cannot insert because of timestamp overlay";
+				console.log(err);
+				cb(err, null);
 			}else{
 				sanitized_data['created_at'] = date.toLocaleString();
 				if(typeof sanitized_data['collected_at']=='undefined'){
 					sanitized_data['collected_at'] = date.toLocaleString();
 				}
 				console.log(sanitized_data);
-				cb(sanitized_data);
+				//cb(sanitized_data);
+				cb(null, sanitized_data);
 			}
 		});
 	}
@@ -227,13 +235,14 @@ Data.prototype.checkTimeStamp = function(t, callback) {
             //console.log(t);
             if(result.rows[0] == null){
             	callback(1);
-            }else if(self.params){ //need to check if Arduino device
-            }else{
+            } 
+			//else if(self.params){ //need to check if Arduino device }
+            else{
                 var x = result.rows.length;
                 var most_recent = result.rows[x-1].created_at; //gets last entry
                 var time2 = new Date(most_recent);
                 if((t.getTime() - time2.getTime()) < 15*60*1000){
-                	console.log("cannot insert because of timestamp overlap\n");
+                	console.log("Error: Cannot insert because of timestamp overlap\n");
                 	callback(0);
                 }else{
                 	callback(1);
@@ -257,10 +266,9 @@ Data.prototype.get_ei_params = function(data){
 
 
 // used to pass back validation errors - required fields not provided, etc
-Data.prototype.enforceRequiredParameters = function(cbErr, cbSuccess){
+Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 	var data_type = this.params['data_type'];
 	var number_of_data_types = Object.keys(schema['data_params']).length;
-	
 	if(typeof data_type == 'undefined' || typeof schema['data_params'][data_type] == 'undefined'){
 		var err = 'Error: data_type must be one of the following: ';
 		var count = 1;
@@ -273,18 +281,24 @@ Data.prototype.enforceRequiredParameters = function(cbErr, cbSuccess){
 		}
 		cbErr(err);
 	}
-	
-	for(var attr in schema){
-		if(schema[attr] == 1 && typeof this.params[attr] == 'undefined'){
-			cbErr("Error: " + attr + ' is required');
-		}
-	}
-	
-	if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
-		cbErr("Error: No Environmental Indicator data values have been provided.");
-	}
 	else{
-		cbSuccess();
+		for(var attr in schema){
+			if(schema[attr] == 1 && typeof this.params[attr] == 'undefined'){
+				cbErr("Error: " + attr + ' is required');
+			}
+		}
+		
+		if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
+			cbErr("Error: No Environmental Indicator data values have been provided.");
+		}
+		else if((typeof this.params['latitude'] == 'undefined' || typeof this.params['longitude'] == 'undefined')
+				&& (typeof device['latitude'] == 'undefined' || typeof device['longitude'] == 'undefined' )){
+			cbErr('Error: No locational data has been provided');
+			
+		}
+		else{
+			cbSuccess();
+		}
 	}
 },
 

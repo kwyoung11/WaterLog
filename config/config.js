@@ -1,5 +1,5 @@
 var config = {
-	"angular_front_end": false;
+	"angular_front_end": false
 }
 
 module.exports = config;
