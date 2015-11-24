@@ -19,16 +19,6 @@ data_controller.prototype.new = function(params, callback) {
 		var self = this;
 		var data_model = new Data(params);
 		
-		// how to encrypt data prior to submission
-		/*
-		data_model.encryptData(function(){
-				data_model.postToDatabase(function(result){
-					var myJson = JSON.stringify(result);
-					self.response_handler.renderJSON(myJson, myJson);
-				});
-			}
-		);
-		*/
 		data_model.postToDatabase(function(result){
 			var myJson = JSON.stringify(result);
 			self.response_handler.renderJSON(myJson, myJson);

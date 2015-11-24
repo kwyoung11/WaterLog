@@ -1,6 +1,7 @@
 /** user.js **/
 var schemas = require("../../schemas/schemas.js");
 var crypto = require('crypto');
+var keypair = require('keypair');
 var bcrypt = require('bcrypt');
 var Application = require('./application');
 var db = require('../../lib/db');
@@ -15,10 +16,14 @@ var User = function (data) {
     this.data = this.sanitize(data);
     this.data.password_reset_token = null;
     this.data.password_reset_sent_at = null;
-	var keypair = this.generateKeyPair();
-	this.data.public_key = keypair[0];
-	this.data.private_key = keypair[1];
-    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'email_confirmation_token', 'email_confirmed', 'is_admin', 'private_profile', 'invites_active'];
+	
+	
+	var pair = User.generateKeyPair(2048);
+	this.data.public_key = pair.public;
+	this.data.private_key = pair.private;
+	var pair2 = User.generateKeyPair(128);
+	this.data.shared_private_key = pair2.private;
+    this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'shared_private_key', 'email_confirmation_token', 'email_confirmed', 'is_admin', 'private_profile', 'invites_active'];
 }
 
 User.prototype = Object.create(Application.prototype);
@@ -82,9 +87,6 @@ User.prototype.save = function(cb) {
     var token = crypto.randomBytes(64).toString('hex');
     user.data.auth_token = token;
 
-    // set public and private keys
-    user.data.public_key = null;
-    user.data.private_key = null;
 
     // create an e-mail confimation token.
     var token = crypto.randomBytes(64).toString('hex');
@@ -110,7 +112,7 @@ User.prototype.save = function(cb) {
             user.data.password_digest = hash;
 
             // insert user info into database
-            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at, public_key, private_key, email_confirmation_token, email_confirmed, is_admin, private_profile, invites_active) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) returning *', user.getDataInArrayFormat(), function (err, result) {
+            db.query('INSERT INTO users (email, password_digest, auth_token, salt, password_reset_token, password_reset_sent_at, public_key, private_key, shared_private_key, email_confirmation_token, email_confirmed, is_admin, private_profile, invites_active) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) returning *', user.getDataInArrayFormat(), function (err, result) {
                 if (err) return cb(err);
                 cb(null, result.rows[0]);
             });
@@ -214,15 +216,10 @@ User.prototype.sanitize = function(data) {
     return sanitized_data;
 }
 
-User.prototype.generateKeyPair = function(){
-	var prime_length = 60;
-	var diffieHellman = crypto.createDiffieHellman(prime_length);
-
-	diffieHellman.generateKeys('base64');
-	var publicKey = diffieHellman.getPublicKey('base64');
-	var privateKey = diffieHellman.getPrivateKey('base64');
-	
-	return [publicKey, privateKey];
+User.generateKeyPair = function(numBits){
+	var options = {bits: numBits};
+	var pair = keypair(options);
+	return pair;
 }
 
 module.exports = User;

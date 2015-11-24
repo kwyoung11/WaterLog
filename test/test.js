@@ -1,43 +1,84 @@
 var request = require('request');
 var crypto = require('crypto');
 var keypair = require('keypair');
-var db = require('../lib/db');
-
+var User = require('../app/models/user');
+var Device = require('../app/models/device');
 
 
 function runPostTest(){
 	var path = 'http://127.0.0.1:3000/data/newData?';
-	var params = 'device_id=3&data_type=water&pH=0&latitude=5&longitude=5'
 	
-    var algorithm = 'aes-128-cbc';
-    var key = db.query('SELECT ');
-    var clearEncoding = 'utf8';
-    var cipherEncoding = 'hex';
-    //If the next line is uncommented, the final cleartext is wrong.
-    //cipherEncoding = 'base64';
-    var cipher = crypto.createCipher(algorithm, key);
-    var encData = cipher.update(data, clearEncoding, cipherEncoding);
-	encData += cipher.final(cipherEncoding);
-	console.log(encData);
-    var decipher = crypto.createDecipher(algorithm, key);
-    var unencrypted = decipher.update(encData, cipherEncoding, clearEncoding);
-	console.log('parameters should be ?device_id=2&encryptedData=' + encData);
-	console.log(encData);
-	
-	var options = {
-	  url: path + params,
-	  headers: {
-		'User-Agent': 'request',
-		'accept' : 'application/json',
-	  },
-	  method: 'post'
-	};
-
-	request(options, function(){});
+	var user_gen_params = {'email' : 'fakeEmail' + User.generateKeyPair().private,
+				'password_digest' : 'admin',
+				'is_admin' : false};
+				
+	// create a new user to test data posts with
+	var user = new User(user_gen_params);
+	user.save(
+		function(err, userAfterInsert){
+			
+			var device_gen_params = {
+				'user_id': userAfterInsert.id,
+				'name': 'test_data_post',
+				'latitude': '0',
+				'longitude': '0',
+				'mode': 'test?'
+			}
+			// create a new device associated with the user to test data posts with
+			var device = new Device(device_gen_params);
+			device.save(
+				function(err, deviceAfterInsert){
+					
+					// a set of possible post parameters
+					var data = 'data_type=water&pH=0&latitude=5&longitude=5&device_id=' +  deviceAfterInsert.id;
+					var algorithm = 'aes-128-cbc';
+					var clearEncoding = 'utf8';
+					var cipherEncoding = 'hex';
+					
+					//encrypt data with shared private key
+					
+					var cipher = crypto.createCipher(algorithm, userAfterInsert.shared_private_key);
+					var encData = cipher.update(data, clearEncoding, cipherEncoding);
+					
+					// encrypted data
+					encData += cipher.final(cipherEncoding);
+					
+					// sign encrypted data with private key
+					var sign = crypto.createSign('RSA-SHA256');
+					sign.update(encData);
+					var signedData = sign.sign(userAfterInsert.private_key, 'hex');
+					data = 'signedData=' + signedData + '&unsignedData=' + encData + '&device_id=' + deviceAfterInsert.id;
+					console.log('signed data is');
+					console.log(signedData);
+					
+					//send post request
+					var options = {
+					  url: path + data,
+					  headers: {
+						'User-Agent': 'request',
+						'accept' : 'application/json',
+					  },
+					  method: 'post'
+					};
+					
+					
+					request(options, function(err, response, body){
+						if(err){
+							console.log(err);
+						}
+						else{
+							console.log(response);
+						}
+						
+						process.exit();
+					});
+					
+				}
+			);
+			
+		});
+		
+    
 }
 
-var options = {bits: 128};
-var pair = keypair(options);
-console.log(pair);
-var pair2 = keypair(options);
-console.log(pair2);
+runPostTest();

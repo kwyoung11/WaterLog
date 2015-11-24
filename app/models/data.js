@@ -11,7 +11,7 @@ var util = require('../../lib/util');
 var Data = function (params) {  
     Application.call(this, params);
 	this.params = params;
-	if(typeof params.encryptedData != 'undefined'){
+	if(typeof params.signedData != 'undefined'){
 		this.encryptedData = true;
 	}
 }
@@ -24,29 +24,6 @@ Data.prototype.constructor = Data;
 
 Data.prototype.params = {};
 
-Data.prototype.encryptData = function(cb){
-	var self = this;
-	if(typeof this.params.device_id != 'undefined' && this.params.device_id != null){
-		
-		var deviceAndUser = util.getDeviceAndUser(this.params.device_id, 
-			function(err){
-				
-			},
-			function(deviceAndUser){
-				var stringToEncrypt = '';
-				for(var attr in self.params){
-					stringToEncrypt += attr + '=' + self.params[attr] + '&';
-				}
-				var device_id = self.params.device_id;
-				self.params = {};
-				self.params.device_id = device_id;
-				self.params.encryptedData = util.encrypt(deviceAndUser[1].private_key, stringToEncrypt);
-				self.encryptedData = true;
-				cb();
-			}
-		);
-	}
-}
 
 Data.prototype.postToDatabase = function(cb) {
 	var self = this;
@@ -96,7 +73,6 @@ Data.prototype.postToDatabase = function(cb) {
 										
 										
 										if(typeof self.params.latitude != 'undefined' && typeof self.params.longitude != 'undefined'){
-											console.log('i am here');
 											db.query('Update devices SET (latitude, longitude) = ($1, $2) where id = $3', [
 												self.params.latitude, self.params.longitude, device.id],
 												function(err, result){}
@@ -110,7 +86,8 @@ Data.prototype.postToDatabase = function(cb) {
 						}
 				});////
 				},
-				result[1].private_key
+				result[1].public_key,
+				result[1].shared_private_key
 			);
 		});
 }
@@ -148,35 +125,49 @@ Data.prototype.getSqlPostValues =  function(){
 	return vals;
 }
 
-Data.prototype.decrypt = function(cb, result, private_key){
+Data.prototype.decrypt = function(cbErr, result, public_key, shared_private_key){
 	var errorEncountered = false;
 	
 	if(this.encryptedData == true){
-		var encryptedData = this.params.encryptedData;
-		var algorithm = 'aes-128-cbc';
-		var clearEncoding = 'utf8';
-		var cipherEncoding = 'hex';
-		var decipher = crypto.createDecipher(algorithm, private_key);
 		
-		if(typeof encryptedData == 'string'){
-			try{
-				var unencryptedData = decipher.update(encryptedData, cipherEncoding, clearEncoding);
-				unencryptedData += decipher.final();
-				
-				var data = unencryptedData.split('&');
-				for(var i = 0 ; i < data.length; i++){
-					var keyAndValue = data[i].split('=');
-					var key = keyAndValue[0];
-					var value = keyAndValue[1];
-					this.params[key] = value;
+		// verify that the signed data could have been generated from the unsigned data
+		var signedData = this.params.signedData;
+		var verify = crypto.createVerify('RSA-SHA256');
+		verify.update(this.params.unsignedData);
+		var validSignature = verify.verify(public_key, signedData, 'hex');
+		if(validSignature == true){
+			
+			// proceed to decrypt the unsigned data
+			var algorithm = 'aes-128-cbc';
+			var clearEncoding = 'utf8';
+			var cipherEncoding = 'hex';
+			var decipher = crypto.createDecipher(algorithm, shared_private_key);
+			
+			if(typeof this.params.unsignedData == 'string'){
+				try{
+					var unencryptedData = decipher.update(this.params.unsignedData, cipherEncoding, clearEncoding);
+					unencryptedData += decipher.final();
+					
+					var data = unencryptedData.split('&');
+					for(var i = 0 ; i < data.length; i++){
+						var keyAndValue = data[i].split('=');
+						var key = keyAndValue[0];
+						var value = keyAndValue[1];
+						this.params[key] = value;
+					}
+					this.params.encryptedData = null;
 				}
-				this.params.encryptedData = null;
-			}
-			catch(err){
-				cb('Error decrypting data.  You may have encrypted data with the wrong secret key or supplied the wrong device_id.');
-				errorEncountered = true;
+				catch(err){
+					cbErr('Error decrypting data.  You may have encrypted data with the wrong secret key or supplied the wrong device_id.');
+					errorEncountered = true;
+				}
 			}
 		}
+		else{
+			errorEncountered = true;
+			cbErr('Error verifying signature.  Make sure you have signed in hex format.');
+		}
+		
 	}
 	
 	if(errorEncountered == false){
@@ -245,7 +236,7 @@ Data.prototype.checkTimeStamp = function(t, callback) {
                 var most_recent = result.rows[x-1].created_at; //gets last entry
                 var time2 = new Date(most_recent);
                 if((t.getTime() - time2.getTime()) < 15*60*1000){
-                	console.log("cannot insert because of timestamp overlap\n");
+                	console.log("Error: Cannot insert because of timestamp overlap\n");
                 	callback(0);
                 }else{
                 	callback(1);
@@ -272,7 +263,6 @@ Data.prototype.get_ei_params = function(data){
 Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 	var data_type = this.params['data_type'];
 	var number_of_data_types = Object.keys(schema['data_params']).length;
-	console.log(data_type);
 	if(typeof data_type == 'undefined' || typeof schema['data_params'][data_type] == 'undefined'){
 		var err = 'Error: data_type must be one of the following: ';
 		var count = 1;

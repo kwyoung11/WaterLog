@@ -9,6 +9,7 @@ schemas = {
         password_reset_sent_at: null,
         public_key: null,
         private_key: null,
+		shared_private_key: null,
         email_confirmation_token: null,
         email_confirmed: null,
         private_profile: null,

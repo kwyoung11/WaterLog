@@ -76,8 +76,6 @@ Device.prototype.getDataInArrayFormat = function() {
         var index = this.paramOrder.indexOf(attr);
         result.push(this.data[attr]);
     }
-    //console.log("PRINTING DATA IN ARRAY");
-    //console.log(result);
     return result;
 }
 
