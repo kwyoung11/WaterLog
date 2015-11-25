@@ -109,6 +109,8 @@ devices_controller.prototype = {
 	create: function(params, callback) {
 		var self = this;
 		params['id'] = self.current_user.data.id;
+		console.log("UNSANITIZED DATA");
+		console.log(params);
     	var device = new Device(params); // create new device object
     	device.save(function(err, dev) {
     		if (err) {

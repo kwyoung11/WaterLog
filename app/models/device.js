@@ -43,14 +43,13 @@ Device.findByUser = function(user_id, cb) {
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-        db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode) VALUES($1, $2, $3, $4, $5) returning *', self.getDataInArrayFormat(), function (err, result) {
+        db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode,type_of_data, keys, units) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *', self.getSqlPostValues(), function (err, result) {
             if (err) {
                 console.log(err);
                 return callback(err);
             }
                 return callback(null, result.rows[0]);
-        });             
-            
+        });                    
 }
 
 Device.prototype.update = function(callback) {  
@@ -78,6 +77,44 @@ Device.prototype.getDataInArrayFormat = function() {
     }
     return result;
 }
+
+Device.prototype.getSqlPostValues =  function(){
+    
+    var vals = [];
+    vals[0] = this.data['user_id'];
+    vals[1] = this.data['name'];
+    vals[2] = this.data['latitude'];
+    vals[3] = this.data['longitude'];
+    vals[4] = this.data['mode'];
+    vals[5] = this.data['type_of_data']
+    // EI data parameters
+    var data_param_size = Object.keys(this.data['data']).length;
+    var data_param_keys = '{';
+    var data_param_values = '{';
+    var count = 1;
+    
+    for(var attr in this.data['data']){
+        data_param_keys += attr;
+        data_param_values += this.data['data'][attr];
+        
+        if(count < data_param_size){
+            data_param_keys += ',';
+            data_param_values += ',';
+            count++;
+        }
+    }
+    
+    data_param_keys += '}';
+    data_param_values += '}';
+    
+    vals[6] = data_param_keys;
+    vals[7] = data_param_values;
+    
+    return vals;
+}
+
+
+
 
 Device.prototype.get = function(name) {  
     return this.data[name];

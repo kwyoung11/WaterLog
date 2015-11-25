@@ -22,7 +22,14 @@ schemas = {
         latitude: null,
         longitude: null,
         name: null,
-        mode: null
+        mode: null,
+        type_of_data: null,
+        keys:{
+        	
+        },
+        units:{
+        	
+        }
        },
     invitation: {
     		id: null,
