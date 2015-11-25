@@ -28,18 +28,20 @@
       <script src="/libs/leaflet-awesome-markers/dist/leaflet.awesome-markers.js"></script>
 
       <script src="/js/application.js"></script>
+      <script src="/js/services/DataService.js"></script>
+      <script src="/js/services/DeviceDataService.js"></script>
+      <script src="/js/services/LoginService.js"></script>
+      <script src="/js/controllers/menuController.js"></script>
+      <script src="/js/controllers/testController.js"></script>
       <script src="/js/controllers/login.js"></script>
       <script src="/js/controllers/devices.js"></script>
       <script src="/js/controllers/deviceDetails.js"></script>
       <script src="/js/controllers/map.js"></script>
-      <script src="/js/services/DataService.js"></script>
-      <script src="/js/services/DeviceDataService.js"></script>
-      <script src="/js/services/LoginService.js"></script>
       <link rel="stylesheet" href="/css/style.css">
       <link rel="stylesheet" href="/css/devices.css">
+      <link rel="stylesheet" href="/css/login.css">
     </head>
-    <body ng-controller="mainController">
-
+    <body >
       <!-- HEADER AND NAVBAR -->
       <div class="ui attached inverted segment" id="nav">
         <div class="ui container">
@@ -47,12 +49,9 @@
             <a class="ui item inverted header" href="#/">
               EnviroHub
             </a>
-            <div class="right menu">
-              <div class="ui buttons">
-                <a class="ui red inverted button" href="#map"> Map </a>
-                <a class="ui blue inverted button" href="#devices"> Devices </a>
-                <a class="ui orange inverted button" href="#about"> About </a>
-                <a class="ui pink inverted button" href="#contact"> Contact </a>
+            <div class="right menu" ng-controller="menuController">
+              <div class="ui inverted basic olive buttons">
+                <a  ng-repeat="button in buttons" class="ui button" href="{{button.link}}"> {{button.text}} </a>
               </div>
             </div>
           </div>
@@ -60,7 +59,7 @@
       </div>
 
       <!-- MAIN CONTENT AND INJECTED VIEWS -->
-         <div id="main">
+         <div id="main" ng-controller="mainController">
              <!-- angular templating -->
              <!-- this is where content will be injected -->
               <div class="page {{ pageClass }}" ng-view></div>

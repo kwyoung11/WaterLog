@@ -99,33 +99,61 @@ devices_controller.prototype = {
 	edit: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		Device.findById(params['id'], function(err, device_data) {
-				view.renderView('devices/edit', device_data, function(content) {
-		  		callback(content);
-			});
+			view.renderView('devices/edit', device_data, function(content) {
+		  	callback(content);
+			});	
+		}		
 		});
 	},
 
 	// POST new user
 	create: function(params, callback) {
 		var self = this;
-		console.log('aa');
 		params['id'] = self.current_user.data.id;
     	var device = new Device(params); // create new device object
     	device.save(function(err, dev) {
-				self.response_handler.redirectTo('/users/' + self.current_user.data.id);
+    		if (err) {
+    			if (self.response_handler.format == 'json') {
+    				self.response_handler.renderJSON(200, {'err_code': 21, 'err_msg': 'Error in creating device.'});
+					} else {
+						GLOBAL.flash.notice = 'There was an error registering your device';
+						self.response_handler.redirectTo('/users/' + self.current_user.data.id);	
+					}	
+    		}
+    		if (self.response_handler.format == 'json') {
+    			self.response_handler.renderJSON(200, dev);
+				} else {
+					self.response_handler.redirectTo('/users/' + self.current_user.data.id);	
+				}
+				
     	});
 	},
 
 	update: function(params, callback) {
 		var self = this;
-		Device.findById(params['id'], function(err, data){
+		Device.findById(params['id'], function(err, data) {
 			data['name'] = params['name'];
 			data['latitude'] = params['latitude'];
 			data['longitude'] = params['longitude'];
 
 			var device = new Device(data);
-    		device.update(function(dev) {
-				self.response_handler.redirectTo('/devices/' + device.data.id);
+    		device.update(function(err, dev) {
+    			if (err) {
+    				if (self.response_handler.format == 'json') {
+    					self.response_handler.renderJSON(200, {'err_code': 21, 'err_msg': 'Error in updating device.'});
+						} else {
+							GLOBAL.flash.notice = 'There was an error updating your device';
+							self.response_handler.redirectTo('/users/' + self.current_user.data.id);	
+						}	
+    			}
+
+    			if (self.response_handler.format == 'json') {
+    				self.response_handler.renderJSON(200, dev);
+					} else {
+						GLOBAL.flash.notice = 'There was an error registering your device';
+						self.response_handler.redirectTo('/devices/' + device.data.id);
+					}
+				
     		});
 		});
 	},
