@@ -101,8 +101,7 @@ devices_controller.prototype = {
 		Device.findById(params['id'], function(err, device_data) {
 			view.renderView('devices/edit', device_data, function(content) {
 		  	callback(content);
-			});	
-		}		
+			});			
 		});
 	},
 
