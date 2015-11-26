@@ -24,15 +24,11 @@ schemas = {
         name: null,
         mode: null,
         type_of_data: null,
-        keys:{
-        	
-        },
-        units:{
-        	
-        }
+        keys:[],
+        units:[]
        },
     invitation: {
-    		id: null,
+    	id: null,
       	user_id: null,
         token: null,
         recipient_email: null

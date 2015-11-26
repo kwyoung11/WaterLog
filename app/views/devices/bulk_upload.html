@@ -1,6 +1,12 @@
+{{keys}}
+
+
+
+
 <input type="file" id="fileinput" />
 <script type="text/javascript">
   function readSingleFile(evt) {
+    //console.log({{keys}});
     //Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0]; 
 
@@ -32,11 +38,11 @@
               url:"/data/newData",
               type:"POST",
               data: {device_id: {{id}},
-                    temperature : temp,
-                    pH : pH,
-                    turbidity: turb,
+                    temperature : data[0],
+                    pH : data[1],
+                    turbidity: data[2],
                     collected_at : time_stamp,
-                    data_type: 'water'},
+                    data_type: {{type_of_data}},
               dataType:"json"
 
             });

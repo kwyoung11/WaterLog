@@ -86,7 +86,7 @@ devices_controller.prototype = {
 
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-
+		console.log("HERE\n");
 		Device.findById(params['id'], function(err, device_data) {
 				//console.log("DEVICE DATA\n");
 				//console.log(device_data);
@@ -108,9 +108,7 @@ devices_controller.prototype = {
 	// POST new user
 	create: function(params, callback) {
 		var self = this;
-		params['id'] = self.current_user.data.id;
-		console.log("UNSANITIZED DATA");
-		console.log(params);
+		params['user_id'] = self.current_user.data.id;
     	var device = new Device(params); // create new device object
     	device.save(function(err, dev) {
     		if (err) {
@@ -161,8 +159,11 @@ devices_controller.prototype = {
 
 	bulkupload: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		view.renderView('devices/bulk_upload', params, function(data) {
-		  callback(data);
+		//var device = new Device(params);
+		Device.findById(params['id'], function(err, device_data) {
+			view.renderView('devices/bulk_upload', device_data, function(content) {
+		  		callback(content);
+			});
 		});
 	}
 

@@ -122,7 +122,8 @@ Data.prototype.getSqlPostValues =  function(){
 	
 	vals[4] = data_param_keys;
 	vals[5] = data_param_values;
-	
+	console.log("GET SQL POST VALUES");
+	console.log(vals);
 	return vals;
 }
 
