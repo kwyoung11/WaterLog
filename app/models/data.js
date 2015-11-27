@@ -1,9 +1,11 @@
 var schemas = require("../../schemas/schemas.js");
 var crypto = require('crypto');
 var bcrypt = require('bcrypt');
+var moment = require('moment');
 var Application = require('./application');
 var db = require('../../lib/db');
 var util = require('../../lib/util');
+
 
 
 // constructor
@@ -214,11 +216,11 @@ Data.prototype.sanitize = function(params,cb) {
 				console.log(err);
 				cb(err, null);
 			}else{
-				sanitized_data['created_at'] = date.toLocaleString();
+				sanitized_data['created_at'] = moment(date).format();
 				console.log('created at');
 				console.log(sanitized_data['created_at']);
 				if(typeof sanitized_data['collected_at']=='undefined'){
-					sanitized_data['collected_at'] = date.toLocaleString();
+					sanitized_data['collected_at'] = moment(date).format();
 					console.log('collected at');
 					console.log(sanitized_data['collected_at']);
 				}
