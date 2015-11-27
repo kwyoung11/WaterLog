@@ -35,7 +35,10 @@ sessions_controller.prototype = {
 	// on login submit
 	create: function(params, cb) {
 		var self = this;
+                console.log(params);
 		User.find('email', params['email'], function(err, user) {
+                        console.log("FORMAT IS: ");
+                        console.log(self.response_handler.format);
 			if (err) {
 				self.response_handler.renderJSON(200, {'err_code': 09, 'err_msg': 'Something went wrong. Please contact envirohubapp@gmail.com for help.'});
 				return cb(err);
@@ -47,7 +50,7 @@ sessions_controller.prototype = {
 
 								// set the users cookie
 								self.response_handler.setCookie('envirohub_auth_token', user.data.auth_token);
-								
+								console.log(self.response_handler.format);
 								// redirect to user profile page
 								if (self.response_handler.format == 'json') {
 									self.response_handler.renderJSON(200, user.data);

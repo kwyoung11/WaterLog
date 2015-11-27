@@ -7,7 +7,11 @@
   z-index: 1000!important;
 }
 
-.page-home, .page-map, .page-about, .page-contact{
+html body .leaflet-control-container .leaflet-top .leaflet-control-zoom a {
+  margin-top: 0px;
+}
+
+.page-home, .page-about, .page-contact{
     bottom:0;
     padding-top:200px;
     position:absolute;
@@ -69,5 +73,5 @@
     to      { transform: translateY(0); }
 }
 
-.ng-enter           { animation: scaleUp 0.5s both ease-in; z-index: 0; }
-.ng-leave           { animation: slideOutLeft 0.5s both ease-in; z-index: 0; }
+.page.ng-enter { animation: scaleUp 0.5s both ease-in; z-index: 0; }
+.page.ng-leave { animation: slideOutLeft 0.5s both ease-in; z-index: 0; }

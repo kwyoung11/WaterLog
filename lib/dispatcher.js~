@@ -6,7 +6,7 @@ var response_handler = require('./response_handler');
 var util = require('./util');
 var qs = require('querystring');
 var application_controller = require('../app/controllers/application_controller');
-var config = require('../config/config.js')
+var config = require('../config/config.json')
 
 this.dispatch = function(req, res) {
   // allow cross-origin requests
@@ -15,18 +15,12 @@ this.dispatch = function(req, res) {
 
   // two ways to specify format: in request header, or appended to URL (e.g., .json)
   var format = req.headers.accept.indexOf('application/json') >= 0 ? 'json' : 'html';
-
   console.log(req.headers.accept.indexOf('application/json'));
   console.log(req.headers);
-  console.log(req.url.split('.'));
-  var arr = req.url.split(".");
-  console.log(format);
-  if (arr[arr.length-1] == "json"){ 
-    format = 'json';
-  }
+  format = req.url.split(".")[1] == 'json' ? 'json' : 'html';
   // set up response object
   responseHandler = new response_handler(res, format);
-  console.log(responseHandler.format);
+
   var requestedUrl = url.parse(req.url, true);
   var parts, action, controller_name, format, theURL;
   var parameters = {};
@@ -224,9 +218,9 @@ this.dispatch = function(req, res) {
         if (requestedUrl.pathname.match("/data/newData") && req.method == "POST") {
         action = "new";
         util.extractPostData(req, function(post) {
-              util.merge(parameters, requestedUrl.query);
-              callController(controller_name, action, parameters); 
-              });    
+              util.merge(parameters, post);
+              callController(controller_name, action, parameters);
+              });
           /*var query = requestedUrl.query;
           for (var key in query) {
             if (query[key]) {
@@ -322,8 +316,6 @@ this.dispatch = function(req, res) {
     // route to appropriate controller method, otherwise load an asset file
     if (controller) {
     controller = new controller(responseHandler, req, function() {
-      console.log(controller.before_filter);
-      console.log(controller['before_filter']);
       if (typeof controller.before_filter == 'function') {
         controller.before_filter(action, parameters);
       }

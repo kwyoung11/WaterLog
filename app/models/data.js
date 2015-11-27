@@ -97,8 +97,8 @@ Data.prototype.getSqlPostValues =  function(){
 	
 	var vals = [];
 	vals[0] = this.params['device_id'];
-	vals[1] = this.params['data_type']
-	vals[2] = this.params['created_at']
+	vals[1] = this.params['data_type'];
+	vals[2] = this.params['created_at'].toUTCString();
 	// EI data parameters
 	var data_param_size = Object.keys(this.params['data']).length;
 	var data_param_keys = '{';

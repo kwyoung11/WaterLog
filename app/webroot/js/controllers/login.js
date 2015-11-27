@@ -1,21 +1,11 @@
-enviroHubApp.controller('loginController', function($scope, LoginService)  {
+enviroHubApp.controller('loginController', function($scope, SessionService)  {
 	$scope.pageClass = 'page-login';
-	$scope.loginStatus = LoginService.fail;
-
-	$scope.doLogin = function(){
-		if ($scope.login_form != undefined && $scope.login_form.email != undefined && $scope.login_form.password_digest != undefined)
-			LoginService.loginUser($scope.login_form.email, $scope.login_form.password_digest);
-	}
-
-	$scope.doRegister = function(){
-		if ($scope.register_form != undefined && $scope.register_form.email != undefined && $scope.register_form.password_digest != undefined)
-			LoginService.registerUser($scope.register_form.email, $scope.register_form.password_digest);
-	}
+	$scope.loginStatus = SessionService.loginFail;
 
 	return $scope.loginStatus;
 });
 
-enviroHubApp.directive("registerForm", function(){
+enviroHubApp.directive("registerForm", function(SessionService){
 	return function(scope, element){
 		$(element).form({
 	    fields: {
@@ -35,8 +25,8 @@ enviroHubApp.directive("registerForm", function(){
 				password_confirm : {
 					identifier: 'password_confirm',
 					rules: [
-						{ type : 'empty', prompt: "Please Confirm your password" },
-						{ type : 'match[password_digest]', prompt: "Passwords do not match" }
+						{ type : 'empty', prompt: "Please Confirm your password" }
+					//	{ type : 'match[password_digest]', prompt: "Passwords do not match" }
 					]
 				},
 				terms : {
@@ -45,12 +35,24 @@ enviroHubApp.directive("registerForm", function(){
 						{ type: 'checked', prompt: "Please accept the Terms & Conditions."}
 					]
 				}
-	    }
-	  });
+	    },
+			inline: true,
+			on: 'blur',
+			transition: 'fade down',
+			onSuccess: function(event, fields){
+				console.log("success");
+				SessionService.registerUser(fields.email, fields.password_digest);
+				return false;
+			},
+			onFailure: function(){
+				console.log("fail");
+				return false;
+			}
+		});
 	}
 });
 
-enviroHubApp.directive("loginFrom", function(){
+enviroHubApp.directive("loginFrom", function(SessionService){
 	return function(scope, element){
 		$(element).form({
 	    fields: {
@@ -63,10 +65,23 @@ enviroHubApp.directive("loginFrom", function(){
 	      password_digest : {
 					identifier: 'password_digest',
 	        rules: [
-	          { type : 'minLength[6]', prompt : 'Your password must be at least {ruleValue} characters.' }
+						{ type : 'empty', prompt: "Please enter a password" }
 	        ]
 				}
-	    }
-	  });
+	    },
+			inline: true,
+			on: 'blur',
+			transition: 'fade down',
+			onSuccess: function(event,fields){
+				console.log("success");
+				console.log(fields)
+				SessionService.loginUser(fields.email, fields.password_digest);
+				return false;
+			},
+			onFailure: function(){
+				console.log("fail");
+				return false;
+			}
+		});
 	}
 });
