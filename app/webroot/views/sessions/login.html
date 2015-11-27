@@ -4,21 +4,21 @@
     <!-- Login -->
       <h1 class="ui centered dividing header"> Login </h1>
 
-      <form login-from class="ui form segment" ng-model="login_form">
+      <form login-from class="ui form segment" >
 
         <div class="ui error message"></div>
 
         <div class="field">
           <label> E-Mail </label>
-          <input type="text" name="email" ng-model="login_form.email">
+          <input type="text" name="email" >
         </div>
 
         <div class="field">
           <label> Password </label>
-          <input name="password_digest" type="password" ng-model="login_form.password_digest">
+          <input name="password_digest" type="password" >
         </div>
 
-        <button class="ui button" type="submit" ng-click="doLogin()"> Submit </button>
+        <button class="ui button" type="submit"> Submit </button>
 
       </form>
     </div>
@@ -38,22 +38,22 @@
 
         <div class="field">
           <label> Password </label>
-          <input type="password" name="password_digest" ng-model="register_form.password_digest">
+          <input type="password" name="password_digest" >
         </div>
 
         <div class="field">
           <label> Confirm Password </label>
-          <input class="ui input" type="password" ng-model="register_form.password_confirm">
+          <input class="ui input" name="password_confirm" type="password" >
         </div>
 
         <div class="field">
           <div class="ui checkbox">
-            <input type="checkbox" name="terms" ng-model="register_form.terms">
+            <input type="checkbox" name="terms" >
             <label> I agree to the <a class="ui link"> Terms and Conditions </a> </label>
           </div>
         </div>
 
-        <button class="ui button" ng-click="doRegister()" type="submit">Submit</button>
+        <button class="ui button" type="submit">Submit</button>
       </form>
     </div>
   </div>

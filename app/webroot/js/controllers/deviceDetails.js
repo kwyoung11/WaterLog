@@ -1,6 +1,6 @@
 enviroHubApp.controller('devicesDetailsController', function ($scope, DataService) {
   $scope.pageClass = 'page-deviceDetails';
-  console.log(DataService.getRainFallData());
+  //console.log(DataService.getRainFallData());
 
   $scope.randomizeData = function () {
     var all_series = this.chartConfig.series;
@@ -21,55 +21,114 @@ enviroHubApp.controller('devicesDetailsController', function ($scope, DataServic
     }
   }
 
-  $scope.addRainFall = function (){
-    DataService.getRainFallData().then(function(data){
-      $scope.chartConfig.series.push({
-        name: 'Rainfall',
-        color: '#4572A7',
-        type: 'column',
-        yAxis: 1,
-        data: data,
-        tooltip: {
-          valueSuffix: ' mm'
-        }
-      })
+var pHRepeat = true;
+var tempRepeat = true;
+var turbidityRepeat = true;
+
+  $scope.addpH = function (){
+    DataService.getpHData().then(function(data){
+      var times = [];
+      var values = [];
+
+
+      for (var i = 0; i < data.length; i++){
+        times.push(data[i].time.substring(5,10));
+        values.push(parseFloat(data[i].value));
+      }
+      if (!Array.isArray($scope.chartConfig.xAxis)){
+        $scope.chartConfig.xAxis = [];
+      }
+
+      times.sort();
+
+      if(pHRepeat == true){
+        $scope.chartConfig.xAxis.push({categories: times});
+
+        $scope.chartConfig.series.push({
+          name: 'pH',
+          color: '#4572A7',
+          type: 'column',
+          yAxis: 1,
+          data: values,
+          tooltip: {
+            valueSuffix: ' mm'
+          }
+        });
+        pHRepeat = false;
+      }
     });
   }
 
-  $scope.addSeaLevelPressure = function (){
-    DataService.getSeaLevelPressureData().then(function(data){
-      $scope.chartConfig.series.push({
-                  name: 'Sea-Level Pressure',
-                  type: 'spline',
-                  color: '#AA4643',
-                  yAxis: 2,
-                  data: [1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5, 1009.6, 1010.2, 1013.1, 1016.9, 1018.2, 1016.7],
-                  marker: {
-                      enabled: false
-                  },
-                  dashStyle: 'shortdot',
-                  tooltip: {
-                      valueSuffix: ' mb'
-                  }
-      })
+  $scope.addTurbidity = function (){
+    DataService.getTurbidityData().then(function(data){
+
+      var times = [];
+      var values = [];
+
+      for (var i = 0; i < data.length; i++){
+        times.push(data[i].time.substring(5,10));
+        values.push(parseFloat(data[i].value));
+      }
+      if (!Array.isArray($scope.chartConfig.xAxis)){
+        $scope.chartConfig.xAxis = [];
+      }
+
+      times.sort();
+
+      if(turbidityRepeat== true){
+        $scope.chartConfig.xAxis.push({categories: times});
+
+        $scope.chartConfig.series.push({
+          name: 'Turbidity',
+          type: 'spline',
+          color: '#AA4643',
+          yAxis: 2,
+          data: values,
+          marker: {
+            enabled: false
+          },
+          dashStyle: 'shortdot',
+          tooltip: {
+            valueSuffix: ' mb'
+          }
+        })
+        turbidityRepeat = false;
+      }
     });
   }
 
   $scope.addTemperature = function (){
     DataService.getTemperatureData().then(function(data){
-      $scope.chartConfig.series.push({
+      var times = [];
+      var values = [];
+
+      for (var i = 0; i < data.length; i++){
+        times.push(data[i].time.substring(5,10));
+        values.push(parseFloat(data[i].value));
+      }
+      if (!Array.isArray($scope.chartConfig.xAxis)){
+        $scope.chartConfig.xAxis = [];
+      }
+
+      times.sort();
+
+      if(tempRepeat == true){
+        $scope.chartConfig.xAxis.push({categories: times});
+
+        $scope.chartConfig.series.push({
           name: 'Temperature',
           color: '#89A54E',
+          yAxis: 0,
           type: 'spline',
-          data: data,
+          data: values,
           tooltip: {
-              valueSuffix: '°C'
+            valueSuffix: '°C'
           }
-      })
+        })
+        tempRepeat = false;
+     }
     });
   }
-
-
 
   $scope.chartConfig = {
     options: {
@@ -80,10 +139,9 @@ enviroHubApp.controller('devicesDetailsController', function ($scope, DataServic
         text: 'Average Monthly Weather Data for Tokyo'
       },
       xAxis: [{
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        categories: []
       }],
-      yAxis: [{ // Primary yAxis
+      yAxis: [{ //Primary yAxis
         labels: {
           formatter: function () {
             return this.value + '°C';
@@ -103,7 +161,7 @@ enviroHubApp.controller('devicesDetailsController', function ($scope, DataServic
       }, { // Secondary yAxis
         gridLineWidth: 0,
         title: {
-          text: 'Rainfall',
+          text: 'pH',
           style: {
             color: '#4572A7'
           }
@@ -116,7 +174,6 @@ enviroHubApp.controller('devicesDetailsController', function ($scope, DataServic
             color: '#4572A7'
           }
         }
-
       }, { // Tertiary yAxis
         gridLineWidth: 0,
         title: {

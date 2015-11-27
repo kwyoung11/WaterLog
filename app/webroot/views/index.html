@@ -27,7 +27,11 @@
       <link rel="stylesheet" href="/libs/leaflet-awesome-markers/dist/leaflet.awesome-markers.css">
       <script src="/libs/leaflet-awesome-markers/dist/leaflet.awesome-markers.js"></script>
 
+
       <script src="/js/application.js"></script>
+      <script src="/js/services/PubSubService.js"></script>
+      <script src="/js/services/WaterServicesService.js"></script>
+      <script src="/js/services/WeatherService.js"></script>
       <script src="/js/services/DataService.js"></script>
       <script src="/js/services/DeviceDataService.js"></script>
       <script src="/js/services/LoginService.js"></script>
@@ -37,6 +41,8 @@
       <script src="/js/controllers/devices.js"></script>
       <script src="/js/controllers/deviceDetails.js"></script>
       <script src="/js/controllers/map.js"></script>
+      <script src="/js/controllers/uploadSingleController.js"></script>
+      <script src="/js/controllers/uploadBulkController.js"></script>
       <link rel="stylesheet" href="/css/style.css">
       <link rel="stylesheet" href="/css/devices.css">
       <link rel="stylesheet" href="/css/login.css">
@@ -50,8 +56,8 @@
               EnviroHub
             </a>
             <div class="right menu" ng-controller="menuController">
-              <div class="ui inverted basic olive buttons">
-                <a  ng-repeat="button in buttons" class="ui button" href="{{button.link}}"> {{button.text}} </a>
+              <div main-navigation-buttons class="ui inverted basic olive buttons">
+                <a ng-repeat="button in buttons" class="ui button" href="{{button.link}}"> {{button.text}} </a>
               </div>
             </div>
           </div>
