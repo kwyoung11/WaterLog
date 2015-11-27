@@ -218,8 +218,6 @@ Data.prototype.sanitize = function(params,cb) {
 				if(typeof sanitized_data['collected_at']=='undefined'){
 					sanitized_data['collected_at'] = date.toLocaleString();
 				}
-				console.log(sanitized_data);
-				//cb(sanitized_data);
 				cb(null, sanitized_data);
 			}
 		});
