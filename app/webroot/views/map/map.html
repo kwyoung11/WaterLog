@@ -1,35 +1,56 @@
 <!-- map.html -->
-<div class="ui internally celled grid  text-center centered">
-  <div class="row">
-    <div class="two wide column">
-      <p>CONTROL PANEL</p>
-      <div class="ui selection dropdown">
-        <input name="Visualization Category" type="hidden">
-        <i class="dropdown icon"></i>
-        <div class="default text">Visualization Category</div>
-        <div class="menu">
-          <div class="item" data-value="1">Visualization Category1</div>
-          <div class="item" data-value="0">Visualization Category2</div>
-        </div>
-      </div>
+
+<!--div class="ui internally celled grid  text-center centered" -->
+<div class="ui padded attached inverted teal segment">
+  <div class="ui divided stackable grid">
+    <div class="five wide column">
+      <h1 class="ui centered dividing header top attached inverted secondary red segment"> CONTROL PANEL </h1>
+      <form  map-from class="ui form bottom attached padded red segment" >
+      <select ng-model="deviceCategory" class="ui simple search dropdown">
+        <option value="">Device Visualization Category</option>
+        <option value="ph">PH</option>
+        <option value="temperature"> Temperature </option>
+        <option value="turbidity">Turbidity</option>
+      </select>
+      <br />
+      <select class="ui simple search dropdown">
+        <option value="">3rd Party Visualization Category</option>
+        <option value="ph3">PH</option>
+        <option value="temperature3"> Temperature </option>
+        <option value="turbidity3">Turbidity</option>
+      </select>
+      <br />
       <div class="ui checkbox">
         <input name="allDevice" type="checkbox">
         <label>Show All Devices</label>
       </div>
+      <br />
       <div class="ui checkbox">
         <input name="myDevice" type="checkbox">
         <label>Show My Devices</label>
       </div>
-      <div class="ui input">
-        <input placeholder="Location" type="text">
+      <br />
+      <div class="field">
+        <label> Latitude </label>
+        <input type="text" name="latitude">
       </div>
-      <p>Range (in Miles):</p>
+      <br />
+      <div class="field">
+        <label> Longitude </label>
+        <input type="text" name="longitude">
+      </div>
+      <br />
+      <div class="field">
+        <label> Time </label>
+        <input type="date" name="time">
+      </div>
+      <br />
+      <button ng-click="submit()" class="ui button" type="submit" id="submit" > Submit </button>
     </div>
-    <div class="eight wide column" ng-controller="mapController">
-      <leaflet lf-center="center" markers="markers" height="480px" width="100%"></leaflet>
+    </form>
+
+    <div class="eleven wide column" ng-controller="mapController">
+      <leaflet event-broadcast="events" lf-center="center" markers="markers" height="580px" width="100%"></leaflet>
     </div>
   </div>
-</div>
-<div class="eight wide column" ng-controller="mapController">
-  <leaflet lf-center="center" markers="markers" height="480px" width="100%"></leaflet>
 </div>

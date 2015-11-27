@@ -1,6 +1,6 @@
 //include our modules
-var http  = require('http');
-var https  = require('https');
+var http  = require('follow-redirects').http;
+var https  = require('follow-redirects').https;
 var url   = require('url');
 var os = require('os');
 var fs = require('fs');
@@ -24,7 +24,16 @@ var dispatcher = require('./lib/dispatcher.js');
 console.log('Starting server @ http://127.0.0.1:' + connection['port'] + '/');
 
 http.createServer(function (req, res) {
-
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Request-Method', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  console.log(req.method);
+  if ( req.method === 'OPTIONS' ) {
+		res.writeHead(200);
+		res.end();
+		return;
+  }
   // wrap calls in a try catch
   // or the node js server will crash upon any code errors
   try {
@@ -34,7 +43,7 @@ http.createServer(function (req, res) {
                  req.connection.remoteAddress +
                 ' for href: ' + url.parse(req.url).href
     );
-
+  
 	
   // dispatch our request
   dispatcher.dispatch(req, res);

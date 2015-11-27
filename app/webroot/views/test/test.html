@@ -1,6 +1,29 @@
 <div class="ui attached padded inverted tertiary olive segment">
   <div class="ui container">
     <!-- Put all your html below here -->
+    <h1>Data Displayed in Console</h1>
+    <p style="color:black">
+      Date Filter for both single and Multiple Devices.<br />
+      <label for="startDT">startDT:</label>
+      <input type="text" ng-model="startDT" ng-init="startDT='2015-11-18'" />
+      <label for="endDT">endDT:</label>
+      <input type="text" ng-model="endDT" ng-init="endDT='2015-11-20'" />
+      <br /><br />
+      Device Filter for single Devices.<br />
+      <label for="singleDeviceID">DeviceID:</label>
+      <input type="text" ng-model="singleDeviceID" ng-init="singleDeviceID='01649500'" />
+
+      <div class="ui button" ng-click="getMultipleDeviceData()">Get Multiple Device</div>
+      <div class="ui button" ng-click="getSingleDeviceData()">Get Single Device</div>
+      <br /><br />
+
+      <div class="ui button" ng-click="getDevices()">Get Devices</div>
+      <div class="ui button" ng-click="getParameters()">Get Parameters</div>
+      <br />
+
+      <div class="ui button" ng-click="getWeather()">Get Weather</div>
+
+  </p>
 
 
     <!-- Put all your html above here -->
