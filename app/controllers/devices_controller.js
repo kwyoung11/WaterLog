@@ -152,7 +152,6 @@ devices_controller.prototype = {
 						GLOBAL.flash.notice = 'There was an error registering your device';
 						self.response_handler.redirectTo('/devices/' + device.data.id);
 					}
-				
     		});
 		});
 	},

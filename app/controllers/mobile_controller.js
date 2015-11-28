@@ -30,19 +30,31 @@ mobile_controller.prototype = {
 
 	//GET /devices/new
 	input: function(params, callback) {
+		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		view.renderView('mobile/input', params, function(data) {
-		  callback(data);
-		});
+		// get devices for current user
+		if(this.current_user != null && this.current_user.data != null && this.current_user.data.id != null){
+			db.query('SELECT id FROM devices WHERE user_id = $1', [this.current_user.data.id], function(err, result){
+				var devicesArr = [];
+				for(var row in result.rows){
+					var rowId = result.rows[row].id;
+					var item = {id: rowId};
+					devicesArr[row] = item;
+				}
+				params['devices'] = devicesArr;
+				view.renderView('mobile/input', params, function(data) {
+				  callback(data);
+				});
+			});
+		}
 	},
 
 	create: function(params, callback) {
 		var self = this;
-		console.log(params);
 
-		var mobile=new Mobile(params);
+		var mobile = new Mobile(params);
 		
-		params=mobile.data;
+		params = mobile.data;
 			var data=new Data(params);
 			data.addCustomfields();
     			data.postToDatabase(function(data) {

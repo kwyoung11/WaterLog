@@ -29,7 +29,6 @@ Mobile.prototype.sanitize = function(params) {
         }else if(params[attr]!=""){
             //data not inputted for this field
             temp[attr] = params[attr];
-                    
         }
     }
             //console.log(temp);
