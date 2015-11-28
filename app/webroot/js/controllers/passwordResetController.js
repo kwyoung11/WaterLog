@@ -1,12 +1,12 @@
-enviroHubApp.controller('passwordResetController', function($scope, SessionService)  {
+enviroHubApp.controller('passwordResetController', function($scope, SessionService, PubSubService)  {
 	$scope.pageClass = 'page-login';
 	$scope.loginStatus = SessionService.loginFail;
-
+	
 	return $scope.loginStatus;
 });
   
-  enviroHubApp.directive("resetPassword", function(SessionService) {
-			console.log("HELLO");
+  enviroHubApp.directive("resetPassword", function(SessionService, PubSubService) {
+
 			return function(scope, element) {
 				$(element).form({
 			    fields: {
@@ -21,10 +21,11 @@ enviroHubApp.controller('passwordResetController', function($scope, SessionServi
 					on: 'blur',
 					transition: 'fade down',
 					onSuccess: function(event, fields) {
+						$(element).addClass('loading');
 						console.log("success");
 						console.log(fields);
 						
-						SessionService.resetPassword(fields.email);
+						SessionService.resetPassword(fields.email, element);
 						return false;
 					},
 					onFailure: function(){
@@ -52,7 +53,7 @@ enviroHubApp.controller('passwordResetController', function($scope, SessionServi
 					onSuccess: function(event, fields) {
 						console.log("success");
 						console.log(fields);
-						SessionService.resetPasswordUpdate(fields.password_digest);
+						SessionService.resetPasswordUpdate(fields.password_digest, element);
 						return false;
 					},
 					onFailure: function(){

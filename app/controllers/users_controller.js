@@ -221,12 +221,8 @@ users_controller.prototype = {
 						GLOBAL.flash.notice = 'You have been removed/deleted from our reecords.';
 						self.repsonse_handler.redirecTo("/");
 					}
-<<<<<<< Updated upstream
-					
-=======
 					var data = {'msg': 'You been removed/deleted from our records.'};
 					self.response_handler.renderJSON(200, data);
->>>>>>> Stashed changes
 
 				});
 			} else {
