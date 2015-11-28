@@ -51,15 +51,17 @@ mobile_controller.prototype = {
 
 	create: function(params, callback) {
 		var self = this;
-
+		
+		console.log(params);
+		
 		var mobile = new Mobile(params);
 		
 		params = mobile.data;
-			var data=new Data(params);
-			data.addCustomfields();
-    			data.postToDatabase(function(data) {
-		  		self.response_handler.redirectTo('/mobile/' +params['device_id']+'/input');
-				});
+		var data = new Data(params);
+		data.addCustomfields();
+		data.postToDatabase(function(data) {
+			self.response_handler.redirectTo('/mobile/' +params['device_id']+'/input');
+		});
 	}
 }
 

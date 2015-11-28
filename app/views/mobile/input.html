@@ -71,8 +71,15 @@
 </form>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script> 
+
 var x = document.getElementById("location-input");
+// disable all input fields that are dependent on data type
+$('.data-type-fields :input').prop('disabled', true);
 $('.data-type-fields').hide();
+var selected_data_type = $('#data-type-select').val();
+// enable input fields for selected data type
+$("#" + selected_data_type.toLowerCase() + "-fields").show();
+$("#" + selected_data_type.toLowerCase() + "-fields :input").prop('disabled', false);
 
 function getLocation() {
     if (navigator.geolocation) {
@@ -81,18 +88,17 @@ function getLocation() {
         x.value = "Geolocation is not supported by this browser.";
     }
 }
+
 function showPosition(position) {
     x.value = position.coords.latitude + ", " + position.coords.longitude; 
 }
 
-var selected_data_type = $('#data-type-select').val();
-
-$("#" + selected_data_type.toLowerCase() + "-fields").show();
-
 $("#data-type-select").change(function() {
+  $('.data-type-fields input').prop('disabled', true);
   $('.data-type-fields').hide();
   var selected_data_type = $('#data-type-select').val();
   $("#" + selected_data_type.toLowerCase() + "-fields").show();
+  $("#" + selected_data_type.toLowerCase() + "-fields :input").prop('disabled', false);
 });
 
 $("#submit-form").click(function() {
