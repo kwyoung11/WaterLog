@@ -25,21 +25,13 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
       startDT = yestarday.toJSON().slice(0, 10);
       endDT = today.toJSON().slice(0, 10);
     }
-
-    $http({
-      url: "//waterservices.usgs.gov/nwis/dv",
-      method: "GET",
-      data: [],
-      params: {
-        format: 'json',
-        indent: 'off',
-        stateCd: 'md',
-        startDT: startDT,
-        endDT: endDT,
-        parameterCd: parameterCd
-      }
-    }).success(function(data) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", 'http://waterservices.usgs.gov/nwis/dv/?endDT=2015-11-20&format=json&indent=off&parameterCd=00010,00400&startDT=2015-11-18&stateCd=md', true);
+    xhr.send();
+    xhr.onload = function() {
       // Format Data and Get Data Objects
+      var data = xhr.response;
+      console.log(data);
       var waterData = parseExternalWater(data);
       devices = waterData.devices;
       parameters = waterData.parameters;
@@ -60,15 +52,13 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
       };
 
       deferred.resolve(outputData);
+    };
 
-    }).error(function() {
-      alert("error");
-      deferred.reject(error);
-    });
-
+    xhr.onerror = function() {
+      deferred.reject(xhr.response);
+    }
     return deferred.promise;
-  };
-
+}
 
   /**
    * Get Device data from deviceID
