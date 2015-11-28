@@ -5,6 +5,7 @@ var moment = require('moment');
 var Application = require('./application');
 var db = require('../../lib/db');
 var util = require('../../lib/util');
+var dataRanges = require("../../schemas/dataRanges.js");
 
 
 
@@ -196,15 +197,11 @@ Data.prototype.sanitize = function(params,cb) {
      }
 	 
 	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
-	 // then add it to the ei params
+	 // then add it to the sanitized data hash
 	 if(typeof ei_params[attr] != 'undefined'){
-		 ei_data[attr] = params[attr];
+		 sanitized_data[attr] = params[attr];
 	 }
     }
-	;
-	if(Object.keys(ei_data).length > 0){
-		sanitized_data['data'] = ei_data;
-	}
 	
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
@@ -288,18 +285,78 @@ Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 			}
 		}
 		
-		if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
-			cbErr("Error: No Environmental Indicator data values have been provided.");
-		}
-		else if((typeof this.params['latitude'] == 'undefined' || typeof this.params['longitude'] == 'undefined')
+		if((typeof this.params['latitude'] == 'undefined' || typeof this.params['longitude'] == 'undefined')
 				&& (typeof device['latitude'] == 'undefined' || typeof device['longitude'] == 'undefined' )){
 			cbErr('Error: No locational data has been provided');
-			
 		}
 		else{
-			cbSuccess();
+			this.validateDataTypesAndRanges(cbErr, cbSuccess);
 		}
 	}
+},
+
+Data.prototype.constructDataArrayForPost = function(cbErr, cbSuccess){
+	var ei_data = {};
+	var ei_params = this.get_ei_params(this.params);
+	
+    for (var attr in this.params) {
+       
+	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
+	 // then add it to the sanitized data hash and remove it from params
+	 if(typeof ei_params[attr] != 'undefined'){
+		 ei_data[attr] = this.params[attr];
+		 delete this.params[attr];
+	 }
+    }
+	
+	if(Object.keys(ei_data).length > 0){
+		this.params['data'] = ei_data;
+	}
+	
+	if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
+		cbErr("Error: No Environmental Indicator data values have been provided.");
+	}
+	else{
+		cbSuccess();
+	}
+	
+}
+
+Data.prototype.validateDataTypesAndRanges = function(cbErr, cbSuccess){
+	var data_type = this.params['data_type'];
+	var errEncountered = false;
+	
+	for(var param in this.params){
+		var value = this.params[param];
+		if(typeof dataRanges[param] != 'undefined'){
+			var typeWeWant = typeof dataRanges[param]['type'];
+			if(typeWeWant == 'number'){
+				value = Number(value);
+			}
+			console.log(value + ' ' + typeof value);
+			if(typeof value != typeof dataRanges[param]['type'] || (typeof value == 'number' && isNaN(value))){
+				cbErr('Error: Parameter ' + param + ' must be of type ' + typeof dataRanges[param]['type']);
+				errEncountered = true;
+				break;
+			}
+		}
+		else if(typeof dataRanges[data_type][param] != 'undefined'){
+			var typeWeWant = typeof dataRanges[data_type][param]['type'];
+			if(typeWeWant == 'number'){
+				value = Number(value);
+			}
+			if(typeof value != typeof dataRanges[data_type][param]['type'] || (typeof value == 'number' && isNaN(value))){
+				cbErr('Error: Parameter ' + param + ' must be of type ' + typeof dataRanges[data_type][param]['type']);
+				errEncountered = true;
+				break;
+			}
+		}
+	}
+	
+	if(errEncountered == false){
+		this.constructDataArrayForPost(cbErr, cbSuccess);
+	}
+	
 },
 
 Data.prototype.addCustomfields=function(){
@@ -309,8 +366,6 @@ Data.prototype.addCustomfields=function(){
             if(typeof curr_schema[attr] == 'undefined'){
                 console.log("ATTRIBUTE "+attr+" NOT DEFINED\n");
                 curr_schema[attr] = this.params[attr];
-                console.log(typeof curr_schema[attr]);
-                console.log(schema);
             }
         }
     }

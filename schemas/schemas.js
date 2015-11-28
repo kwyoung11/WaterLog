@@ -31,7 +31,7 @@ schemas = {
         recipient_email: null
     },
 	data: {
-		/* 1 is used to mark a required field */
+		/* 1 is used to mark a required field in a data post*/
 		id: null,
 		device_id: 1,
 		data_type: 1,
