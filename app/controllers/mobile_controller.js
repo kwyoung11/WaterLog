@@ -30,24 +30,38 @@ mobile_controller.prototype = {
 
 	//GET /devices/new
 	input: function(params, callback) {
+		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		view.renderView('mobile/input', params, function(data) {
-		  callback(data);
+		Device.findByUser(self.current_user.data.id, function(err, devices) {
+			var mobile_devices = devices.filter(function(device) {
+				return device.mode == 'Arduino';
+			});
+
+			var mobile_devices = {'devices': mobile_devices};
+			util.merge(self.view_data, mobile_devices);
+
+			view.renderView('mobile/input', self.view_data, function(data) {
+		  	callback(data);
+			});	
 		});
+		
 	},
 
 	create: function(params, callback) {
 		var self = this;
-		console.log(params);
+		console.log("params are: " + JSON.stringify(params));
 
-		var mobile=new Mobile(params);
-		
-		params=mobile.data;
-			var data=new Data(params);
-			data.addCustomfields();
-    			data.postToDatabase(function(data) {
-		  		self.response_handler.redirectTo('/mobile/' +params['device_id']+'/input');
-				});
+		var mobile = new Mobile(params);
+		params = mobile.data;
+		var data = new Data(params);
+		data.addCustomfields();
+		console.log("data is: " + data);
+    data.postToDatabase(function(data) {
+    	GLOBAL.flash.notice = "Data uploaded successfully.";
+		  view.renderView('/mobile/input', self.view_data, function(data) {
+		  	callback(data);
+		  });
+		});
 	}
 }
 

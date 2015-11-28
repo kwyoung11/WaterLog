@@ -302,10 +302,10 @@ Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 	}
 },
 
-Data.prototype.addCustomfields=function(){
-    curr_schema=schema['data_params'][this.params.data_type];
-    for (var attr in this.params){
-        if(attr!="device_id" && attr!="data_type"){
+Data.prototype.addCustomfields = function() {
+    curr_schema = schema['data_params'][this.params.data_type];
+    for (var attr in this.params) {
+        if (attr != "device_id" && attr != "data_type") {
             if(typeof curr_schema[attr] == 'undefined'){
                 console.log("ATTRIBUTE "+attr+" NOT DEFINED\n");
                 curr_schema[attr] = this.params[attr];

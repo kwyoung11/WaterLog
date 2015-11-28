@@ -1,4 +1,4 @@
-enviroHubApp.factory('SessionService', function ($http, PubSubService){
+enviroHubApp.factory('SessionService', function ($http, PubSubService) {
   var loggedIn = {};
 
   var user = undefined;
@@ -40,7 +40,11 @@ enviroHubApp.factory('SessionService', function ($http, PubSubService){
     });
   }
 
+<<<<<<< Updated upstream
   loggedIn.registerUser = function (email, pass){
+=======
+  loggedIn.registerUser = function (email, pass) {
+>>>>>>> Stashed changes
     var x = $http({
       method: 'POST',
       url: '/users',
@@ -54,5 +58,34 @@ enviroHubApp.factory('SessionService', function ($http, PubSubService){
     })
     console.log(x);
   }
+
+  loggedIn.resetPassword = function (email) {
+    var x = $http({
+      method: 'POST',
+      url: '/password_resets',
+      data: {
+        email: email,
+      }
+    });
+    x.success(function(response) {
+      console.log("Password Reset Successful", response);
+    })
+    console.log(x);
+  };
+
+  loggedIn.resetPasswordUpdate = function (token) {
+    var x = $http({
+      method: 'POST',
+      url: '/password_resets/',
+      data: {
+        email: email,
+      }
+    });
+    x.success(function(response) {
+      console.log("Password Reset Successful", response);
+    })
+    console.log(x);
+  };
+
   return loggedIn;
 });
