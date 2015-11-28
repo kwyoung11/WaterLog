@@ -197,7 +197,7 @@ Data.prototype.sanitize = function(params,cb) {
      }
 	 
 	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
-	 // then add it to the sanitized data hash
+	 // then add it to the sanitized data hash - these will be combined into a data keys & values array
 	 if(typeof ei_params[attr] != 'undefined'){
 		 sanitized_data[attr] = params[attr];
 	 }
@@ -213,9 +213,9 @@ Data.prototype.sanitize = function(params,cb) {
 				console.log(err);
 				cb(err, null);
 			}else{
-				sanitized_data['created_at'] = moment(date).format();
+				sanitized_data['created_at'] = moment(date.toLocaleString(), "YYYY-MM-DD HH:mm:ss");
 				if(typeof sanitized_data['collected_at']=='undefined'){
-					sanitized_data['collected_at'] = moment(date).format();
+					sanitized_data['collected_at'] = moment(date.toLocaleString(), "YYYY-MM-DD HH:mm:ss");
 				}
 				cb(null, sanitized_data);
 			}
