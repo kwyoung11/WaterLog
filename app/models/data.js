@@ -213,9 +213,10 @@ Data.prototype.sanitize = function(params,cb) {
 				console.log(err);
 				cb(err, null);
 			}else{
-				sanitized_data['created_at'] = moment(date.toLocaleString(), "YYYY-MM-DD HH:mm:ss");
+				console.log(date.toLocaleString());
+				sanitized_data['created_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 				if(typeof sanitized_data['collected_at']=='undefined'){
-					sanitized_data['collected_at'] = moment(date.toLocaleString(), "YYYY-MM-DD HH:mm:ss");
+					sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 				}
 				cb(null, sanitized_data);
 			}
@@ -225,18 +226,18 @@ Data.prototype.sanitize = function(params,cb) {
 
 Data.prototype.checkTimeStamp = function(t, callback) {  
     var self = this;
-
         	db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
             [self.params.data_type,self.params.device_id], function (err, result) {
-            //console.log(t);
             if(result.rows[0] == null){
             	callback(1);
             } 
 			//else if(self.params){ //need to check if Arduino device }
             else{
+				console.log(t);
                 var x = result.rows.length;
                 var most_recent = result.rows[x-1].created_at; //gets last entry
                 var time2 = new Date(most_recent);
+				console.log(time2);
                 if((t.getTime() - time2.getTime()) < 15*60*1000){
                 	console.log("Error: Cannot insert because of timestamp overlap\n");
                 	callback(0);
