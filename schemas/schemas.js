@@ -44,7 +44,8 @@ schemas = {
 			water:{
 				pH: null,
 				temperature: null,
-				turbidity: null
+				turbidity: null,
+				water_flow: null
 			},
 			air:{
 				carbon_monoxide: null,
