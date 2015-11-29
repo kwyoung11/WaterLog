@@ -16,12 +16,34 @@
 	{{/devices}}
 </select>
 
-<div style="display:none">
-{{#devices}}
-	<div id="device{{id}}">
-		<div>{{keys}}</div>
+<div>
+	{{#devices}}
+	<div class="device" id="device{{id}}" style="display: none;">
+		<label>Device registered for data type {{type_of_data}}</label>
+		<table>
+			<tr>
+				<td class="keys">
+					<div>
+						{{#keys}}
+						<div>
+							<label>{{.}}</label><input type="text" name="{{.}}"></input>
+						</div>
+						{{/keys}}
+					</div>
+				</td>
+				<td class="units">
+					<div>
+						{{#units}}
+						<div>
+							<label>{{.}}</label>
+						</div>
+						{{/units}}
+					</div>
+				</td>
+			</tr>
+		</table>
 	</div>
-{{/devices}}
+	{{/devices}}
 </div>
 
 <br>
@@ -41,7 +63,7 @@
 <option value="soil">Soil</option>
 </select>
 
-
+<!--
 <div class="data-type-fields" id="water-fields">
 <h2> Water Quality </h2>
 <ul>
@@ -79,6 +101,8 @@
   </ul>
 </div>
 
+-->
+
 <input type="submit" value="Submit" id="submit-form">
 </form>
 
@@ -89,6 +113,7 @@ var latitude = document.getElementById("latitude-input");
 var longitude = document.getElementById("longitude-input");
 
 var selected_id = $('#device_id_selector').val();
+showDevice(selected_id);
 
 // disable all input fields that are dependent on data type
 $('.data-type-fields input').prop('disabled', true);
@@ -107,6 +132,28 @@ function getLocation() {
     }
 }
 
+/*
+var str = '{{devices}}';
+
+var dataString = 
+	'[{{#devices}}{\
+	 "id": {{id}}, \
+	 "keys": [{{keys}}], \
+	 "units": [{{units}}] \
+	 }, {{/devices}} ]';
+console.log(dataString);
+console.log(str);
+var data = jQuery.parseJSON(str);
+console.log(data);
+*/
+
+function showDevice(id){
+	$(".device").hide();
+	$(".device input").prop('disabled', true);
+	$("#device" + id).show();
+	$("#device" + id + " input").prop('disabled', false);
+}
+
 function showPosition(position) {
     latitude.value = position.coords.latitude;
 	longitude.value = position.coords.longitude;
@@ -114,6 +161,7 @@ function showPosition(position) {
 
 $("#device_id_selector").change(function(){
 	selected_id = $('#device_id_selector').val();
+	showDevice(selected_id);
 });
 
 $("#data-type-select").change(function() {
