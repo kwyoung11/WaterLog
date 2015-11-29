@@ -44,7 +44,7 @@ Device.prototype.save = function(callback) {
     this.data = this.sanitize(this.data);
         db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode,type_of_data, keys, units) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *', self.getSqlPostValues(), function (err, result) {
             if (err) {
-                console.log("HERE\n\n\n");
+                //console.log("HERE\n\n\n");
                 console.log(err);
                 return callback(err);
             }
@@ -76,13 +76,7 @@ Device.prototype.getSqlPostValues =  function(){
     vals[3] = this.data['longitude'];
     vals[4] = this.data['mode'];
 
-    if(this.data['mode']=="Manual"){
-        vals[5] = ''
-        vals[6] = '{}'
-        vals[7] = '{}'
-    }
-    else{
-        vals[5] = this.data['type_of_data'];
+    vals[5] = this.data['type_of_data'];
     
         var data_param_size = this.data['keys'].length;
         console.log("param size is "+data_param_size);
@@ -107,7 +101,6 @@ Device.prototype.getSqlPostValues =  function(){
     
         vals[6] = data_param_keys;
         vals[7] = data_param_units;
-    }
     console.log("POST VALUES");
     console.log(vals);
     return vals;
@@ -132,7 +125,7 @@ Device.prototype.sanitize = function(data) {
     //sanitized_data['keys']=
     var sanitize_keys_array=[];
     var sanitize_units_array=[];
-    if(data["mode"]=="Manual"){
+    /*if(data["mode"]=="Manual"){
         console.log("ITS A MOBILE DEVICE\n");
         sanitized_data["name"] = data["name"];
         sanitized_data["latitude"] = data["latitude"];
@@ -140,7 +133,7 @@ Device.prototype.sanitize = function(data) {
         sanitized_data["mode"] = data["mode"];
         sanitized_data["user_id"] = data["user_id"];
 
-    }else{
+    }else{*/
         //sanitized_data["id"] = data["id"];
         for (var attr in data) {
             if (schema[attr]==null) {
@@ -169,7 +162,7 @@ Device.prototype.sanitize = function(data) {
             }
         
         }
-    }
+    //}
     //console.log("SANITIZED DATA");
     //console.log(sanitized_data);
     return sanitized_data;

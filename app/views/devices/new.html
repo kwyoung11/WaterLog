@@ -1,14 +1,27 @@
 <h1> Register a new device </h1>
 <script>
 function validateForm() { //cannot proceed without entering a nickname
-    var x = document.forms["myForm"]["devid"].value;
+    var x = document.forms["myForm"]["name"].value;
     if (x == null || x == "") {
-        alert("Must enter valid information");
+        alert("Must enter valid name");
         return false;
     }
+    var keys= document.forms["myForm"]["keys"];
+    var yy = document.forms["myForm"]["keys"].length;
+    alert(yy);
+    var count = 0;
+    for(var z=0; z< yy; z++){
+    	keys[z]!= null && 
+    }
+    if(yy==0){
+    	alert("there are no keys\n");
+    }
+	//var fav_count = document.getElementByName('keys');
+	//alert(fav_count);
+	return false;
 } //myForm needs to return to the my devices page which it doesn't right now
 </script>
-<form action="/devices" onsubmit="return validateForm()" method="POST"> 
+<form name = "myForm" action="/devices" onsubmit="return validateForm()" method="POST"> 
 		<ul>
 			<li> Name: <input type="text" name="name"></input></li>
 		</ul>
@@ -24,7 +37,6 @@ function validateForm() { //cannot proceed without entering a nickname
   		<option value="Manual">Mobile</option>
 		</select>
 		</li>
-		<h2>If Arduino device: </h2>
 		<ul>
 			<li> Data Measurement 1: <input type="text" name="keys"></input></li></br>
 			 Units: <input type="text" name="units"></input>
