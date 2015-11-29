@@ -125,8 +125,6 @@ Data.prototype.getSqlPostValues =  function(){
 	
 	vals[4] = data_param_keys;
 	vals[5] = data_param_values;
-	console.log("GET SQL POST VALUES");
-	console.log(vals);
 	return vals;
 }
 
@@ -214,7 +212,6 @@ Data.prototype.sanitize = function(params,cb) {
 				console.log(err);
 				cb(err, null);
 			}else{
-				console.log(date.toLocaleString());
 				sanitized_data['created_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 				if(typeof sanitized_data['collected_at']=='undefined'){
 					sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
@@ -234,11 +231,9 @@ Data.prototype.checkTimeStamp = function(t, callback) {
             } 
 			//else if(self.params){ //need to check if Arduino device }
             else{
-				console.log(t);
                 var x = result.rows.length;
                 var most_recent = result.rows[x-1].created_at; //gets last entry
                 var time2 = new Date(most_recent);
-				console.log(time2);
                 if((t.getTime() - time2.getTime()) < 15*60*1000){
                 	console.log("Error: Cannot insert because of timestamp overlap\n");
                 	callback(0);
