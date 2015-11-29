@@ -71,7 +71,7 @@ Device.prototype.update = function(callback) {
 Device.prototype.getSqlPostValues =  function(){
     
     var vals = [];
-    vals[0] = this.data['id'];
+    vals[0] = this.data['user_id'];
     vals[1] = this.data['name'];
     vals[2] = this.data['latitude'];
     vals[3] = this.data['longitude'];

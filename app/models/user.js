@@ -17,8 +17,8 @@ var User = function (data) {
     this.data.password_reset_token = null;
     this.data.password_reset_sent_at = null;
 	
-	
-	var pair = User.generateKeyPair(2048);
+	// change this to support encryption - 512
+	var pair = User.generateKeyPair(128);
 	this.data.public_key = pair.public;
 	this.data.private_key = pair.private;
 	var pair2 = User.generateKeyPair(128);

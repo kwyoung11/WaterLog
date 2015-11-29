@@ -1,10 +1,10 @@
+<h1>File Upload for Device {{id}}</h1>
+<h2>each file must be a text document and must be in format {{keys}},time_stamp|[next_entry]</h2>
 <input type="file" id="fileinput" />
 <script type="text/javascript">
   function readSingleFile(evt) {
-    //console.log({{keys}});
     //Retrieve the first (and only!) File from the FileList object
     var f = evt.target.files[0]; 
-
     if (!f) {
         alert("Failed to load file");
     } else if (!f.type.match('text/plain')) {
@@ -13,36 +13,39 @@
       var r = new FileReader();
       r.onload = function(e) { 
         var contents = e.target.result;
-        alert( "Got the file.n" 
-        +"name: " + f.name + "\n"
-        +"type: " + f.type + "\n"
-        +"size: " + f.size + " bytes\n"
-        + "contents: " + contents
-        );
+        var str='{{keys}}';
+        var arr = str.split(','); 
+        var num_params= {{keys.length}};
         var data_sets=contents.split('|');
-        for(var i = 0; i<data_sets.length; i++){
-            var data = data_sets[i].split(',');
-            var temp = data[0];
-            var pH = data[1];
-            var turb = data[2];
-            var time_stamp = data[3];
-            alert("HERE");
-            $.ajax({
-              url:"/data/newData",
-              type:"POST",
-              data: {device_id: {{id}},
-                    collected_at : time_stamp,
-                    data_type: {{type_of_data}}
-                  },
-              dataType:"json"
-            });
+        if(data_sets.length ==1){ //there was no | anywhere so the array is of size 1 since nothing was split
+          alert("File not in the correct format\n");
+          return;
         }
+          for(var i = 0; i<data_sets.length; i++){
+            var data = data_sets[i].split(',');
+            if(data.length != 1 && data.length != num_params+1){
+              alert("Entry number " +(i+1)+" is not in the correct format\n");
+              continue;
+            }
+            var content={};
+            for(var v=0;v<arr.length;v++){
+              content[arr[v]]=data[v];
+            }
+            content['collected_at']=data[v];
+            content['device_id']={{id}};
+            content['data_type'] = '{{type_of_data}}';
+            $.ajax({
+            url: '/data/newData',
+            type: 'POST',
+            dataType: 'json',
+            contentType:'application/json',
+            data: content
+            });
+          }
+        
       }
       r.readAsText(f);
     }
-      
-    
   }
-
   document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
   </script>

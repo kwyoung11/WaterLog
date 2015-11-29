@@ -6,25 +6,21 @@ var response_handler = require('./response_handler');
 var util = require('./util');
 var qs = require('querystring');
 var application_controller = require('../app/controllers/application_controller');
-var config = require('../config/config.js')
+var config = require('../config/config.json')
 
 this.dispatch = function(req, res) {
+  // allow cross-origin requests
+  // res.header("Access-Control-Allow-Origin", "*");
+  // res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
-  // allow cross-origin requests  
-  if(typeof res.header != 'undefined' && res.header != null){
-	  res.header("Access-Control-Allow-Origin", "*");
-	  res.header("Access-Control-Allow-Headers", "X-Requested-With");  
-  }
-  
-  
   // two ways to specify format: in request header, or appended to URL (e.g., .json)
   var format = req.headers.accept.indexOf('application/json') >= 0 ? 'json' : 'html';
-  if (typeof arr != 'undefined' && arr[arr.length-1] == "json"){
-    format = 'json';
-  }
+  console.log(req.headers.accept.indexOf('application/json'));
+  console.log(req.headers);
+  format = req.url.split(".")[1] == 'json' ? 'json' : 'html';
   // set up response object
   responseHandler = new response_handler(res, format);
-  console.log(responseHandler.format);
+
   var requestedUrl = url.parse(req.url, true);
   var parts, action, controller_name, format, theURL;
   var parameters = {};
@@ -198,7 +194,6 @@ this.dispatch = function(req, res) {
           } else if (requestedUrl.pathname.match(/\/devices/) && req.method == "POST") {
             action = "create";
             parameters['id'] = parts[2];
-            console.log(parameters);
             util.extractPostData(req, function(post) {
               util.merge(parameters, post);
               callController(controller_name, action, parameters);
@@ -223,19 +218,19 @@ this.dispatch = function(req, res) {
         if (requestedUrl.pathname.match("/data/newData") && req.method == "POST") {
         action = "new";
         util.extractPostData(req, function(post) {
-              //util.merge(parameters, requestedUrl.query);
-              util.merge(parameters,post);
-              callController(controller_name, action, parameters); 
-              });    
+              util.merge(parameters, post);
+              callController(controller_name, action, parameters);
+              });
+          /*var query = requestedUrl.query;
+          for (var key in query) {
+            if (query[key]) {
+              parameters[key] = query[key];
+            }
+          }
+          callController(controller_name, action, parameters);
+          */
         }
         break;
-
-      case "home":
-        if (requestedUrl.pathname.match("/home/system_info") && req.method == "GET") {
-          action = "info"; 
-          callController(controller_name, action, parameters);
-        }
-      break;
 
       case "login":
        if (req.method == "GET") {
@@ -261,12 +256,11 @@ this.dispatch = function(req, res) {
         break;
 
       case "mobile":
-	  
-        if (requestedUrl.pathname.match(/\/mobile\/input/) && req.method == "GET") {
+        if (requestedUrl.pathname.match(/\/mobile\/([0-9]+)\/input/) && req.method == "GET") {
             action = "input";
+            parameters['id']=parts[2];
             callController(controller_name, action, parameters);
-          }else if (requestedUrl.pathname.match(/\/mobile\/create/) && req.method == "POST") {
-			  // (/\/mobile\/([0-9]+)\/[(a-z)]+\/create/)
+          }else if (requestedUrl.pathname.match(/\/mobile\/([0-9]+)\/[(a-z)]+\/create/) && req.method == "POST") {
             action = "create";
             parameters['device_id'] = parts[2];
             parameters['data_type'] = parts[3];
@@ -322,8 +316,6 @@ this.dispatch = function(req, res) {
     // route to appropriate controller method, otherwise load an asset file
     if (controller) {
     controller = new controller(responseHandler, req, function() {
-      console.log(controller.before_filter);
-      console.log(controller['before_filter']);
       if (typeof controller.before_filter == 'function') {
         controller.before_filter(action, parameters);
       }

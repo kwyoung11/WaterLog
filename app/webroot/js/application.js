@@ -88,12 +88,3 @@
         $scope.message = 'Contact us! JK. This is just a demo.';
     });
 
-    enviroHubApp.controller('uploadBulkController', function($scope) {
-        $scope.pageClass = 'page-bulkupload';
-        $scope.message = 'Bulk Upload Page';
-    });
-
-    enviroHubApp.controller('uploadSingleController', function($scope) {
-        $scope.pageClass = 'page-singleUpload';
-        $scope.message = 'Single Upload Page';
-    });

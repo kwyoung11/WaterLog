@@ -1,9 +1,12 @@
 var schemas = require("../../schemas/schemas.js");
 var crypto = require('crypto');
 var bcrypt = require('bcrypt');
+var moment = require('moment');
 var Application = require('./application');
 var db = require('../../lib/db');
 var util = require('../../lib/util');
+var dataRanges = require("../../schemas/dataRanges.js");
+
 
 
 // constructor
@@ -54,7 +57,7 @@ Data.prototype.postToDatabase = function(cb) {
 								cb(err);
 							},
 							function(){
-								db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4,$5,$6)', self.getSqlPostValues(), function (err, result) {
+								db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4, $5, $6)', self.getSqlPostValues(), function (err, result) {
 									if (err) {
 										console.log(err);
 										return cb(err);  
@@ -195,15 +198,11 @@ Data.prototype.sanitize = function(params,cb) {
      }
 	 
 	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
-	 // then add it to the ei params
+	 // then add it to the sanitized data hash - these will be combined into a data keys & values array
 	 if(typeof ei_params[attr] != 'undefined'){
-		 ei_data[attr] = params[attr];
+		 sanitized_data[attr] = params[attr];
 	 }
     }
-	;
-	if(Object.keys(ei_data).length > 0){
-		sanitized_data['data'] = ei_data;
-	}
 	
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
@@ -215,12 +214,10 @@ Data.prototype.sanitize = function(params,cb) {
 				console.log(err);
 				cb(err, null);
 			}else{
-				sanitized_data['created_at'] = date.toLocaleString();
+				sanitized_data['created_at'] = moment(date.toLocaleString(), "YYYY-MM-DD HH:mm:ss");
 				if(typeof sanitized_data['collected_at']=='undefined'){
-					sanitized_data['collected_at'] = date.toLocaleString();
+					sanitized_data['collected_at'] = moment(date.toLocaleString(), "YYYY-MM-DD HH:mm:ss");
 				}
-				console.log(sanitized_data);
-				//cb(sanitized_data);
 				cb(null, sanitized_data);
 			}
 		});
@@ -289,29 +286,87 @@ Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 			}
 		}
 		
-		if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
-			cbErr("Error: No Environmental Indicator data values have been provided.");
-		}
-		else if((typeof this.params['latitude'] == 'undefined' || typeof this.params['longitude'] == 'undefined')
+		if((typeof this.params['latitude'] == 'undefined' || typeof this.params['longitude'] == 'undefined')
 				&& (typeof device['latitude'] == 'undefined' || typeof device['longitude'] == 'undefined' )){
 			cbErr('Error: No locational data has been provided');
-			
 		}
 		else{
-			cbSuccess();
+			this.validateDataTypesAndRanges(cbErr, cbSuccess);
 		}
 	}
+},
+
+Data.prototype.constructDataArrayForPost = function(cbErr, cbSuccess){
+	var ei_data = {};
+	var ei_params = this.get_ei_params(this.params);
+	
+    for (var attr in this.params) {
+       
+	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
+	 // then add it to the sanitized data hash and remove it from params
+	 if(typeof ei_params[attr] != 'undefined'){
+		 ei_data[attr] = this.params[attr];
+		 delete this.params[attr];
+	 }
+    }
+	
+	if(Object.keys(ei_data).length > 0){
+		this.params['data'] = ei_data;
+	}
+	
+	if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
+		cbErr("Error: No Environmental Indicator data values have been provided.");
+	}
+	else{
+		cbSuccess();
+	}
+	
+}
+
+Data.prototype.validateDataTypesAndRanges = function(cbErr, cbSuccess){
+	var data_type = this.params['data_type'];
+	var errEncountered = false;
+	
+	for(var param in this.params){
+		var value = this.params[param];
+		if(typeof dataRanges[param] != 'undefined'){
+			var typeWeWant = typeof dataRanges[param]['type'];
+			if(typeWeWant == 'number'){
+				value = Number(value);
+			}
+			console.log(value + ' ' + typeof value);
+			if(typeof value != typeof dataRanges[param]['type'] || (typeof value == 'number' && isNaN(value))){
+				cbErr('Error: Parameter ' + param + ' must be of type ' + typeof dataRanges[param]['type']);
+				errEncountered = true;
+				break;
+			}
+		}
+		else if(typeof dataRanges[data_type][param] != 'undefined'){
+			var typeWeWant = typeof dataRanges[data_type][param]['type'];
+			if(typeWeWant == 'number'){
+				value = Number(value);
+			}
+			if(typeof value != typeof dataRanges[data_type][param]['type'] || (typeof value == 'number' && isNaN(value))){
+				cbErr('Error: Parameter ' + param + ' must be of type ' + typeof dataRanges[data_type][param]['type']);
+				errEncountered = true;
+				break;
+			}
+		}
+	}
+	
+	if(errEncountered == false){
+		this.constructDataArrayForPost(cbErr, cbSuccess);
+	}
+	
 },
 
 Data.prototype.addCustomfields=function(){
     curr_schema=schema['data_params'][this.params.data_type];
     for (var attr in this.params){
-        if(attr!="device_id" && attr!="data_type"){
+        if(attr!="device_id" && attr!="data_type" && attr !="collected_at"){
             if(typeof curr_schema[attr] == 'undefined'){
                 console.log("ATTRIBUTE "+attr+" NOT DEFINED\n");
                 curr_schema[attr] = this.params[attr];
-                console.log(typeof curr_schema[attr]);
-                console.log(schema);
             }
         }
     }

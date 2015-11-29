@@ -1,21 +1,49 @@
+
+{{#notice}}
+  <p> {{{notice}}} </p>
+{{/notice}}
+<body>
+
+<form action="/mobile/create" method="POST">
 <h1> Please insert data below</h1>
 
+<label> Device: </label>
+<select name="device_id"> 
+{{#devices}}
+  {{#.}}
+<option value="{{id}}">{{id}}</option>
+  {{/.}}
+{{/devices}}
+</select>
 
-<form action="/mobile/{{id}}/water/create" method="POST">
+<br>
+<label> Location (lat, lon): </label>
+<input type="text" name="location" id="location-input"></input>
+<button id="get-lat-lon" onclick="getLocation()" > Get Current Lat, Lon </button>
+
+<br> 
+<label> Data Type: </label>
+<select name="data_type" id="data-type-select">
+<option value="water">Water</option>
+<option value="air">Air</option>
+<option value="soil">Soil</option>
+</select>
+
+
+<div class="data-type-fields" id="water-fields">
 <h2> Water Quality </h2>
 <ul>
     <li> Temperature: <input type="text" name="temperature" id="water"></input> &#8457;</li>
     <li> pH: <input type="text" name="pH" id="water"></input></li>
+    <li> Waterflow: <input type="text" name="water_flow" id="water"></input></li>
     <li> Turbidity: <input type="text" name="turbidity" id="water"></input></li>
     <li> Custom: <input type="text" name="custom_key"></input> 
     </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li> 
    </ul> 
   </ul>
+</div>
 
-  <input type="submit" value="Submit Data">
-</form>
-
-<form action="/mobile/{{id}}/soil/create" method="POST">
+<div class="data-type-fields" id="soil-fields">
 <h2> Soil Quality </h2>
    <ul>
     <li> pH: <input type="text" name="pH" id="soil"></input></li>
@@ -25,10 +53,9 @@
     </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li> 
    </ul> 
   </ul>
-<input type="submit" value="Submit Data">
-</form>
+</div>
 
-<form action="/mobile/{{id}}/air/create" method="POST">
+<div class="data-type-fields" id="air-fields">
 <h2> Air Quality </h2>
    <ul>
     <li> Carbon Monoxide: <input type="text" name="carbon_monoxide" id="air"></input> ppm</li>
@@ -38,5 +65,57 @@
     <li> Custom: <input type="text" name="custom_key"></input> 
     </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li>
   </ul>
- <input type="submit" value="Submit Data">
+</div>
+
+<input type="submit" value="Submit" id="submit-form">
 </form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script> 
+
+var x = document.getElementById("location-input");
+// disable all input fields that are dependent on data type
+$('.data-type-fields :input').prop('disabled', true);
+$('.data-type-fields').hide();
+var selected_data_type = $('#data-type-select').val();
+// enable input fields for selected data type
+$("#" + selected_data_type.toLowerCase() + "-fields").show();
+$("#" + selected_data_type.toLowerCase() + "-fields :input").prop('disabled', false);
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        x.value = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    x.value = position.coords.latitude + ", " + position.coords.longitude; 
+}
+
+$("#data-type-select").change(function() {
+  $('.data-type-fields input').prop('disabled', true);
+  $('.data-type-fields').hide();
+  var selected_data_type = $('#data-type-select').val();
+  $("#" + selected_data_type.toLowerCase() + "-fields").show();
+  $("#" + selected_data_type.toLowerCase() + "-fields :input").prop('disabled', false);
+});
+
+$("#submit-form").click(function() {
+  this.preventDefault();
+  var arr = ["air", "water", "soil"];
+
+  var selected_data_type = $('#data-type-select').val();
+  var index = array.indexOf(selected_data_type);
+  if (index > -1) {
+    array.splice(index, 1);
+  }
+  //$("#" + selected_data_type + "-fields")
+  this.submit();
+});
+
+
+</script>
+
+</body>
+

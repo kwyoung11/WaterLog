@@ -19,6 +19,8 @@ data_controller.prototype.new = function(params, callback) {
 		var self = this;
 		var data_model = new Data(params);
 		
+		data_model.addCustomfields();
+		
 		data_model.postToDatabase(function(result){
 			var myJson = JSON.stringify(result);
 			self.response_handler.renderJSON(myJson, myJson);
