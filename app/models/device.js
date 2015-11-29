@@ -42,14 +42,15 @@ Device.findByUser = function(user_id, cb) {
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
+    //if(content['user_id']!=undefined){
         db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode,type_of_data, keys, units) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *', self.getSqlPostValues(), function (err, result) {
             if (err) {
-                //console.log("HERE\n\n\n");
+                console.log("HERE\n\n\n");
                 console.log(err);
                 return callback(err);
             }
                 return callback(null, result.rows[0]);
-        });                    
+        });                
 }
 
 Device.prototype.update = function(callback) {  
@@ -60,8 +61,8 @@ Device.prototype.update = function(callback) {
                 console.log(err);
                 return callback(err);
             }
-                console.log("UPDATED CORRECTLY \n");
-                console.log(result.rows[0]);
+                //console.log("UPDATED CORRECTLY \n");
+                //console.log(result.rows[0]);
                 return callback(null, result.rows[0]);
         });             
             
@@ -77,32 +78,36 @@ Device.prototype.getSqlPostValues =  function(){
     vals[4] = this.data['mode'];
 
     vals[5] = this.data['type_of_data'];
-    
-        var data_param_size = this.data['keys'].length;
-        console.log("param size is "+data_param_size);
-        var data_param_keys = '{';
-        var data_param_units = '{';
-        var count = 1;
-        var ind=0
-        while(ind < data_param_size){
-            data_param_keys += this.data['keys'][ind];
-            data_param_units += this.data['units'][ind];
+        if(this.data['keys']!=null){
+          
+            var data_param_size = this.data['keys'].length;
+            console.log("param size is "+data_param_size);
+            var data_param_keys = '{';
+            var data_param_units = '{';
+            var count = 1;
+            var ind=0
+            while(ind < data_param_size){
+                data_param_keys += this.data['keys'][ind];
+                data_param_units += this.data['units'][ind];
         
-            if(count < data_param_size){
-                data_param_keys += ',';
-                data_param_units += ',';
-                count++;
+                if(count < data_param_size){
+                    data_param_keys += ',';
+                    data_param_units += ',';
+                    count++;
+                }
+                ind++;
             }
-            ind++;
-        }
     
-        data_param_keys += '}';
-        data_param_units += '}';
-    
-        vals[6] = data_param_keys;
-        vals[7] = data_param_units;
-    console.log("POST VALUES");
-    console.log(vals);
+            data_param_keys += '}';
+            data_param_units += '}';
+            vals[6] = data_param_keys;
+            vals[7] = data_param_units;
+        }/*else{
+            vals[6]='{}';
+            vals[7]='{}';
+        }*/
+    //console.log("POST VALUES");
+    //console.log(vals);
     return vals;
 }
 
@@ -125,46 +130,41 @@ Device.prototype.sanitize = function(data) {
     //sanitized_data['keys']=
     var sanitize_keys_array=[];
     var sanitize_units_array=[];
-    /*if(data["mode"]=="Manual"){
-        console.log("ITS A MOBILE DEVICE\n");
-        sanitized_data["name"] = data["name"];
-        sanitized_data["latitude"] = data["latitude"];
-        sanitized_data["longitude"] = data["longitude"];
-        sanitized_data["mode"] = data["mode"];
-        sanitized_data["user_id"] = data["user_id"];
-
-    }else{*/
-        //sanitized_data["id"] = data["id"];
         for (var attr in data) {
             if (schema[attr]==null) {
-            //console.log("FOUND SCHEMA");
                 sanitized_data[attr] = data[attr];
             }else if(attr.match("keys")){ 
                 var ind = 0;
+                var count=0;
                 while(ind < data[attr].length){
-                    //console.log(data[attr][ind]);
                     if(data[attr][ind]!=""){
+                        count++;
                         sanitize_keys_array.push(data[attr][ind]);
                     }
                     ind++;
+                }
+                if(sanitize_keys_array.length==0){
+                    console.log("No measurements specified");
+                    return {};
                 }
                 sanitized_data[attr] = sanitize_keys_array;
             }else if (attr.match("units")){
                 var ind = 0;
                 while(ind < data[attr].length){
-                //console.log(data[attr][ind]);
                     if(data[attr][ind]!=""){
                         sanitize_units_array.push(data[attr][ind]);
                     }
                     ind++;
                 }
-                sanitized_data[attr] = sanitize_units_array;
+                if(sanitize_units_array.length != sanitize_keys_array.length){
+                    console.log("number of keys not equal to number of values");
+                    return {};
+                }else{
+                    sanitized_data[attr] = sanitize_units_array;
+                }
             }
         
         }
-    //}
-    //console.log("SANITIZED DATA");
-    //console.log(sanitized_data);
     return sanitized_data;
 }
 

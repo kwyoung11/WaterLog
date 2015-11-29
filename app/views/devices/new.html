@@ -6,19 +6,6 @@ function validateForm() { //cannot proceed without entering a nickname
         alert("Must enter valid name");
         return false;
     }
-    var keys= document.forms["myForm"]["keys"];
-    var yy = document.forms["myForm"]["keys"].length;
-    alert(yy);
-    var count = 0;
-    for(var z=0; z< yy; z++){
-    	keys[z]!= null && 
-    }
-    if(yy==0){
-    	alert("there are no keys\n");
-    }
-	//var fav_count = document.getElementByName('keys');
-	//alert(fav_count);
-	return false;
 } //myForm needs to return to the my devices page which it doesn't right now
 </script>
 <form name = "myForm" action="/devices" onsubmit="return validateForm()" method="POST"> 

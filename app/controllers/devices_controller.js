@@ -43,12 +43,18 @@ devices_controller.prototype = {
 
 			Device.findByUser(self.current_user.data.id, function(err, devices){
 				var resource_found = false;
-				for (device in devices) {
-					if (device.id == params['id']) {
+				console.log(devices);
+				console.log(devices[0]['id']);
+
+				for (var ind in devices) {
+					//console.log("device.id "+devices[ind]['id']+" params['id'] " +params['id']+ "\n");
+					if (devices[ind]['id'] == params['id']) {
 						resource_found = true;
 					}
 				}
+				//console.log("RESOURCE FOUND IS "+resource_found+"\n");
 				if (!resource_found) {
+					//console.log("IN BEFORE FILTER\n");
 					self.response_handler.serverError(404, "Resource not found");
 				}
 			});
