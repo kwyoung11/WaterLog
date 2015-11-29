@@ -34,7 +34,7 @@ mobile_controller.prototype = {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// get devices for current user
 		if(this.current_user != null && this.current_user.data != null && this.current_user.data.id != null){
-			db.query('SELECT id FROM devices WHERE user_id = $1 && mode = $2', [this.current_user.data.id, 'mobile'], function(err, result){
+			db.query('SELECT id FROM devices WHERE user_id = $1 AND mode = $2', [this.current_user.data.id, 'mobile'], function(err, result){
 				var devicesArr = [];
 				for(var row in result.rows){
 					var rowId = result.rows[row].id;
