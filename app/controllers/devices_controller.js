@@ -161,6 +161,8 @@ devices_controller.prototype = {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		//var device = new Device(params);
 		Device.findById(params['id'], function(err, device_data) {
+			console.log("PASSING DEVICE_DATA FOR BULK UPLOAD");
+			console.log(device_data);
 			view.renderView('devices/bulk_upload', device_data, function(content) {
 		  		callback(content);
 			});
