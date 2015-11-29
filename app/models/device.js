@@ -4,9 +4,7 @@ var db = require('../../lib/db');
 
 var Device = function (data) {
     Application.call(this,data);
-    console.log("data is " + JSON.stringify(data));
     this.data = this.sanitize(data);
-    console.log("sanitized data is " + JSON.stringify(this.data));
     this.paramOrder = ['id','user_id', 'latitude', 'longitude','name','mode'];
 }
 

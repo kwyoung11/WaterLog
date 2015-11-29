@@ -19,7 +19,7 @@
 <br>
 <label> Location (lat, lon): </label>
 <input type="text" name="location" id="location-input"></input>
-<button id="get-lat-lon" onclick="getLocation()" > Get Current Lat, Lon </button>
+<button type="button" id="get-lat-lon" onclick="getLocation()" > Get Current Lat, Lon </button>
 
 <br> 
 <label> Data Type: </label>
@@ -69,12 +69,13 @@
 
 <input type="submit" value="Submit" id="submit-form">
 </form>
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script> 
 
 var x = document.getElementById("location-input");
 // disable all input fields that are dependent on data type
-$('.data-type-fields :input').prop('disabled', true);
+$('.data-type-fields input').prop('disabled', true);
 $('.data-type-fields').hide();
 var selected_data_type = $('#data-type-select').val();
 // enable input fields for selected data type

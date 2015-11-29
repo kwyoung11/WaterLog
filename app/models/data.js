@@ -34,19 +34,19 @@ Data.prototype.postToDatabase = function(cb) {
 		this.params.device_id,
 		function(err){
 			console.log(err);
-			cb(err);
+			cb(err, null);
 		},
 		function(result){
 			self.decrypt(
 				function(err){
 					console.log(err);
-					cb(err);
+					cb(err, null);
 				}, 
 				function(){
 					p=self.params
 					self.sanitize(p,function(err, data){
 						if(err){
-							cb(err);
+							cb(err, null);
 						}else{
 						self.params=data;
 						var device = result[0];
@@ -54,22 +54,22 @@ Data.prototype.postToDatabase = function(cb) {
 							device,
 							function(err){
 								console.log(err);
-								cb(err);
+								cb(err, null);
 							},
 							function(){
 								db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4, $5, $6)', self.getSqlPostValues(), function (err, result) {
 									if (err) {
 										console.log(err);
-										return cb(err);  
+										return cb(err, null);  
 									}
 									else{
 										if(self.encryptedData == true){	
 											console.log('Successful post');
-											cb('Post successful');
+											cb(null, 'Post successful');
 										}
 										else{
 											console.log('Successful unencrypted post');
-											cb('Unencrypted post successful');
+											cb(null, 'Unencrypted post successful');
 										}
 										
 										// Update device location if necessary
@@ -226,7 +226,6 @@ Data.prototype.sanitize = function(params,cb) {
 Data.prototype.checkTimeStamp = function(t, callback) {  
     var self = this;
 
-        	console.log("IN TIMESTAMP\n");
         	db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
             [self.params.data_type,self.params.device_id], function (err, result) {
             //console.log(t);
@@ -333,7 +332,6 @@ Data.prototype.validateDataTypesAndRanges = function(cbErr, cbSuccess){
 			if(typeWeWant == 'number'){
 				value = Number(value);
 			}
-			console.log(value + ' ' + typeof value);
 			if(typeof value != typeof dataRanges[param]['type'] || (typeof value == 'number' && isNaN(value))){
 				cbErr('Error: Parameter ' + param + ' must be of type ' + typeof dataRanges[param]['type']);
 				errEncountered = true;
