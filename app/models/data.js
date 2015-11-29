@@ -34,19 +34,19 @@ Data.prototype.postToDatabase = function(cb) {
 		this.params.device_id,
 		function(err){
 			console.log(err);
-			cb(err);
+			cb(err, null);
 		},
 		function(result){
 			self.decrypt(
 				function(err){
 					console.log(err);
-					cb(err);
+					cb(err, null);
 				}, 
 				function(){
 					p=self.params
 					self.sanitize(p,function(err, data){
 						if(err){
-							cb(err);
+							cb(err, null);
 						}else{
 						self.params=data;
 						var device = result[0];
@@ -54,22 +54,22 @@ Data.prototype.postToDatabase = function(cb) {
 							device,
 							function(err){
 								console.log(err);
-								cb(err);
+								cb(err, null);
 							},
 							function(){
 								db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4, $5, $6)', self.getSqlPostValues(), function (err, result) {
 									if (err) {
 										console.log(err);
-										return cb(err);  
+										return cb(err, null);  
 									}
 									else{
 										if(self.encryptedData == true){	
 											console.log('Successful post');
-											cb('Post successful');
+											cb(null, 'Post successful');
 										}
 										else{
 											console.log('Successful unencrypted post');
-											cb('Unencrypted post successful');
+											cb(null, 'Unencrypted post successful');
 										}
 										
 										// Update device location if necessary
@@ -214,9 +214,10 @@ Data.prototype.sanitize = function(params,cb) {
 				console.log(err);
 				cb(err, null);
 			}else{
-				sanitized_data['created_at'] = moment(date.toLocaleString(), "YYYY-MM-DD HH:mm:ss");
+				console.log(date.toLocaleString());
+				sanitized_data['created_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 				if(typeof sanitized_data['collected_at']=='undefined'){
-					sanitized_data['collected_at'] = moment(date.toLocaleString(), "YYYY-MM-DD HH:mm:ss");
+					sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 				}
 				cb(null, sanitized_data);
 			}
@@ -226,19 +227,18 @@ Data.prototype.sanitize = function(params,cb) {
 
 Data.prototype.checkTimeStamp = function(t, callback) {  
     var self = this;
-
-        	console.log("IN TIMESTAMP\n");
         	db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
             [self.params.data_type,self.params.device_id], function (err, result) {
-            //console.log(t);
             if(result.rows[0] == null){
             	callback(1);
             } 
 			//else if(self.params){ //need to check if Arduino device }
             else{
+				console.log(t);
                 var x = result.rows.length;
                 var most_recent = result.rows[x-1].created_at; //gets last entry
                 var time2 = new Date(most_recent);
+				console.log(time2);
                 if((t.getTime() - time2.getTime()) < 15*60*1000){
                 	console.log("Error: Cannot insert because of timestamp overlap\n");
                 	callback(0);
@@ -334,7 +334,6 @@ Data.prototype.validateDataTypesAndRanges = function(cbErr, cbSuccess){
 			if(typeWeWant == 'number'){
 				value = Number(value);
 			}
-			console.log(value + ' ' + typeof value);
 			if(typeof value != typeof dataRanges[param]['type'] || (typeof value == 'number' && isNaN(value))){
 				cbErr('Error: Parameter ' + param + ' must be of type ' + typeof dataRanges[param]['type']);
 				errEncountered = true;
