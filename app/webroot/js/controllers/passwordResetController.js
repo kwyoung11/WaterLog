@@ -28,7 +28,7 @@ enviroHubApp.controller('passwordResetController', function($scope, SessionServi
 						SessionService.resetPassword(fields.email, element);
 						return false;
 					},
-					onFailure: function(){
+					onFailure: function() {
 						console.log("fail");
 						return false;
 					}
