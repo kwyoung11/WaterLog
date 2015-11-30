@@ -180,46 +180,59 @@ Data.prototype.decrypt = function(cbErr, result, public_key, shared_private_key)
 }
 
 Data.prototype.sanitize = function(params,cb) {  
-
+	var self = this;
     params = params || {};
     var sanitized_data = {};
     // loop over the params hash
 	var ei_data = {};
-	var ei_params = this.get_ei_params(params);
 	
-    for (var attr in params) {
-       
-     // if the key in the data hash exists in the user schema hash
-     if (typeof schema[attr] != 'undefined') {
-      // then add it to the sanitized_data hash
-      sanitized_data[attr] = params[attr];
-     }
-	 
-	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
-	 // then add it to the sanitized data hash - these will be combined into a data keys & values array
-	 if(typeof ei_params[attr] != 'undefined'){
-		 sanitized_data[attr] = params[attr];
-	 }
-    }
-	
-	//checking time stamp
-	if(typeof sanitized_data['created_at'] == 'undefined'){
-		var date = new Date();
-		x=0;
-		var x = this.checkTimeStamp(date,function(res){
-			if(res == 0){
-				var err = "Error: Cannot insert because of timestamp overlay";
-				console.log(err);
-				cb(err, null);
-			}else{
-				sanitized_data['created_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
-				if(typeof sanitized_data['collected_at']=='undefined'){
-					sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
-				}
-				cb(null, sanitized_data);
+	this.addCustomFieldsToSchema(
+		function(err){
+			
+			if(err){
+				
 			}
-		});
-	}
+			else{
+				for (var attr in params) {
+		   
+				 // if the key in the data hash exists in the user schema hash
+				 if (typeof schema[attr] != 'undefined') {
+				  // then add it to the sanitized_data hash
+				  sanitized_data[attr] = params[attr];
+				 }
+				 // else if its a custom data type, add it to a data hash
+				 else if(typeof schema['custom'] != 'undefined' && typeof schema['custom'][attr] != 'undefined'){
+					 if(sanitized_data['data'] == null){
+						 sanitized_data['data'] = {};
+					 }
+					 sanitized_data['data'][attr] = params[attr];
+				 }
+				}
+				
+				//checking time stamp
+				if(typeof sanitized_data['created_at'] == 'undefined'){
+					var date = new Date();
+					x=0;
+					var x = self.checkTimeStamp(date,function(res){
+						if(res == 0){
+							var err = "Error: Cannot insert because of timestamp overlay";
+							console.log(err);
+							cb(err, null);
+						}else{
+							sanitized_data['created_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
+							if(typeof sanitized_data['collected_at']=='undefined'){
+								sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
+							}
+							cb(null, sanitized_data);
+						}
+					});
+				}
+			}
+		}
+	
+	);
+	
+    
 }
 
 Data.prototype.checkTimeStamp = function(t, callback) {  
@@ -244,17 +257,8 @@ Data.prototype.checkTimeStamp = function(t, callback) {
         }); 
 },
 
-Data.prototype.get_ei_params = function(data){
-	if(data.data_type == 'water'){
-		return schema['data_params']['water'];
-	}
-	else if(data.data_type == 'soil'){
-		return schema['data_params']['soil'];
-	}
-	else if(data.data_type == 'air'){
-		return schema['data_params']['air'];
-	}
-	return {};
+Data.prototype.get_custom_params = function(){
+	return schema['custom'];
 }
 
 
@@ -277,6 +281,7 @@ Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 	else{
 		for(var attr in schema){
 			if(schema[attr] == 1 && typeof this.params[attr] == 'undefined'){
+				console.log("Error: " + attr + ' is required');
 				cbErr("Error: " + attr + ' is required');
 			}
 		}
@@ -292,22 +297,6 @@ Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 },
 
 Data.prototype.constructDataArrayForPost = function(cbErr, cbSuccess){
-	var ei_data = {};
-	var ei_params = this.get_ei_params(this.params);
-	
-    for (var attr in this.params) {
-       
-	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
-	 // then add it to the sanitized data hash and remove it from params
-	 if(typeof ei_params[attr] != 'undefined'){
-		 ei_data[attr] = this.params[attr];
-		 delete this.params[attr];
-	 }
-    }
-	
-	if(Object.keys(ei_data).length > 0){
-		this.params['data'] = ei_data;
-	}
 	
 	if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
 		cbErr("Error: No Environmental Indicator data values have been provided.");
@@ -316,7 +305,7 @@ Data.prototype.constructDataArrayForPost = function(cbErr, cbSuccess){
 		cbSuccess();
 	}
 	
-}
+},
 
 Data.prototype.validateDataTypesAndRanges = function(cbErr, cbSuccess){
 	var data_type = this.params['data_type'];
@@ -351,19 +340,27 @@ Data.prototype.validateDataTypesAndRanges = function(cbErr, cbSuccess){
 	if(errEncountered == false){
 		this.constructDataArrayForPost(cbErr, cbSuccess);
 	}
-	
 },
 
-Data.prototype.addCustomfields=function(){
-    curr_schema=schema['data_params'][this.params.data_type];
-    for (var attr in this.params){
-        if(attr!="device_id" && attr!="data_type" && attr !="collected_at"){
-            if(typeof curr_schema[attr] == 'undefined'){
-                console.log("ATTRIBUTE "+attr+" NOT DEFINED\n");
-                curr_schema[attr] = this.params[attr];
-            }
-        }
-    }
+Data.prototype.addCustomFieldsToSchema=function(callback){
+	var self = this;
+    curr_schema=schema;
+	
+	db.query('SELECT keys FROM devices WHERE id=$1', [self.params.device_id], function (err, result){
+		if(err){
+			callback(err);
+		}else{
+			
+			// add custom fields from device to schema for data
+			var device = result.rows[0];
+			schema['custom'] = {};
+			for(var key in device.keys){
+				schema['custom'][device.keys[key]] = null;
+			}
+			
+			callback(null);
+		}
+	});
 
 },
 

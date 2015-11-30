@@ -56,7 +56,6 @@ mobile_controller.prototype = {
 		
 		params = mobile.data;
 		var data = new Data(params);
-		data.addCustomfields();
 		data.postToDatabase(function(err, result) {
 			if(err){
 				console.log(err);

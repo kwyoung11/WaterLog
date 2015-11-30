@@ -22,7 +22,9 @@ function runPostTest(encryptedOption, cb){
 				'name': 'test_data_post',
 				'latitude': '0',
 				'longitude': '0',
-				'mode': 'test?'
+				'mode': 'Manual',
+				'keys': ['pH'],
+				'units': ['pH units']
 			}
 			// create a new device associated with the user to test data posts with
 			var device = new Device(device_gen_params);
@@ -30,9 +32,15 @@ function runPostTest(encryptedOption, cb){
 				function(err, deviceAfterInsert){
 					
 					// a set of possible post parameters
-					var data = 'data_type=water&pH=0&latitude=5&longitude=5&device_id=' +  deviceAfterInsert.id;
+					var data = {
+						'data_type': 'water',
+						'pH': 0,
+						'latitude': 5,
+						'longitude': 5,
+						'device_id': deviceAfterInsert.id
+					}
 					
-					
+					/* currently deprecated
 					if(encryptedOption == true){
 						
 						var algorithm = 'aes-128-cbc';
@@ -55,14 +63,16 @@ function runPostTest(encryptedOption, cb){
 						
 						
 					}
+					*/
 					
 					//send post request
 					var options = {
-					  url: path + data,
+					  url: path,
 					  headers: {
 						'User-Agent': 'request',
 						'accept' : 'application/json',
 					  },
+					  form: data,
 					  method: 'post'
 					};
 					
@@ -82,7 +92,6 @@ function runPostTest(encryptedOption, cb){
 		
     
 }
-// test for encrypted posts.  We should see something like "Post successful" in the response body
-runPostTest(true, function(){});
+
 // test for unencrypted posts.  We should see something like "Unencrypted post successful" in the response body
 runPostTest(false, function(){process.exit();});
