@@ -1,8 +1,11 @@
 <h2> Update password </h2>
-<form action='/password_resets/' method="POST" id="update_password_resets">
+<form action='/password_resets' method="POST" id="update_password_resets">
 	<ul>
 			<li> Password: <input type="password" name="password_digest" placeholder="New password"></input></li>
 		</ul>
 
 		<input type="submit" value="Reset Password">
 </form>
+<script> 
+document.getElementById('update_password_resets').setAttribute('action', "/password_resets/" + window.location.pathname.split("/")[2]);
+</script>
