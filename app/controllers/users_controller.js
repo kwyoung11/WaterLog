@@ -201,7 +201,32 @@ users_controller.prototype = {
 	destroy: function(params, callback) {
 		var self = this;
 			if (self.current_user.data.id == params['id']) {
-				db.query("SELECT * FROM devices WHERE user_id=$1",[params['id']], function(err, result) {
+				//User.findById(params['id'], function(err, user) {
+					self.current_user.destroy(self.current_user.data.id,function(err, result){
+					if (err) {
+						var data = {'err_code': 99, 'err_msg': 'There was an error in trying to delete your records from our database.'};	
+						if (self.response_handler.format == 'json') {
+							self.response_handler.renderJSON(200, data);
+						} else {
+							view.renderView("/users/" + self.current_user.data.id, data, function(data) {
+								callback(data);
+							});	
+						}	
+					}else{
+
+					if (self.response_handler.format == 'json') {
+						var data = {'msg': 'You have been removed/deleted from our records.'};
+						self.response_handler.renderJSON(200, data);
+					} else {
+						GLOBAL.flash.notice = 'You have been removed/deleted from our records.';
+						self.response_handler.redirectTo("/#");
+						
+					}
+					}
+
+				});
+					//});
+				/*db.query("SELECT * FROM devices WHERE user_id=$1",[params['id']], function(err, result) {
 					var arr =result.rows;
 					for(var ind in arr){
 						console.log("RESULTS\n");
@@ -238,31 +263,6 @@ users_controller.prototype = {
 
 					}
 
-				});
-					
-				
-				/*db.query("DELETE FROM users WHERE id=$1", [params['id']], function(err, result) {
-					
-					if (err) {
-						var data = {'err_code': 99, 'err_msg': 'There was an error in trying to delete your records from our database.'};	
-						if (self.response_handler.format == 'json') {
-							self.response_handler.renderJSON(200, data);
-						} else {
-							view.renderView("/users/" + self.current_user.data.id, data, function(data) {
-								callback(data);
-							});	
-						}	
-					}
-
-					if (self.response_handler.format == 'json') {
-						var data = {'msg': 'You have been removed/deleted from our records.'};
-						self.response_handler.renderJSON(200, data);
-					} else {
-						GLOBAL.flash.notice = 'You have been removed/deleted from our reecords.';
-						self.response_handler.redirectTo("/login");
-					}
-					
-					
 				});*/
 			} else {
 				var data = {'err_code': 10, 'err_msg': 'Sorry, but you don\'t have permission to do that.'};
