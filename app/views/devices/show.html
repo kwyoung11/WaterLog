@@ -8,8 +8,7 @@
       <script>
       function checkMobile(data) { //cannot proceed without entering a nickname
           if(data.match("Manual")){
-          	document.write("<a class='item' href=/mobile/{{id}}/input><i class='ui add icon'></i> Add data manually</a>");
-          	//IF THE PAGE IS NOT IN A MOBILE BROWSER THEN THIS SHOULD NOT EXECUTE
+          	document.write("<a class='item' href=/mobile/input><i class='ui add icon'></i> Add data manually</a>");
          	}else{
          		document.write("<a class='item' href=/devices/{{id}}/bulkupload> <i class='ui upload icon'></i> Upload Data File </a>");
          	}

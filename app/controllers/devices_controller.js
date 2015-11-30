@@ -113,6 +113,8 @@ devices_controller.prototype = {
 	// POST new user
 	create: function(params, callback) {
 		var self = this;
+		console.log("HERE1");
+		console.log(self.current_user);
 		params['user_id'] = self.current_user.data.id;
     	var device = new Device(params); // create new device object
     	device.save(function(err, dev) {
