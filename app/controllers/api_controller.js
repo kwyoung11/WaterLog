@@ -26,6 +26,7 @@ api_controller.prototype.constructor = api_controller;
 	
 	api_controller.prototype.device = function (params, cb) {
 		var self = this;
+		var query_params;
 		if (params.location && params.radius) { // get devices with x mile radius of lat, lon
 			var latitude = params.location.split(",")[0];
 			var longitude = params.location.split(",")[1];
@@ -33,7 +34,9 @@ api_controller.prototype.constructor = api_controller;
 			var bot = latitude - (params.radius/69);
 			var right = longitude - (params.radius/54) + (2*(params.radius/54));
 			var left = longitude - (params.radius/54);
-			db.query("SELECT * from devices WHERE longitude BETWEEN $1 AND $2 AND latitude BETWEEN $3 AND $4", [right, left, bot, top], function(err, result) {
+			
+			console.log("SELECT * from devices WHERE longitude BETWEEN " + left + " AND " + right + " AND latitude BETWEEN " + bot + " AND " + top);
+			db.query("SELECT * from devices WHERE cast(longitude as double precision) BETWEEN $1 AND $2 AND cast(latitude as double precision) BETWEEN $3 AND $4", [left, right, bot, top], function(err, result) {
 				if (err) {
 					console.log(err);
 					return cb(err);

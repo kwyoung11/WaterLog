@@ -40,30 +40,14 @@ devices_controller.prototype.constructor = devices_controller;
 					}
 				});
 			});
-			// Device.findByUser(self.current_user.data.id, function(err, devices){
-			// 	var resource_found = false;
-			// 	console.log(devices);
-			// 	//console.log(devices[0]['id']);
-
-			// 	for (var ind in devices) {
-			// 		//console.log("device.id "+devices[ind]['id']+" params['id'] " +params['id']+ "\n");
-			// 		if (devices[ind]['id'] == params['id']) {
-			// 			resource_found = true;
-			// 		}
-			// 	}
-			// 	//console.log("RESOURCE FOUND IS "+resource_found+"\n");
-			// 	if (!resource_found) {
-			// 		//console.log("IN BEFORE FILTER\n");
-			// 		// self.response_handler.serverError(404, "Resource not found");
-			// 		return cb([404, "Resource not found"]);
-			// 	}
-			// });
+		} else {
+			cb(null);
 		}
 	},
 
 	devices_controller.prototype.before_action = function (action, params) {
 
-	},
+	}
 
 	//GET /devices/new
 	devices_controller.prototype.new = function(params, callback) {
@@ -75,7 +59,7 @@ devices_controller.prototype.constructor = devices_controller;
 			});			
 		
 		
-	},
+	}
 
 	devices_controller.prototype.index = function(params, callback) {
 			var self = this;
@@ -88,7 +72,7 @@ devices_controller.prototype.constructor = devices_controller;
 			});
 		});
 		
-	},
+	}
 
 	devices_controller.prototype.show = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
@@ -100,7 +84,7 @@ devices_controller.prototype.constructor = devices_controller;
 		  		callback(content);
 			});
 		});
-	},
+	}
 
 	devices_controller.prototype.edit = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
@@ -109,7 +93,7 @@ devices_controller.prototype.constructor = devices_controller;
 		  	callback(content);
 			});			
 		});
-	},
+	}
 
 	// POST new user
 	devices_controller.prototype.create = function(params, callback) {
@@ -134,7 +118,7 @@ devices_controller.prototype.constructor = devices_controller;
 				}
 				
     	});
-	},
+	}
 
 	devices_controller.prototype.update = function(params, callback) {
 		var self = this;
@@ -162,7 +146,7 @@ devices_controller.prototype.constructor = devices_controller;
 					}
     		});
 		});
-	},
+	}
 
 	devices_controller.prototype.bulkupload = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};

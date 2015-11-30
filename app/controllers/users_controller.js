@@ -43,6 +43,8 @@ users_controller.prototype.constructor = users_controller;
 						cb(null);
 					}
 			});
+		} else {
+			cb(null);
 		}
 	},
 
