@@ -43,7 +43,7 @@ devices_controller.prototype = {
 			Device.findByUser(self.current_user.data.id, function(err, devices){
 				var resource_found = false;
 				console.log(devices);
-				console.log(devices[0]['id']);
+				//console.log(devices[0]['id']);
 
 				for (var ind in devices) {
 					//console.log("device.id "+devices[ind]['id']+" params['id'] " +params['id']+ "\n");
@@ -113,6 +113,8 @@ devices_controller.prototype = {
 	// POST new user
 	create: function(params, callback) {
 		var self = this;
+		console.log("HERE1");
+		console.log(self.current_user);
 		params['user_id'] = self.current_user.data.id;
     	var device = new Device(params); // create new device object
     	device.save(function(err, dev) {

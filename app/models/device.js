@@ -42,6 +42,7 @@ Device.findByUser = function(user_id, cb) {
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
+    console.log("HERE2");
     if(this.data['user_id']!=undefined){
         db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode,type_of_data, keys, units) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *', self.getSqlPostValues(), function (err, result) {
             if (err) {
@@ -165,6 +166,7 @@ Device.prototype.sanitize = function(data) {
             }
         
         }
+    console.log(sanitized_data);
     return sanitized_data;
 }
 

@@ -137,7 +137,7 @@ User.prototype.generatePassword = function(password_digest, cb) {
             cb(null, new User(result.rows[0]));
         });
     }); 
-};
+}
 
 // update specific attributes of user object in database
 User.prototype.update = function(obj, cb) {
@@ -199,6 +199,57 @@ User.prototype.set = function(name, value) {
     this.data[name] = value;
 }
 
+User.prototype.destroy = function(id,callback){
+    //console.log("In destroy");
+    //console.log(id);
+    this.destroyAssociations(id,function(err, data){
+        if(err){
+            cb(err, null);
+        }else{
+            db.query("DELETE FROM users WHERE id=$1", [id], function(err, result) {
+                if (err) {
+                    callback(err);
+                } else {
+                //view.renderView("/users/" + self.current_user.data.id, data, function(data) {
+                    callback(result.rows);
+                //}); 
+                }                
+            });
+        }
+    });
+
+}
+
+User.prototype.destroyAssociations = function(user_id,callback){
+    db.query("SELECT * FROM devices WHERE user_id=$1",[user_id], function(err, result) {
+        if(err){
+            //console.log("error1");
+            console.log(err);
+        }
+        var arr =result.rows;
+        if(arr==[]){
+            callback(null);
+        }
+        for(var ind in arr){
+            db.query("DELETE FROM data WHERE device_id=$1",[arr[ind].id], function(err, result) {
+                if(err){
+                    //console.log("error2");
+                    console.log(err);
+                }
+            });
+        }
+        db.query("DELETE FROM devices WHERE user_id=$1",[user_id], function(err, result) {
+            if(err){
+                //console.log("error3");
+                console.log(err);
+                callback(err);
+            }else{
+                 callback(null);
+            }
+        });
+    });
+}
+
 // removes unallowed parameters from the parameters hash
 User.prototype.sanitize = function(data) {  
     data = data || {};
@@ -222,4 +273,6 @@ User.generateKeyPair = function(numBits){
 	return pair;
 }
 
+
 module.exports = User;
+
