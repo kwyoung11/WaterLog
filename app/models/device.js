@@ -42,15 +42,20 @@ Device.findByUser = function(user_id, cb) {
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-    //if(content['user_id']!=undefined){
+    if(this.data['user_id']!=undefined){
         db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode,type_of_data, keys, units) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *', self.getSqlPostValues(), function (err, result) {
             if (err) {
-                console.log("HERE\n\n\n");
-                console.log(err);
-                return callback(err);
+                /*view.renderView("/users/" + this.data.id, data, function(data) {
+                    return callback(data);
+                }); */
+                return callback(err);                   
+            }else{
+               return callback(null, result.rows[0]); 
             }
-                return callback(null, result.rows[0]);
-        });                
+        }); 
+    }else{
+        callback(true);
+    }               
 }
 
 Device.prototype.update = function(callback) {  
@@ -102,12 +107,7 @@ Device.prototype.getSqlPostValues =  function(){
             data_param_units += '}';
             vals[6] = data_param_keys;
             vals[7] = data_param_units;
-        }/*else{
-            vals[6]='{}';
-            vals[7]='{}';
-        }*/
-    //console.log("POST VALUES");
-    //console.log(vals);
+        }
     return vals;
 }
 
@@ -123,7 +123,7 @@ Device.prototype.set = function(name, value) {
 }
 
 Device.prototype.sanitize = function(data) {  
-    console.log("SANITIZING DATA NOW")
+    //console.log("SANITIZING DATA NOW")
     data = data || {};
     schema = schemas.device;
     sanitized_data = {};

@@ -120,7 +120,7 @@ devices_controller.prototype = {
     		if (err) {
     			if (self.response_handler.format == 'json') {
     				self.response_handler.renderJSON(200, {'err_code': 21, 'err_msg': 'Error in creating device.'});
-					} else {
+				} else {
 						GLOBAL.flash.notice = 'There was an error registering your device';
 						self.response_handler.redirectTo('/users/' + self.current_user.data.id);	
 					}	
