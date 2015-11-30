@@ -59,7 +59,6 @@ Data.prototype.postToDatabase = function(cb) {
 							function(){
 								db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4, $5, $6)', self.getSqlPostValues(), function (err, result) {
 									if (err) {
-										console.log(err);
 										return cb(err, null);  
 									}
 									else{
@@ -221,6 +220,9 @@ Data.prototype.sanitize = function(params,cb) {
 						}else{
 							sanitized_data['created_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 							if(typeof sanitized_data['collected_at']=='undefined'){
+								sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
+							}
+							else{
 								sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 							}
 							cb(null, sanitized_data);
