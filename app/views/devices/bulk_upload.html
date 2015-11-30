@@ -22,25 +22,28 @@
           return;
         }
           for(var i = 0; i<data_sets.length; i++){
-            var data = data_sets[i].split(',');
-            if(data.length != 1 && data.length != num_params+1){
-              alert("Entry number " +(i+1)+" is not in the correct format\n");
-              continue;
-            }
-            var content={};
-            for(var v=0;v<arr.length;v++){
-              content[arr[v]]=data[v];
-            }
-            content['collected_at']=data[v];
-            content['device_id']={{id}};
-            content['data_type'] = '{{type_of_data}}';
-            $.ajax({
-            url: '/data/newData',
-            type: 'POST',
-            dataType: 'json',
-            contentType:'application/json',
-            data: content
-            });
+			if(data_sets[i].length > 1){
+				var data = data_sets[i].split(',');
+				if(data.length != 1 && data.length != num_params+1){
+				  alert("Entry number " +(i+1)+" is not in the correct format\n");
+				  continue;
+				}
+				var content={};
+				for(var v=0;v<arr.length;v++){
+				  content[arr[v]]=data[v];
+				}
+				content['collected_at']=data[v];
+				content['device_id']={{id}};
+				content['data_type'] = '{{type_of_data}}';
+				$.ajax({
+				url: '/data/newData',
+				type: 'POST',
+				dataType: 'json',
+				contentType:'application/json',
+				data: content
+				});
+				console.log('made post');
+			}
           }
         
       }

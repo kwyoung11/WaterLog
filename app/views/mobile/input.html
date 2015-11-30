@@ -7,13 +7,44 @@
 <h1> Please insert data below</h1>
 
 <label> Device: </label>
-<select name="device_id"> 
-{{#devices}}
-  {{#.}}
-<option value="{{id}}">{{id}}</option>
-  {{/.}}
-{{/devices}}
+
+
+<select name="device_id" id="device_id_selector"> 
+	{{#devices}}
+		<option value="{{id}}">{{id}}</option>
+	{{/devices}}
 </select>
+
+<div>
+	{{#devices}}
+	<div class="device" id="device{{id}}" style="display: none;">
+		<input type="hidden" name="data_type" value="{{type_of_data}}"></input>
+		<label>Device registered for data type {{type_of_data}}</label>
+		<table>
+			<tr>
+				<td class="keys">
+					<div>
+						{{#keys}}
+						<div>
+							<label>{{.}}</label><input type="text" name="{{.}}"></input>
+						</div>
+						{{/keys}}
+					</div>
+				</td>
+				<td class="units">
+					<div>
+						{{#units}}
+						<div>
+							<label>{{.}}</label>
+						</div>
+						{{/units}}
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+	{{/devices}}
+</div>
 
 <br>
 <label> Latitude </label><input type="text" name="latitude" id="latitude-input"></input>
@@ -22,66 +53,19 @@
 <br>
 <button type="button" id="get-lat-lon" onclick="getLocation()" > Get Current Lat, Lon </button>
 
-<br> 
-<label> Data Type: </label>
-<select name="data_type" id="data-type-select">
-<option value="water">Water</option>
-<option value="air">Air</option>
-<option value="soil">Soil</option>
-</select>
-
-
-<div class="data-type-fields" id="water-fields">
-<h2> Water Quality </h2>
-<ul>
-    <li> Temperature: <input type="text" name="temperature" id="water"></input> &#8457;</li>
-    <li> pH: <input type="text" name="pH" id="water"></input></li>
-    <li> Waterflow: <input type="text" name="water_flow" id="water"></input></li>
-    <li> Turbidity: <input type="text" name="turbidity" id="water"></input></li>
-    <li> Custom: <input type="text" name="custom_key"></input> 
-    </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li> 
-   </ul> 
-  </ul>
-</div>
-
-<div class="data-type-fields" id="soil-fields">
-<h2> Soil Quality </h2>
-   <ul>
-    <li> pH: <input type="text" name="pH" id="soil"></input></li>
-    <li> Soil Nitrate: <input type="text" name="soil_nitrate" id="soil"></input></li> ppm
-    <li> Electrical Conductivity: <input type="text" name="electrical_conductivity" id="soil"></input> milliSiemens per meter (mS/m)</li>
-    <li> Custom: <input type="text" name="custom_key"></input> 
-    </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li> 
-   </ul> 
-  </ul>
-</div>
-
-<div class="data-type-fields" id="air-fields">
-<h2> Air Quality </h2>
-   <ul>
-    <li> Carbon Monoxide: <input type="text" name="carbon_monoxide" id="air"></input> ppm</li>
-    <li> Nitrogen Dioxide: <input type="text" name="nitrogen_dioxide" id="air"></input>ppm</li>
-    <li> Ozone: <input type="text" name="ozone" id="air"></input>ppm</li>
-    <li> Sulphur Dioxide: <input type="text" name="sulphur_dioxide" id="air"></input>ppm</li>
-    <li> Custom: <input type="text" name="custom_key"></input> 
-    </br> value (in format value,units ):<input type="text" name="custom_value"></input> </li>
-  </ul>
-</div>
-
 <input type="submit" value="Submit" id="submit-form">
 </form>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script> 
+
 var latitude = document.getElementById("latitude-input");
 var longitude = document.getElementById("longitude-input");
-// disable all input fields that are dependent on data type
-$('.data-type-fields input').prop('disabled', true);
-$('.data-type-fields').hide();
-var selected_data_type = $('#data-type-select').val();
-// enable input fields for selected data type
-$("#" + selected_data_type.toLowerCase() + "-fields").show();
-$("#" + selected_data_type.toLowerCase() + "-fields :input").prop('disabled', false);
+
+var selected_id = $('#device_id_selector').val();
+// show input fields for the selected device
+showDevice(selected_id);
+
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -90,28 +74,30 @@ function getLocation() {
 	   longitude.value = "Geolocation is not supported by this browser.";
     }
 }
+
+function showDevice(id){
+	$(".device").hide();
+	$(".device input").prop('disabled', true);
+	$("#device" + id).show();
+	$("#device" + id + " input").prop('disabled', false);
+}
+
 function showPosition(position) {
     latitude.value = position.coords.latitude;
 	longitude.value = position.coords.longitude;
 }
-$("#data-type-select").change(function() {
-  $('.data-type-fields input').prop('disabled', true);
-  $('.data-type-fields').hide();
-  var selected_data_type = $('#data-type-select').val();
-  $("#" + selected_data_type.toLowerCase() + "-fields").show();
-  $("#" + selected_data_type.toLowerCase() + "-fields :input").prop('disabled', false);
+
+$("#device_id_selector").change(function(){
+	selected_id = $('#device_id_selector').val();
+	showDevice(selected_id);
 });
+
+
 $("#submit-form").click(function() {
   this.preventDefault();
-  var arr = ["air", "water", "soil"];
-  var selected_data_type = $('#data-type-select').val();
-  var index = array.indexOf(selected_data_type);
-  if (index > -1) {
-    array.splice(index, 1);
-  }
-  //$("#" + selected_data_type + "-fields")
   this.submit();
 });
+
 </script>
 
 </body>
