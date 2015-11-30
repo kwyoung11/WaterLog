@@ -226,8 +226,8 @@ users_controller.prototype = {
 										var data = {'msg': 'You have been removed/deleted from our records.'};
 										self.response_handler.renderJSON(200, data);
 									} else {
-										GLOBAL.flash.notice = 'You have been removed/deleted from our reecords.';
-										self.response_handler.redirectTo("/login");
+										GLOBAL.flash.notice = 'You have been removed/deleted from our records.';
+										self.response_handler.redirectTo("/#");
 									}
 					
 					
