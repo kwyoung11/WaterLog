@@ -38,7 +38,7 @@ password_resets_controller.prototype = {
 	edit: function(params, callback) {
 		view.renderView('password_resets/edit', this.view_data, function(data) {
 			return callback(data);
-		});	
+		});
 	},
 
 	// POST /password_resets
@@ -46,6 +46,16 @@ password_resets_controller.prototype = {
 		var self = this;
 		// create new user object, passing in the email and password_digest from the post data as params
     var user = User.find('email', params.email, function(err, user) {
+    	if (err) {
+    		if (self.response_handler.format == 'json') {
+    			self.response_handler.renderJSON(200, {'err_code': 99, 'err_msg': 'Error in finding email.'});
+    		} else {
+    			self.view_data.notice = 'Error in finding email';
+    			view.renderView('password_resets/new', self.view_data, function(data) {
+				  	return callback(data);
+					});	
+    		}
+    	}
     	if (user) {
     		
     		// initialize password_reset fields
@@ -61,19 +71,27 @@ password_resets_controller.prototype = {
 					"<p> EnviroHub</p>";
 					// send password reset email
     			mailer.deliver(user.data.email, "Reset your EnviroHub password", body);	
-    			GLOBAL.flash.notice = 'An e-mail has been sent to the e-mail address you provided. Check your e-mail for password reset instructions.';
-    			self.response_handler.redirectTo("/");
+    			if (self.response_handler.format == 'json') {
+    				self.response_handler.renderJSON(200, {'msg': 'An e-mail has been sent to the e-mail address you provided. Check your e-mail for password reset instructions.'});
+    			} else {
+    				GLOBAL.flash.notice = 'An e-mail has been sent to the e-mail address you provided. Check your e-mail for password reset instructions.';
+    				self.response_handler.redirectTo("/");
+    			}
+    				
     		});
     		
     	} else {
     		// render password resets page again
-    		self.view_data.notice = 'An e-mail has been sent to the e-mail address you provided. Check your e-mail for password reset instructions.';
-    		view.renderView('password_resets/new', self.view_data, function(data) {
-				  return callback(data);
-				});	
+    		if (self.response_handler.format == 'json') {
+    			self.response_handler.renderJSON(200, {'err_code': 31, 'err_msg': 'No user found by that e-mail'});
+    		} else {
+    			self.view_data.notice = 'No user found by that e-mail';
+    			view.renderView('password_resets/new', self.view_data, function(data) {
+				  	return callback(data);
+					});	
+    		}
+    		
     	}
-    	
-    	
     });
 	},
 
@@ -83,20 +101,41 @@ password_resets_controller.prototype = {
 		User.find('password_reset_token', params['password_reset_token'], function(err, user) {
 			var date = new Date();
 			// reset_password_token expires after 2 hours
+                        console.log(Math.abs(date-user.data.password_reset_sent_at));
 			if (Math.abs(date - user.data.password_reset_sent_at) < 3600000) {
 				// update password
 				user.data.password_digest = params['password_digest'];
 				user.update({'password_digest': params['password_digest']}, function(err, user) {
-					self.view_data.notice = 'Your password has been reset. Login below.';
-					view.renderView('sessions/new', self.view_data, function(data) {
-			  		return callback(data);
-					});
+					if (err) {
+						if (self.response_handler.format == 'json') {
+							self.response_handler.renderJSON(200, {'err_code': 99, 'err_msg': 'Error in updating password.'})
+						}	else {
+							self.view_data.notice = 'Error in updating password.';
+							view.renderView('sessions/new', self.view_data, function(data) {
+			  				return callback(data);
+							});
+						}	
+					}
+ 					if (self.response_handler.format == 'json') {
+						self.response_handler.renderJSON(200, {'msg': 'Your password has been reset. Login below.'})
+					} else {
+						self.view_data.notice = 'Your password has been reset. Login below.';
+						view.renderView('sessions/new', self.view_data, function(data) {
+			  			return callback(data);
+						});
+					}
+					
 				});
 			} else {
-				self.view_data.notice = 'Your password reset token has expired. Request a new one below.';
-				view.renderView('password_resets/new', self.view_data, function(data) {
-			  	return callback(data);
-				});
+				if (self.response_handler.format == 'json') {
+					self.response_handler.renderJSON(200, {'err_code': 30 , 'msg': 'Your password reset token has expired. Request a new one below.'});
+				} else {
+					self.view_data.notice = 'Your password reset token has expired. Request a new one below.';
+					view.renderView('password_resets/new', self.view_data, function(data) {
+			  		return callback(data);
+					});	
+				}
+				
 			}
 		});
 	},

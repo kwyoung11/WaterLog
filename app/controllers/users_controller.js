@@ -262,7 +262,9 @@ users_controller.prototype = {
 						self.response_handler.redirectTo("/login");
 					}
 					
-					
+					var data = {'msg': 'You been removed/deleted from our records.'};
+					self.response_handler.renderJSON(200, data);
+
 				});*/
 			} else {
 				var data = {'err_code': 10, 'err_msg': 'Sorry, but you don\'t have permission to do that.'};

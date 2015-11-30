@@ -1,21 +1,31 @@
 <!DOCTYPE html>
   <head>
     <meta charset="utf-8">
-    <title>EnviroHub</title>
-    <link rel="stylesheet" href="/css/application.css">
-    
+    <title> Enviro Hub </title>
+
+    <!-- SCROLLS -->
+    <!-- load jquery -->
+    <script src="/libs/jquery/dist/jquery.min.js" charset="utf-8"></script>
+
+    <!-- load semantic -->
+    <script src="/libs/semantic/dist/semantic.min.js"> </script>
+    <link rel="stylesheet" href="/libs/semantic/dist/semantic2.min.css">
+
   </head>
 
-
   <body>
-      {{{content_for_layout}}}
+    <div class="ui inverted attached segment">
+    	<div class="ui container">
+  		  <a class="ui huge inverted header" href="/"> EnviroHub </a>
+    	</div>
+    </div>
 
+    {{{content_for_layout}}}
 
-  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="js/libs/jquery-1.6.1.min.js">\x3C/script>')</script>
-  <script type="text/javascript" src="/js/application.js"></script>
-
-  <a href="/home/system_info"> System Features</a>
+    <div class="ui attached segment">
+      <div class="ui container">
+        <a class="ui button" href="/home/system_info"> System Features</a>
+      </div>
+    </div>
   </body>
 </html>

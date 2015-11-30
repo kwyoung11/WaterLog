@@ -6,24 +6,21 @@
   </div>
   <div class="ui bottom attached segment">
     <div class = "ui five stackable cards container">
+      <div class="ui green link card" style="min-height:100px">
+        <div class="content">
+          <div class="ui centered green header" style="margin-top:25px;"> <i class="ui add icon"> </i> Add Device</div>
+        </div>
+      </div>
       <div data-ng-repeat = "device in devices" class="ui card">
         <div class="ui blue link card">
           <div class="content">
-            <i ng-class="{green: device.status == 'active', red: device.status != 'active'}" class="ui right floated circle icon"></i>
-            <div class="header">{{ device.id }}</div>
-            <div class="meta">
-              <span class="category"> Last update: {{ device.date }}</span>
-            </div>
+            <div class="header">{{ device.name }}</div>
           </div>
           <div class="extra content">
             <div class="description">
               <div class = "ui list">
-                <div class = "item"> <strong> pH: </strong> {{ device.pH }} </div>
-                <div class = "item"> <strong> Temperature: </strong> {{ device.temperature }} </div>
-                <div class = "item">
-                  <div class="header"> Location: </div>
-                  <div class="description"> {{ device.lat + ',' + device.long }} </div>
-                </div>
+                <div class="header"> Location: </div>
+                <div class="description"> {{ device.latitude + ',' + device.longitude }} </div>
               </div>
             </div>
           </div>
@@ -31,6 +28,7 @@
       </div>
     </div>
   </div>
+
 
 
 

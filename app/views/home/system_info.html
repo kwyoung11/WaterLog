@@ -1,30 +1,51 @@
-<h1>System Features</h1>
+<div class="ui attached segment">
+	<div class="ui container">
+		<h3 class="ui red header"> System Features </h3>
+	</div>
+</div>
 
-<h2>Privacy:</h2>
-All information a user collects from a device is private and is not visible to any other registered user. </br>
-<h2>Installation:</h2>
-To install on a private server, follow the instructions below </br>
-a.	Download git on your machine</br>
-b.	mkdir /var/www</br>
-c.	cd /var/www</br>
-d.	git clone https://github.com/kwyoung11/WaterLog.git /var/www/EnviroHub</br>
-e.	cd EnviroHub</br>
-f.	chmod +x installation_script.sh</br>
-g.	./installation_script.sh</br>
+<div class="ui olive inverted attached message	">
+	<div class="ui container">
+		<div class="ui small header"> Privacy </div>
+		<div> All information a user collects from a device is private and is not visible to any other registered user. </div>
+	</div>
+</div>
 
-This creates an administrator with credentials: email: admin@admin.com, password: admin</br>
+<div class="ui info attached message	">
+	<div class="ui container">
+		<div class="ui small header"> Installation: </div>
+		<div> To install on a private server, follow the instructions below </div>
+		<ol class="ui ordered list">
+			<li> Download git on your machine </li>
+			<li> mkdir /var/www </li>
+			<li> cd /var/www </li>
+			<li> git clone https://github.com/kwyoung11/WaterLog.git /var/www/EnviroHub </li>
+			<li> cd EnviroHub </li>
+			<li> chmod +x installation_script.sh </li>
+			<li> ./installation_script.sh </li>
+		</ol>
+		<div> This creates an administrator with credentials: email: admin@admin.com, password: admin </div>
+	</div>
+</div>
 
-<h2>Public get api:</h2>
-A user can select different features such as a certain data_type, time period, device and/or parameters when on EnviroHub.com. This sends an HTTP GET request to the server which then retrieves the data from the database and returns it to be displayed. </br>
+<div class="ui green inverted attached message	">
+	<div class="ui container">
+		<div class="ui small header"> Public GET API </div>
+		<div> A user can select different features such as a certain data_type, time period, device and/or parameters when on EnviroHub.com. This sends an HTTP GET request to the server which then retrieves the data from the database and returns it to be displayed. </div>
+	</div>
+</div>
 
-<h2>Security in Wireless Devices</h2>
+<div class="ui violet inverted attached message	">
+	<div class="ui container">
+		<div class="ui small header"> Security in Wireless Devices </div>
+		<div> The first part of the solution is to use digital signatures to ensure integrity and authenticity of the request. Each message is “signed” with the device’s private key given to it by EnviroHub.com. Signing the message ensures non-repudiation meaning that the server knows where the message is coming from and there is no question who is sending the message; only the server and the particular device know the shared key.</div>
+		<div> The second part of the solution is to use a symmetric shared secret key. There will be a unique secret key for every device that a user owns and each message will be encrypted on one side and decrypted on the other side using the same shared private key. </div>
+	</div>
+</div>
 
-The first part of the solution is to use digital signatures to ensure integrity and authenticity of the request. Each message is “signed” with the device’s private key given to it by EnviroHub.com. Signing the message ensures non-repudiation meaning that the server knows where the message is coming from and there is no question who is sending the message; only the server and the particular device know the shared key.</br>
-	
-The second part of the solution is to use a symmetric shared secret key. There will be a unique secret key for every device that a user owns and each message will be encrypted on one side and decrypted on the other side using the same shared private key. </br>
-
-<h2>Password Security</h2>
-
-All user passwords will be encrypted using a one-way hash function using a randomly generated salt. The number of login attempts will be limited to 3 before the user will be locked out of their account for 15 minutes.</br>
-
-
+<div class="ui warning attached message	">
+	<div class="ui container">
+		<div class="ui small header"> Password Security </div>
+		<div> All user passwords will be encrypted using a one-way hash function using a randomly generated salt. The number of login attempts will be limited to 3 before the user will be locked out of their account for 15 minutes. </div>
+	</div>
+</div>

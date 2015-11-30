@@ -10,14 +10,7 @@ for (var m = a; m.isBefore(b); m.add('days', 1)) {
 	var temp = Math.random() * (80 - 10) + 10;
 	var datetime = m.format();
   console.log(datetime);
-  db.query("INSERT INTO data (device_id, data_type, keys, values, created_at) VALUES (1, 'Water', '{pH, turbidity, temperature}', '{" + ph + "," + tds + "," + temp + "}', '"+datetime+"')", [], function(err, result) {
+  db.query("INSERT INTO data (device_id, data_type, keys, values, created_at) VALUES (15, 'Water', '{pH, turbidity, temperature}', '{" + ph + "," + tds + "," + temp + "}', '"+datetime+"')", [], function(err, result) {
 
   });
-
-  var ph = Math.random() * (9.0 - 5.0) + 5.0;
-	var tds = Math.random() * (400);
-	var temp = Math.random() * (80 - 10) + 10;
-	db.query("INSERT INTO data (device_id, data_type, keys, values, created_at) VALUES (2, 'Water', '{pH, turbidity, temperature}', '{" + ph + "," + tds + "," + temp + "}', '"+datetime+"')", [], function(err, result) {
-
-  });	
 }

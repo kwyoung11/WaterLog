@@ -1,11 +1,28 @@
-<h2> Update password </h2>
-<form action='/password_resets' method="POST" id="update_password_resets">
-	<ul>
-			<li> Password: <input type="password" name="password_digest" placeholder="New password"></input></li>
-		</ul>
+<div class="ui secondary grey inverted attached menu">
+	<div class="ui container">
+		<div class="header item"> Update password </div>
+		<div class="right menu">
+			<a class="item" href="javascript:history.go(-1)"> <i class="ui left arrow icon"></i> Back </a>
+		</div>
+	</div>
+</div>
 
-		<input type="submit" value="Reset Password">
-</form>
+<div class="ui attached segment">
+	<div class="ui container">
+		{{#err}}
+			<div class="ui error message"> {{err_msg}} </div>
+		{{/err}}
+		<div id="register">
+			<form class="ui padded form segment" action='/password_resets' method="POST" id="update_password_resets">
+				<div class="inline field">
+					<label style="width:65px; text-align:right"> Password: </label>
+					<input type="password" name="password_digest" placeholder="New Password"> </input></li>
+				</div>
+				<input class="ui basic button"type="submit" value="Reset Password">
+			</form>
+		</div>
+	</div>
+</div>
 <script> 
-document.getElementById('update_password_resets').setAttribute('action', "/password_resets/" + window.location.pathname.split("/")[2]);
+$('#update_password_resets').attr('action', "/password_resets/" + window.location.pathname.split("/")[2]);
 </script>

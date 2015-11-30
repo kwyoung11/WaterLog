@@ -1,3 +1,8 @@
+
+
+
+
+
 var fs = require('fs');
 var url = require('url');
 // var controller = require('./controller');
@@ -9,12 +14,11 @@ var application_controller = require('../app/controllers/application_controller'
 var config = require('../config/config.js')
 
 this.dispatch = function(req, res) {
-
   // allow cross-origin requests  
-  // if (typeof res.header != 'undefined' && res.header != null){
-	 //  res.header("Access-Control-Allow-Origin", "*");
-	 //  res.header("Access-Control-Allow-Headers", "X-Requested-With");  
-  // }
+//  if(typeof res.header != 'undefined' && res.header != null){
+//	  res.header("Access-Control-Allow-Origin", "*");
+//	  res.header("Access-Control-Allow-Headers", "X-Requested-With");  
+ // }
   
   
   // two ways to specify format: in request header, or appended to URL (e.g., .json)
@@ -184,7 +188,13 @@ this.dispatch = function(req, res) {
             parameters['id'] = parts[2];
             callController(controller_name, action, parameters);
 
-          // devices#update
+          // devices#show
+          } else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)/) && req.method == "GET") {
+            action = "show";
+            parameters['id'] = parts[2];
+            callController(controller_name, action, parameters);
+
+            // devices#update
           } else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)\/update/) && req.method == "POST") {
             action = "update";
             parameters['id'] = parts[2];
@@ -192,24 +202,10 @@ this.dispatch = function(req, res) {
               util.merge(parameters, post);
               callController(controller_name, action, parameters);
             });
-
-           // devices#destroy
-          } else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)\/delete/) && req.method == "POST") {
-            action = "destroy";
-            parameters['id'] = parts[2];
-            callController(controller_name, action, parameters);
-
-          // devices#show  
-          }else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)/) && req.method == "GET") {
-            action = "show";
-            //console.log("CRASH\n");
-            parameters['id'] = parts[2];
-            callController(controller_name, action, parameters);
             // devices#create
           } else if (requestedUrl.pathname.match(/\/devices/) && req.method == "POST") {
             action = "create";
             parameters['id'] = parts[2];
-            console.log(parameters);
             util.extractPostData(req, function(post) {
               util.merge(parameters, post);
               callController(controller_name, action, parameters);
@@ -220,6 +216,12 @@ this.dispatch = function(req, res) {
             action = "index";
             parameters['id'] = parts[2];
             callController(controller_name, action, parameters);
+
+          // devices#destroy
+          } else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)\/delete/) && req.method == "POST") {
+            action = "destroy";
+            parameters['id'] = parts[2];
+            callController(controller_name, action, parameters);
           }
 
           break;
@@ -228,9 +230,17 @@ this.dispatch = function(req, res) {
         if (requestedUrl.pathname.match("/data/newData") && req.method == "POST") {
         action = "new";
         util.extractPostData(req, function(post) {
-              util.merge(parameters,post);
+              util.merge(parameters, requestedUrl.query);
               callController(controller_name, action, parameters); 
               });    
+          /*var query = requestedUrl.query;
+          for (var key in query) {
+            if (query[key]) {
+              parameters[key] = query[key];
+            }
+          }
+          callController(controller_name, action, parameters);
+          */
         }
         break;
 
@@ -274,6 +284,8 @@ this.dispatch = function(req, res) {
             // parameters['data_type'] = parts[3];
             util.extractPostData(req, function(post) {
               util.merge(parameters, post);
+              console.log("PRINTING ALL POST DATA\n");
+              console.log(parameters);
               callController(controller_name, action, parameters);
             });
           }
@@ -333,8 +345,7 @@ this.dispatch = function(req, res) {
       controller[action](parameters, function(content, opts) {
 
         if (content) {
-          //console.log("HERE\n");
-          responseHandler.renderHtml(content);
+        responseHandler.renderHtml(content);
         } else {
         responseHandler.serverError(404);
         }

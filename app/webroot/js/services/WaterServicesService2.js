@@ -1,7 +1,4 @@
-enviroHubApp.service('WaterServicesService', function($q, $http) {
-
-  //
-
+var WaterServicesService = function($) {
   // Data
   var devices = [];
   var parameters = [];
@@ -11,8 +8,8 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
    * For Current Date - Ommit parameters
    * For no sinleID needed - Ommit parameter
    */
-  this.getData = function(startDT, endDT, singleID) {
-    var deferred = $q.defer();
+   var getData = function(startDT, endDT, singleID) {
+    var deferred = $.Deferred();
     // Default GetRequest Parameters
     var parameterCd = '00010,00400';
     var state = 'md';
@@ -42,7 +39,7 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
 
       // Get Single Device Data
       var singleDeviceData = [];
-      if (!(singleID === undefined || !singleID.trim())) {
+      if (singleID !== undefined) {
         singleDeviceData = getDataSingle(singleID);
       }
 
@@ -60,14 +57,8 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
     xhr.onerror = function() {
       deferred.reject(xhr.response);
     }
-    return deferred.promise;
+    return deferred;
 }
-
-
-
-
-
-
 
   /**
    * Get Device data from deviceID
@@ -300,4 +291,7 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
     }
   };
 
-});
+  return{
+    getData : getData
+  }
+}(jQuery);

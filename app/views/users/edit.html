@@ -1,25 +1,40 @@
+<div class="ui attached segment">
+	<div class="ui container">
+		<div class="ui large header"> Edit Profile </div>
 
-<h1> Edit </h1>
+		{{#err}}
+			<div class="ui error message"> {{err_msg}} </div>
+		{{/err}}
 
-<div id="register">
-	{{#err}}
-		{{err_msg}}
-	{{/err}}
-<form action="/users/{{current_user.data.id}}" method="POST">
-		<ul>
-			<li> Email: <input type="email" name="email" value="{{current_user.data.email}}"></input></li>
-			<li> Password: <a href="/password_resets/new"> Reset Password </a></li>
-		</ul>
-	<h2> Privacy Settings </h2>
-	{{#admin}}
-		<ul>
-			<li> Activate invitation-only registration system: <input type="checkbox" name="invites_active"></input></li>
-			<li> Set your profile to private: <input type="checkbox" name="private_profile"></input></li>
-		</ul>
-	{{/admin}}
+		<div id="register">
+			<form class="ui padded form segment" action="/users/{{current_user.data.id}}" method="POST">
+				<div class="inline field">
+					<label style="width:65px; text-align:right"> Email: </label>
+					<input type="email" name="email" value="{{current_user.data.email}}"></input>
+				</div>
+				<div class="inline field">
+					<label style="width:65px; text-align:right"> Password: </label>
+					<a href="/password_resets/new"> Reset Password </a>
+				</div>
 
-		<input type="submit" value="Update">
-	
-</form>
+				{{#admin}}
+					<div class="ui small dividing header"> Privacy </div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" name="invites_active"></input>
+							<label> Activate invitation-only registration system </label>
+						</div>
+					</div>
+					<div class="field">
+						<div class="ui checkbox">
+							<input type="checkbox" name="private_profile"></input>
+							<label> Set your profile to private </label>
+						</div>
+					</div>
+				{{/admin}}
+
+				<input class="ui basic button" type="submit" value="Update">
+			</form>
+		</div>
+	</div>
 </div>
-

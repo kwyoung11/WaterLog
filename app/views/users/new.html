@@ -1,20 +1,33 @@
-<h1> Register </h1>
+<div class="ui attached segment">
+	<div class="ui container">
+		<div class="ui large header"> Register </div>
+		{{#notice}}
 
-<div id="register">
-	{{#err}}
-		{{err_msg}}
-	{{/err}}
-<form action="/users" method="POST"> 
-	<input type="hidden" name="invitation_token" value="" id="invitation_token">
-		<ul>
-			<li> Email: <input type="email" name="email"></input></li>
-			<li> Password: <input type="password" name="password_digest"> </input></li>
-		</ul>
+			<div class="ui info message"> {{{notice}}} </div>
+		{{/notice}}
 
-		<input type="submit" value="Register">
-	
-</form>
+		{{#err}}
+			<div class="ui error message"> {{err_msg}} </div>
+		{{/err}}
+
+		<div id="register">
+			<form class="ui padded form segment" action="/users" method="POST">
+				<input type="hidden" name="invitation_token" value="" id="invitation_token">
+				<div class="inline field">
+					<label style="width:65px; text-align:right"> Email: </label>
+					<input type="email" name="email"></input>
+				</div>
+				<div class="inline field">
+					<label style="width:65px; text-align:right"> Password: </label>
+					<input type="password" name="password_digest"> </input></li>
+				</div>
+				<input class="ui basic button" type="submit" value="Register">
+			</form>
+		</div>
+
+	</div>
 </div>
+
 <script>
 	document.getElementById("invitation_token").setAttribute('value', window.location.pathname.split("/")[3]);
 </script>

@@ -1,8 +1,5 @@
-enviroHubApp.controller('loginController', function($scope, SessionService)  {
+enviroHubApp.controller('loginController', function($scope)  {
 	$scope.pageClass = 'page-login';
-	$scope.loginStatus = SessionService.loginFail;
-
-	return $scope.loginStatus;
 });
 
 enviroHubApp.directive("registerForm", function(SessionService){
@@ -40,12 +37,11 @@ enviroHubApp.directive("registerForm", function(SessionService){
 			on: 'blur',
 			transition: 'fade down',
 			onSuccess: function(event, fields){
-				console.log("success");
 				SessionService.registerUser(fields.email, fields.password_digest);
+				$(element).addClass('loading');
 				return false;
 			},
 			onFailure: function(){
-				console.log("fail");
 				return false;
 			}
 		});
@@ -73,13 +69,11 @@ enviroHubApp.directive("loginFrom", function(SessionService){
 			on: 'blur',
 			transition: 'fade down',
 			onSuccess: function(event,fields){
-				console.log("success");
-				console.log(fields)
 				SessionService.loginUser(fields.email, fields.password_digest);
+				$(element).addClass('loading');
 				return false;
 			},
 			onFailure: function(){
-				console.log("fail");
 				return false;
 			}
 		});

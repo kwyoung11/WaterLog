@@ -7,3 +7,4 @@ exports.password_resets = require("./password_resets_controller.js");
 exports.api = require("./api_controller.js");
 exports.mobile = require("./mobile_controller.js");
 exports.invitations = require("./invitations_controller.js");
+exports.map = require("./map_controller.js");
