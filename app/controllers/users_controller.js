@@ -225,45 +225,6 @@ users_controller.prototype = {
 					}
 
 				});
-					//});
-				/*db.query("SELECT * FROM devices WHERE user_id=$1",[params['id']], function(err, result) {
-					var arr =result.rows;
-					for(var ind in arr){
-						console.log("RESULTS\n");
-						console.log(arr[ind]);
-						db.query("DELETE FROM data WHERE device_id=$1",[arr[ind].id], function(err, result) {
-							db.query("DELETE FROM devices WHERE id=$1",[arr[ind].id], function(err, result) {
-								db.query("DELETE FROM users WHERE id=$1", [params['id']], function(err, result) {
-									if (err) {
-										//console.log("error3\n");
-										//console.log(err);
-										var data = {'err_code': 99, 'err_msg': 'There was an error in trying to delete your records from our database.'};	
-										if (self.response_handler.format == 'json') {
-											self.response_handler.renderJSON(200, data);
-										} else {
-											view.renderView("/users/" + self.current_user.data.id, data, function(data) {
-											callback(data);
-											});	
-										}	
-									}
-
-									if (self.response_handler.format == 'json') {
-										var data = {'msg': 'You have been removed/deleted from our records.'};
-										self.response_handler.renderJSON(200, data);
-									} else {
-										GLOBAL.flash.notice = 'You have been removed/deleted from our records.';
-										self.response_handler.redirectTo("/#");
-									}
-					
-					
-								});
-								
-							});
-						});
-
-					}
-
-				});*/
 			} else {
 				var data = {'err_code': 10, 'err_msg': 'Sorry, but you don\'t have permission to do that.'};
 				if (self.response_handler.format == 'json') {

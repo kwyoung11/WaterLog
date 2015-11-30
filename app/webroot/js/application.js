@@ -33,6 +33,16 @@
                 controller  : 'loginController'
             })
 
+            .when('/reset_password', {
+                templateUrl : '/views/sessions/passwordReset.html',
+                controller  : 'passwordResetController'
+            })
+
+            .when('/reset_password/:password_reset_token/edit', {
+                templateUrl : '/views/sessions/passwordResetEdit.html',
+                controller  : 'passwordResetController'
+            })
+
             // route for the map page
             .when('/map', {
                 templateUrl : '/views/map/map.html',
@@ -87,4 +97,3 @@
         $scope.pageClass = 'page-contact';
         $scope.message = 'Contact us! JK. This is just a demo.';
     });
-

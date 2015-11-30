@@ -14,8 +14,6 @@ var User = function (data) {
 
     // remove unallowed parameters
     this.data = this.sanitize(data);
-    this.data.password_reset_token = null;
-    this.data.password_reset_sent_at = null;
 	
 	// change this to support encryption - 512
 	var pair = User.generateKeyPair(128);
@@ -152,6 +150,8 @@ User.prototype.update = function(obj, cb) {
     var keys = [];
     // get values array
     var result = [];
+    console.log("IN USER UPDATE");
+    console.log(user);
     for (var attr in obj) {
         keys.push(attr);
         if (attr == 'password_digest') {
@@ -162,7 +162,7 @@ User.prototype.update = function(obj, cb) {
         result.push(obj[attr]);
     }
     result.push(user.data.id);
-
+    console.log(user);
     // generate placeholders
     for (var i = 1; i <= keys.length; i++) {
         update_string += keys[i-1] + '=$' + i + ',';
@@ -274,5 +274,5 @@ User.generateKeyPair = function(numBits){
 }
 
 
-
 module.exports = User;
+

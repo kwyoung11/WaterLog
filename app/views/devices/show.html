@@ -1,24 +1,51 @@
 <html>
 <h1> Info about {{name}}</h1>
-
-<a href="/devices/{{id}}/edit">Edit {{name}}</a>
- 
-<body>
-</br>
-</br>
-
-<script>
-function checkMobile(data) { //cannot proceed without entering a nickname
-    if(data.match("Manual")){
-    	document.write("<a href=/mobile/{{id}}/input>Add data manually</a>")
-    	//IF THE PAGE IS NOT IN A MOBILE BROWSER THEN THIS SHOULD NOT EXECUTE
-   	}else{
-   		document.write("<a href=/devices/{{id}}/bulkupload>Upload Data File</a>")
-   	}
-}
-checkMobile('{{mode}}');
-</script>
-</br>
-LIST DATA HERE
-</body>
-</html>
+<div class="ui secondary attached menu">
+	<div class="ui container">
+		<div class="header item"> Device: <strong> {{name}} </strong> </div>
+		<div class="right menu">
+      <a class="item" href="/devices/{{id}}/edit"> <i class="ui edit icon"></i>Edit {{name}}</a>
+      <script>
+      function checkMobile(data) { //cannot proceed without entering a nickname
+          if(data.match("Manual")){
+          	document.write("<a class='item' href=/mobile/{{id}}/input><i class='ui add icon'></i> Add data manually</a>");
+          	//IF THE PAGE IS NOT IN A MOBILE BROWSER THEN THIS SHOULD NOT EXECUTE
+         	}else{
+         		document.write("<a class='item' href=/devices/{{id}}/bulkupload> <i class='ui upload icon'></i> Upload Data File </a>");
+         	}
+      }
+      checkMobile('{{mode}}');
+      </script>
+    </div>
+  </div>
+</div>
+<div class="ui attached segment" ng-app="deviceApp" ng-controller="deviceDetails">
+  <div class="ui container">
+    <div class="ui grid">
+      <div class="ten wide column">
+        <highchart id="chart1" config="chartConfig" class="span10"></highchart>
+      </div>
+      <div class="six wide column">
+        <div class="ui button" ng-click="swapChartType()"> Line or Bar </div>
+        <div class="ui button" ng-click="randomizeData()"> Randomize Data </div>
+        <div class="ui button" ng-click="addpH()"> Add pH Data </div>
+        <div class="ui button" ng-click="addTemperature()"> Add Temperature Data </div>
+        <div class="ui button" ng-click="addTurbidity()"> Add Turbidity Data </div>
+				<div class="form-group">
+            <label for="date-birth" class="control-label">Birth date:</label>
+            <div class="control">
+                <input id="date-birth" class="form-control" type="date" ng-model="dateBirth">
+            </div>
+        </div>
+				<div> Start Date:<input type="text" name="startDate"> </div>
+				<div> End Date:<input type="text" name="endDate"> </div>
+				<div> <input type="submit" value="submit"> </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/services/DataService.js" charset="utf-8"> </script>
+<script src="/libs/angular/angular.min.js" charset="utf-8"> </script>
+<script src="/libs/highcharts/highcharts.src.js" charset="utf-8"> </script>
+<script src="/libs/angular-highcharts/dist/highcharts-ng.min.js" charset="utf-8"> </script>
+<script src="/js/controllers/deviceDetails.js" charset="utf-8"> </script>

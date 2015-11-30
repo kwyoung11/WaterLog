@@ -1,11 +1,30 @@
-{{#notice}}
-	<p> {{notice}} </p>
-{{/notice}}
-<h2> Forgot password? </h2>
-<form action='/password_resets' method="POST">
-	<ul>
-			<li> Email: <input type="email" name="email" placeholder="Email"></input></li>
-		</ul>
+<div class="ui secondary attached menu">
+	<div class="ui container">
+		<div class="header item"> Forgot password? </div>
+		<div class="right menu">
+			<a class="item" href="javascript:history.go(-1)"> <i class="ui left arrow icon"></i> Back </a>
+		</div>
+	</div>
+</div>
 
-		<input type="submit" value="Reset Password">
-</form>
+<div class="ui attached segment">
+	<div class="ui container">
+		{{#notice}}
+			<div class="ui warning message"> {{{notice}}} </div>
+		{{/notice}}
+
+		{{#err}}
+			<div class="ui error message"> {{err_msg}} </div>
+		{{/err}}
+
+		<div id="register">
+			<form class="ui padded form segment" action='/password_resets' method="POST">
+				<div class="inline field">
+					<lable> Email: </label>
+					<input type="email" name="email" placeholder="Email"></input>
+				</div>
+				<input class="ui basic button" type="submit" value="Reset Password">
+			</form>
+		</div>
+	</div>
+</div>

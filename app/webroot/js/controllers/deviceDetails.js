@@ -1,4 +1,6 @@
-enviroHubApp.controller('devicesDetailsController', function ($scope, DataService) {
+var deviceApp = angular.module('deviceApp', ["highcharts-ng"]);
+
+deviceApp.controller('deviceDetails', function ($scope) {
   $scope.pageClass = 'page-deviceDetails';
   //console.log(DataService.getRainFallData());
 
@@ -21,16 +23,15 @@ enviroHubApp.controller('devicesDetailsController', function ($scope, DataServic
     }
   }
 
-var pHRepeat = true;
-var tempRepeat = true;
-var turbidityRepeat = true;
+  var pHRepeat = true;
+  var tempRepeat = true;
+  var turbidityRepeat = true;
 
   $scope.addpH = function (){
     DataService.getpHData().then(function(data){
       var times = [];
       var values = [];
-
-
+      console.log(data);
       for (var i = 0; i < data.length; i++){
         times.push(data[i].time.substring(5,10));
         values.push(parseFloat(data[i].value));
@@ -47,7 +48,7 @@ var turbidityRepeat = true;
         $scope.chartConfig.series.push({
           name: 'pH',
           color: '#4572A7',
-          type: 'column',
+          type: 'line',
           yAxis: 1,
           data: values,
           tooltip: {
@@ -117,10 +118,11 @@ var turbidityRepeat = true;
 
         $scope.chartConfig.series.push({
           name: 'Temperature',
+          type: 'column',
           color: '#89A54E',
           yAxis: 0,
-          type: 'spline',
           data: values,
+          //dashStyle: 'shortdot',
           tooltip: {
             valueSuffix: '°C'
           }
@@ -128,6 +130,20 @@ var turbidityRepeat = true;
         tempRepeat = false;
      }
     });
+  }
+  $scope.chartConfig = {
+      options: {
+          chart: {
+              type: 'bar'
+          }
+      },
+      series: [{
+          data: [10, 15, 12, 8, 7]
+      }],
+      title: {
+          text: 'Hello'
+      },
+      loading: false
   }
 
   $scope.chartConfig = {
@@ -207,5 +223,4 @@ var turbidityRepeat = true;
     },
     series: []
   };
-
 });

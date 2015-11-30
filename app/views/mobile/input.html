@@ -1,4 +1,3 @@
-
 {{#notice}}
   <p> {{{notice}}} </p>
 {{/notice}}
@@ -74,10 +73,8 @@
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script> 
-
 var latitude = document.getElementById("latitude-input");
 var longitude = document.getElementById("longitude-input");
-
 // disable all input fields that are dependent on data type
 $('.data-type-fields input').prop('disabled', true);
 $('.data-type-fields').hide();
@@ -85,7 +82,6 @@ var selected_data_type = $('#data-type-select').val();
 // enable input fields for selected data type
 $("#" + selected_data_type.toLowerCase() + "-fields").show();
 $("#" + selected_data_type.toLowerCase() + "-fields :input").prop('disabled', false);
-
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition);
@@ -94,12 +90,10 @@ function getLocation() {
 	   longitude.value = "Geolocation is not supported by this browser.";
     }
 }
-
 function showPosition(position) {
     latitude.value = position.coords.latitude;
 	longitude.value = position.coords.longitude;
 }
-
 $("#data-type-select").change(function() {
   $('.data-type-fields input').prop('disabled', true);
   $('.data-type-fields').hide();
@@ -107,11 +101,9 @@ $("#data-type-select").change(function() {
   $("#" + selected_data_type.toLowerCase() + "-fields").show();
   $("#" + selected_data_type.toLowerCase() + "-fields :input").prop('disabled', false);
 });
-
 $("#submit-form").click(function() {
   this.preventDefault();
   var arr = ["air", "water", "soil"];
-
   var selected_data_type = $('#data-type-select').val();
   var index = array.indexOf(selected_data_type);
   if (index > -1) {
@@ -120,9 +112,6 @@ $("#submit-form").click(function() {
   //$("#" + selected_data_type + "-fields")
   this.submit();
 });
-
-
 </script>
 
 </body>
-

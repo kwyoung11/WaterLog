@@ -1,6 +1,6 @@
 //include our modules
-var http  = require('follow-redirects').http;
-var https  = require('follow-redirects').https;
+var http  = require('http');
+var https  = require('https');
 var url   = require('url');
 var os = require('os');
 var fs = require('fs');
