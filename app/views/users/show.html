@@ -1,22 +1,39 @@
-{{#notice}}
-	<p> {{{notice}}} </p>
-{{/notice}}
-<h1>Users<h1>
+<div class="ui secondary grey inverted attached menu">
+	<div class="ui container">
+		<div class="header item"> My Account: {{current_user.data.email}}</div>
+		<div class="right menu">
+			<a class="item" href='/map'> <i class="ui marker icon"></i> Map </a>
+			<a class="item" href='/users/{{current_user.data.id}}/edit'> <i class="ui edit icon"></i> Edit Profile </a>
+			<a class="item" href="/logout"> <i class="ui sign out icon"></i> Logout </a>
+			<!-- <a class="item" href="/users/{{current_user.data.id}}/destroy"> <i class="ui remove icon"></i> Destroy </a> -->
+		</div>
+	</div>
+</div>
+<div class="ui padded attached segment">
+	<div class="ui container">
+		{{#notice}}
+			<div class="ui warning message" > {{{notice}}} </div>
+		{{/notice}}
 
-		<h2> User e-mail is: {{current_user.data.email}} </h2>
-		<h1> My Devices for {{current_user.data.email}} </h1>
-		<a href="/devices/new"> Add a New Device </a>
-		</br>
-		</br>
-		</br>
+		<div class="ui small dividing header"> My Devices </div>
+		<ul class="ui link list">
+			<a class="item" href="/devices/new">
+				<i class="ui green add icon"></i>
+				<div class="content">
+					<div class="header" style="color:blue"> New Device </div>
+				</div>
+			</a>
 
-{{#devices}}
- <ul>
- 	<li><a href="/devices/{{id}}"> {{name}}</a></li> 
- 	<li><a href="/devices/{{id}}"> {{latitude}}</a></li> 
- 	<li><a href="/devices/{{id}}"> {{longitude}}</a></li> 
- </ul>
-{{/devices}}
-		<a href="/logout"> Logout </a>
-		<a href='/users/{{current_user.data.id}}/edit' id="myLink"> Edit </a>
-		<a href="/users/{{current_user.data.id}}/destroy"> Destroy </a>
+			{{#devices}}
+			 	<a class="item" href="/devices/{{id}}">
+	    		<i class="right triangle icon"></i>
+					<div class="content">
+						<div class="header"> {{name}} </div>
+			 			latitude: {{latitude}}, longitude: {{longitude}}
+					</div>
+				</a>
+			{{/devices}}
+		</ul>
+
+	</div>
+</div>

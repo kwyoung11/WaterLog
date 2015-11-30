@@ -1,4 +1,4 @@
-    enviroHubApp.service('DeviceDataService', function ($http, $q){
+  var DeviceDataService = function ($){
         // var device = {};
         // $http.get("http://vache.cs.umd.edu/api/devices?device_id=1")
         // .success(function(response){
@@ -22,49 +22,53 @@
         // ]};
         // return device;
         var ph = [{name:"John", lat:38.9929846, lon:-76.9468502, data:{ph:3.0, temperature: 88.5, turbidity: 7.0},date:"2015-11-22"}, {name:"Mara", lat:38.9943243, lon:-76.9434234, data:{ph:4.5, temperature: 70.3, turbidity: 3.0}, date:"2015-11-21"} ];
-        var request = $http.get("http://vache.cs.umd.edu/api/devices?device_id=1");
+        var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=1");
         this.getphData = function (){
-            var deferred = $q.defer();
+            var deferred = $.Deferred();
             request.success(function(dt){
                 var data = [];
-                console.log(ph);
+                // console.log(ph);
                 for (var i = 0; i < ph.length; i++){
                     data.push({name: ph[i].name, lat: ph[i].lat, lon: ph[i].lon, data: ph[i].data.ph});
                 }
-                console.log(data);
+                // console.log(data);
                 deferred.resolve(data);
             });
-            return deferred.promise;
+            return deferred;
         }
-    
+
         this.gettempData = function (){
-            var deferred = $q.defer();
+            var deferred = $.Deferred();
             request.success(function(dt){
                 var data = [];
-                console.log(ph);
+                // console.log(ph);
                 for (var i = 0; i < ph.length; i++){
                     data.push({name: ph[i].name, lat: ph[i].lat, lon: ph[i].lon, data: ph[i].data.temperature});
                 }
-                console.log(data);
+                // console.log(data);
                 deferred.resolve(data);
             });
-            return deferred.promise;
+            return deferred;
         }
 
         this.getturbData = function (){
-            var deferred = $q.defer();
+            var deferred = $.Deferred();
             request.success(function(dt){
                 var data = [];
-                console.log(ph);
+                // console.log(ph);
                 for (var i = 0; i < ph.length; i++){
                     data.push({name: ph[i].name, lat: ph[i].lat, lon: ph[i].lon, data: ph[i].data.turbidity});
                 }
-                console.log(data);
+                // console.log(data);
                 deferred.resolve(data);
             });
-            return deferred.promise;
+            return deferred;
         }
 
-    });
+        return{
+          getphData : getphData,
+          gettempData : gettempData,
+          getturbData : getturbData
+        }
 
-
+    }(jQuery);

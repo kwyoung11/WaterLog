@@ -1,13 +1,20 @@
-enviroHubApp.factory('SessionService', function ($http, PubSubService){
+enviroHubApp.factory('SessionService', function ($http, $location, PubSubService){
   var loggedIn = {};
 
-  var user = undefined;
+  var user_data = undefined;
 
   loggedIn.loginSuccess = 'LoginSuccess';  // Login Status
   loggedIn.logoutSuccess = 'LogoutSuccess'; // Login Status
   loggedIn.loginFail = 'LoginFail';        // Login Status
 
   loggedIn.status = loggedIn.loginFail;
+
+  loggedIn.getUserId = function(){
+    if (user_data)
+      return user_data.id;
+    else
+      return user_data;
+  }
 
   loggedIn.logoutUser = function (username) {
     username = username | user;
@@ -26,21 +33,15 @@ enviroHubApp.factory('SessionService', function ($http, PubSubService){
         password_digest: password
       }
     });
-    if (username == "asdf@asdf.com"){
-      user = username;
+    q.success(function(data){
+      user_data = data;
       loggedIn.status = loggedIn.loginSuccess;
       PubSubService.publish(loggedIn.loginSuccess);
-    } else {
-      loggedIn.status = loggedIn.loginFail;
-      PubSubService.publish(loggedIn.loginFail);
-    }
-    q.success(function(data){
-      console.log("Login Request", data);
-
+      $location.path('/map');
     });
   }
 
-  loggedIn.registerUser = function (email, pass){
+  loggedIn.registerUser = function (email, pass) {
     var x = $http({
       method: 'POST',
       url: '/users',
@@ -50,9 +51,42 @@ enviroHubApp.factory('SessionService', function ($http, PubSubService){
       }
     });
     x.success(function(response){
-      console.log("Register Request Succesful", response);
+      if (response.msg == "Success"){
+        loggedIn.loginUser ( email, pass );
+      }
+    });
+  }
+
+  loggedIn.resetPassword = function (email, element) {
+    var x = $http({
+      method: 'POST',
+      url: '/password_resets',
+      data: {
+        email: email,
+      }
+    });
+    x.success(function(response) {
+      console.log("Password Reset Successful", response);
+      $(element).removeClass('loading');
+      $(element).find('.message').addClass(response.err_code ? 'error' : 'success').html(response.msg ? response.msg : response.err_msg);
     })
     console.log(x);
-  }
+  };
+
+  loggedIn.resetPasswordUpdate = function (token, element) {
+    var x = $http({
+      method: 'POST',
+      url: '/password_resets/',
+      data: {
+        email: email,
+      }
+    });
+    x.success(function(response) {
+      console.log("Password Reset Successful", response);
+      PubSubService.publish('passwordResetRequestCompleted', response);
+    })
+    console.log(x);
+  };
+
   return loggedIn;
 });

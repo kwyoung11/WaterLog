@@ -1,0 +1,56 @@
+
+<!--div class="ui internally celled grid  text-center centered" -->
+<div class="ui padded attached inverted teal segment" ng-app="mapApp" ng-controller="mapController">
+  <div class="ui divided stackable grid">
+    <div class="five wide column">
+      <h1 class="ui centered dividing header top attached inverted secondary red segment"> CONTROL PANEL </h1>
+      <form  map-from class="ui form bottom attached padded red segment" >
+        <select ng-model="deviceCategory" class="ui simple search dropdown">
+          <option value="">Device Visualization Category</option>
+          <option value="pH" selected>PH</option>
+          <option value="Temperature"> Temperature </option>
+          <option value="Turbidity">Turbidity</option>
+        </select>
+        <br />
+        <select ng-model="thirdParty" class="ui simple search dropdown">
+          <option value="">3rd Party Visualization Category</option>
+          <option value="pH">PH</option>
+          <option value="Temperature"> Temperature </option>
+          <option value="Turbidity">Turbidity</option>
+        </select>
+        <br />
+        <!-- <div class="inline field">
+          <label style="width:60px; text-align:right"> Latitude: </label>
+          <input type="text" name="latitude">
+        </div>
+        <div class="inline field">
+          <label style="width:60px; text-align:right"> Longitude: </label>
+          <input type="text" name="longitude">
+        </div> -->
+        <div class="inline field">
+          <label style="width:60px; text-align:right"> Time: </label>
+          <input type="date" name="time">
+        </div>
+        <br />
+        <button ng-click="submit()" class="ui button" type="submit" id="submit" > Submit </button>
+        <div class="ui button" ng-click="clearMap()"> Clear Map </div>
+      </form>
+    </div>
+    <div class="eleven wide column">
+      <leaflet lf-center="center" markers="markers" height="580px" width="100%"></leaflet>
+    </div>
+  </div>
+</div>
+
+<!-- map.html -->
+<script src="/libs/angular/angular.min.js" charset="utf-8"> </script>
+<script src="/libs/leaflet/leaflet.js" charset="utf-8"> </script>
+<link rel="stylesheet" href="/libs/leaflet/leaflet.css" media="screen" title="no title" charset="utf-8">
+<script src="/libs/angular-leaflet/dist/angular-leaflet-directive.min.js" charset="utf-8"> </script>
+<script src="/libs/leaflet-awesome-markers/dist/leaflet.awesome-markers.js"></script>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css"/>
+<link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+<link rel="stylesheet" href="/libs/leaflet-awesome-markers/dist/leaflet.awesome-markers.css">
+<script src="/js/controllers/map.js" charset="utf-8"> </script>
+<script src="/js/services/DeviceDataService.js" charset="utf-8"> </script>
+<script src="/js/services/WaterServicesService2.js" charset="utf-8"> </script>
