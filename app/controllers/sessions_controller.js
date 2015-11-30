@@ -21,10 +21,10 @@ sessions_controller.prototype = Object.create(application_controller.prototype);
 sessions_controller.prototype.constructor = sessions_controller;
 
 /* sessions_controller prototype methods below */
-sessions_controller.prototype = {
+
 
 	// login page
-	new: function(params, cb) {
+	sessions_controller.prototype.new = function(params, cb) {
 
 			view.renderView("sessions/new", this.view_data, function(content) {
 				cb(content);
@@ -33,7 +33,7 @@ sessions_controller.prototype = {
 	},
 
 	// on login submit
-	create: function(params, cb) {
+	sessions_controller.prototype.create = function(params, cb) {
 		var self = this;
                 console.log(params);
 		User.find('email', params['email'], function(err, user) {
@@ -87,7 +87,7 @@ sessions_controller.prototype = {
 	},
 
 	// /logout
-	destroy: function(params, cb) {
+	sessions_controller.prototype.destroy = function(params, cb) {
 		var self = this;
 		self.response_handler.setCookie('envirohub_auth_token', '');
 		if (self.response_handler.format == 'json') {
@@ -96,7 +96,5 @@ sessions_controller.prototype = {
 			self.response_handler.redirectTo('/');	
 		}
 	}
-
-};
 
 module.exports = sessions_controller;

@@ -22,7 +22,6 @@ var map_controller = function(response_handler, req, cb) {
 map_controller.prototype = Object.create(application_controller.prototype);
 map_controller.prototype.constructor = map_controller;
 
-map_controller.prototype = {
 
 	// before_filter: function (action, params) {
 	// 	var self = this;
@@ -56,7 +55,7 @@ map_controller.prototype = {
 
 	// },
 
-	index: function(params, callback) {
+	map_controller.prototype.index = function(params, callback) {
 			var self = this;
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			// load user data here
@@ -64,8 +63,6 @@ map_controller.prototype = {
 			view.renderView('map/index', data, function(content) {
 		  		callback(content);
 			});
-	},
-
-}
+	}
 
 module.exports = map_controller;

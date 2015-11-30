@@ -25,47 +25,48 @@ var devices_controller = function(response_handler, req, cb) {
 devices_controller.prototype = Object.create(application_controller.prototype);
 devices_controller.prototype.constructor = devices_controller;
 
-devices_controller.prototype = {
-
-	before_filter: function (action, params) {
+	devices_controller.prototype.before_filter = function (action, params, cb) {
 		var self = this;
 		if (["show", "edit", "update", "destroy"].indexOf(action) >= 0) {
 			Device.findById(params['id'], function(err1, device) {
 				User.findById(device.user_id, function(err2, user) {
-					if (!device.id) {
-						self.response_handler.serverError(404, "Resource not found.");
+					if (!device || !device.id) {
+						return cb([404, "Resource not found"]);
 					} else if (device.user_id != self.current_user.data.id && user.data.private_profile) {
-						self.response_handler.serverError(403, "This user has set their account data to be private.");
+						return cb([403, "This user has set their account data to be private."]);
+						// return self.response_handler.serverError(403, "This user has set their account data to be private.");
+					} else {
+						cb(null);
 					}
 				});
-				
 			});
-			Device.findByUser(self.current_user.data.id, function(err, devices){
-				var resource_found = false;
-				console.log(devices);
-				//console.log(devices[0]['id']);
+			// Device.findByUser(self.current_user.data.id, function(err, devices){
+			// 	var resource_found = false;
+			// 	console.log(devices);
+			// 	//console.log(devices[0]['id']);
 
-				for (var ind in devices) {
-					//console.log("device.id "+devices[ind]['id']+" params['id'] " +params['id']+ "\n");
-					if (devices[ind]['id'] == params['id']) {
-						resource_found = true;
-					}
-				}
-				//console.log("RESOURCE FOUND IS "+resource_found+"\n");
-				if (!resource_found) {
-					//console.log("IN BEFORE FILTER\n");
-					self.response_handler.serverError(404, "Resource not found");
-				}
-			});
+			// 	for (var ind in devices) {
+			// 		//console.log("device.id "+devices[ind]['id']+" params['id'] " +params['id']+ "\n");
+			// 		if (devices[ind]['id'] == params['id']) {
+			// 			resource_found = true;
+			// 		}
+			// 	}
+			// 	//console.log("RESOURCE FOUND IS "+resource_found+"\n");
+			// 	if (!resource_found) {
+			// 		//console.log("IN BEFORE FILTER\n");
+			// 		// self.response_handler.serverError(404, "Resource not found");
+			// 		return cb([404, "Resource not found"]);
+			// 	}
+			// });
 		}
 	},
 
-	before_action: function (action, params) {
+	devices_controller.prototype.before_action = function (action, params) {
 
 	},
 
 	//GET /devices/new
-	new: function(params, callback) {
+	devices_controller.prototype.new = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		var data = {'id': params['id']};
 		// console.log(params);
@@ -76,7 +77,7 @@ devices_controller.prototype = {
 		
 	},
 
-	index: function(params, callback) {
+	devices_controller.prototype.index = function(params, callback) {
 			var self = this;
 			var callback = (typeof callback === 'function') ? callback : function() {};
 			// load user data here
@@ -89,7 +90,7 @@ devices_controller.prototype = {
 		
 	},
 
-	show: function(params, callback) {
+	devices_controller.prototype.show = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		console.log("HERE\n");
 		Device.findById(params['id'], function(err, device_data) {
@@ -101,7 +102,7 @@ devices_controller.prototype = {
 		});
 	},
 
-	edit: function(params, callback) {
+	devices_controller.prototype.edit = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		Device.findById(params['id'], function(err, device_data) {
 			view.renderView('devices/edit', device_data, function(content) {
@@ -111,7 +112,7 @@ devices_controller.prototype = {
 	},
 
 	// POST new user
-	create: function(params, callback) {
+	devices_controller.prototype.create = function(params, callback) {
 		var self = this;
 		console.log("HERE1");
 		console.log(self.current_user);
@@ -135,7 +136,7 @@ devices_controller.prototype = {
     	});
 	},
 
-	update: function(params, callback) {
+	devices_controller.prototype.update = function(params, callback) {
 		var self = this;
 		Device.findById(params['id'], function(err, data) {
 			data['name'] = params['name'];
@@ -163,7 +164,7 @@ devices_controller.prototype = {
 		});
 	},
 
-	bulkupload: function(params, callback) {
+	devices_controller.prototype.bulkupload = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		//var device = new Device(params);
 		Device.findById(params['id'], function(err, device_data) {
@@ -174,7 +175,5 @@ devices_controller.prototype = {
 			});
 		});
 	}
-
-}
 
 module.exports = devices_controller;

@@ -26,10 +26,9 @@ var mobile_controller = function(response_handler, req, cb) {
 mobile_controller.prototype = Object.create(application_controller.prototype);
 mobile_controller.prototype.constructor = mobile_controller;
 
-mobile_controller.prototype = {
 
 	//GET /devices/new
-	input: function(params, callback) {
+	mobile_controller.prototype.input = function(params, callback) {
 		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// get devices for current user
@@ -49,7 +48,7 @@ mobile_controller.prototype = {
 		}
 	},
 
-	create: function(params, callback) {
+	mobile_controller.prototype.create = function(params, callback) {
 		var self = this;
 		
 		var mobile = new Mobile(params);
@@ -68,6 +67,5 @@ mobile_controller.prototype = {
 			}
 		});
 	}
-}
 
 module.exports = mobile_controller;

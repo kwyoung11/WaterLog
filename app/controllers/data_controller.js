@@ -7,6 +7,7 @@ var db = require('../../lib/db');
 var crypto = require('crypto');
 var util = require('../../lib/util');
 var Data = require('../models/data');
+var application_controller = require('./application_controller');
 
 /* constructor */
 var data_controller = function(response_handler, req, cb) {
@@ -14,6 +15,9 @@ var data_controller = function(response_handler, req, cb) {
 	this.req = req;
 	setTimeout(cb, 0);
 };
+
+data_controller.prototype = Object.create(application_controller.prototype);
+data_controller.prototype.constructor = data_controller;
 
 data_controller.prototype.new = function(params, callback) {
 		var self = this;

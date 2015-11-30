@@ -25,10 +25,9 @@ invitations_controller.prototype = Object.create(application_controller.prototyp
 invitations_controller.prototype.constructor = invitations_controller;
 
 /* invitations_controller prototype methods below */
-invitations_controller.prototype = {
 	
 	// GET /invitations/new
-	new: function(params, callback) {
+	invitations_controller.prototype.new = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		console.log("SELF IS: ");
 		console.log(this);
@@ -39,7 +38,7 @@ invitations_controller.prototype = {
 	},
 
 	// POST /invitations
-	create: function(params, callback) {
+	invitations_controller.prototype.create = function(params, callback) {
 		var self = this;
 		// create new user object, passing in the email and password_digest from the post data as params
     var invitation = new Invitation(params); 
@@ -94,8 +93,6 @@ invitations_controller.prototype = {
 		// view.renderView('users/show', data, function(data) {
 		// 	callback(data, user);
 		// });	
-	},
-
-};
+	}
 
 module.exports = invitations_controller;

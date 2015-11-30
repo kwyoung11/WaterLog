@@ -22,10 +22,10 @@ password_resets_controller.prototype = Object.create(application_controller.prot
 password_resets_controller.prototype.constructor = password_resets_controller;
 
 /* password_resets_controller prototype methods below */
-password_resets_controller.prototype = {
+
 	
 	// GET /password_resets/new
-	new: function(params, callback) {
+	password_resets_controller.prototype.new = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// respond with new password_resets page
 		console.log(this.view_data);
@@ -35,14 +35,14 @@ password_resets_controller.prototype = {
 	},
 
 	// GET /password_resets/1/edit
-	edit: function(params, callback) {
+	password_resets_controller.prototype.edit = function(params, callback) {
 		view.renderView('password_resets/edit', this.view_data, function(data) {
 			return callback(data);
 		});
 	},
 
 	// POST /password_resets
-	create: function(params, callback) {
+	password_resets_controller.prototype.create = function(params, callback) {
 		var self = this;
 		// create new user object, passing in the email and password_digest from the post data as params
     var user = User.find('email', params.email, function(err, user) {
@@ -96,7 +96,7 @@ password_resets_controller.prototype = {
 	},
 
 	// PATCH/PUT /password_resets/1
-	update: function(params, callback) {
+	password_resets_controller.prototype.update = function(params, callback) {
 		var self = this;
 		User.find('password_reset_token', params['password_reset_token'], function(err, user) {
 			var date = new Date();
@@ -138,9 +138,7 @@ password_resets_controller.prototype = {
 				
 			}
 		});
-	},
+	}
 
-
-};
 
 module.exports = password_resets_controller;

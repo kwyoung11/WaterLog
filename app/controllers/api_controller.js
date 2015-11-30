@@ -23,9 +23,8 @@ api_controller.prototype = Object.create(application_controller.prototype);
 api_controller.prototype.constructor = api_controller;
 
 /* api_controller prototype methods below */
-api_controller.prototype = {
 	
-	device: function (params, cb) {
+	api_controller.prototype.device = function (params, cb) {
 		var self = this;
 		if (params.location && params.radius) { // get devices with x mile radius of lat, lon
 			var latitude = params.location.split(",")[0];
@@ -78,7 +77,7 @@ api_controller.prototype = {
 		}
 	},
 
-	users: function(params, cb) {
+	api_controller.prototype.users = function(params, cb) {
 		// gets all user device info as well as user info
 		/* example JSON: 
 		{
@@ -123,7 +122,5 @@ api_controller.prototype = {
 			});	
 		}  
 	}
-
-};
 
 module.exports = api_controller;

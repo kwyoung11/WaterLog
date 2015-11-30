@@ -24,28 +24,30 @@ users_controller.prototype = Object.create(application_controller.prototype);
 users_controller.prototype.constructor = users_controller;
 
 /* users_controller prototype methods below */
-users_controller.prototype = {
 	
-	before_filter: function (action, params) {
+	users_controller.prototype.before_filter = function (action, params, cb) {
 		var self = this;
 		if (action == "edit" || action == "update" || action == "destroy") {
 			if (self.current_user.data.id != params['id']) {
-				self.response_handler.serverError(403, "You do not have permission to perform this action.");
+				cb([403, "You do not have permission to perform this action."]);
+			} else {
+				cb(null);
 			}
 		} else if (action == "show") {
 			User.findById(params['id'], function(err, user) {
-				console.log(user);
 					if (user && user.data.is_admin && user.data.private_profile && self.current_user.data.id != params['id']) {
-						self.response_handler.serverError(403, "This user has set their profile to private.");
+						cb([403, "This user has set their profile to private."]); 
 					} else if (!user.data.id) {
-						self.response_handler.serverError(404, "Could not find a user with that ID.");
+						cb([404, "Could not find a user with that ID."]);
+					} else {
+						cb(null);
 					}
 			});
 		}
 	},
 
 	// GET /users/new
-	new: function(params, callback) {
+	users_controller.prototype.new = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// respond with login/registration page
 		view.renderView('users/new', this.view_data, function(data) {
@@ -54,7 +56,7 @@ users_controller.prototype = {
 	},
  	
  	// GET /users/1
-	show: function(params, callback) {
+	users_controller.prototype.show = function(params, callback) {
 		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// load user data here
@@ -75,7 +77,7 @@ users_controller.prototype = {
 	},
 
 	// GET /users/1/edit
-	edit: function(params, callback) {
+	users_controller.prototype.edit = function(params, callback) {
 		var self = this;
 		var user = User.findById(params['id'], function(err, user) {
 			if (user.data.is_admin) { 
@@ -89,7 +91,7 @@ users_controller.prototype = {
 	},
 
 	// POST /users
-	create: function(params, callback) {
+	users_controller.prototype.create = function(params, callback) {
 		var self = this;
 		// create new user object, passing in the email and password_digest from the post data as params
     var user = new User(params); 
@@ -166,7 +168,7 @@ users_controller.prototype = {
 	},
 
 	// PATCH/PUT /users/1
-	update: function(params, callback) {
+	users_controller.prototype.update = function(params, callback) {
 		var self = this;
 		console.log("in update function");
 		var user = User.findById(params['id'], function(err, user) {
@@ -198,7 +200,7 @@ users_controller.prototype = {
 	},
 
 	// GET /users/1/destroy
-	destroy: function(params, callback) {
+	users_controller.prototype.destroy = function(params, callback) {
 		var self = this;
 			if (self.current_user.data.id == params['id']) {
 				//User.findById(params['id'], function(err, user) {
@@ -239,7 +241,7 @@ users_controller.prototype = {
 			}
 	},
 
-	confirm_email: function(params, callback) {
+	users_controller.prototype.confirm_email = function(params, callback) {
 		var self = this;
 		// find the user by the confirmation code
 		User.find('email_confirmation_token', params['email_confirmation_token'], function(err, user) {
@@ -278,7 +280,5 @@ users_controller.prototype = {
 			}
 		});
 	}
-
-};
 
 module.exports = users_controller;

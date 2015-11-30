@@ -22,4 +22,11 @@ var application_controller = function(response_handler, req, cb) {
 	});
 };
 
+application_controller.prototype = {
+	
+	before_filter: function(action, params, cb) {
+		cb(null, null);
+	}
+}
+
 module.exports = application_controller;
