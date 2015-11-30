@@ -123,7 +123,7 @@ Device.prototype.set = function(name, value) {
 }
 
 Device.prototype.sanitize = function(data) {  
-    console.log("SANITIZING DATA NOW")
+    //console.log("SANITIZING DATA NOW")
     data = data || {};
     schema = schemas.device;
     sanitized_data = {};
