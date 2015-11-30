@@ -1,20 +1,29 @@
-{{#notice}}
-	<p> {{{notice}}} </p>
-{{/notice}}
-<h1> Login </h1>
+<div class="ui attached segment">
+	<div class="ui container">
+		{{#notice}}
+			<div class="ui message"> {{{notice}}} </div>
+		{{/notice}}
 
-<div id="register">
-	{{#err}}
-		{{err_msg}}
-	{{/err}}
-<form action="/login" method="POST"> 
-		<ul>
-			<li> Email: <input type="email" name="email"></input></li>
-			<li> Password: <input type="password" name="password_digest"> </input></li>
-		</ul>
+		<div class="ui large header"> Login </div>
 
-		<input type="submit" value="Login">
-	
-</form>
-<a href="/password_resets/new"> forgot password? </a>
+		{{#err}}
+			<div class="ui error message"> {{err_msg}} </div>
+		{{/err}}
+
+		<div id="register">
+			<form class="ui padded form segment" action="/login" method="POST">
+				<div class="inline field">
+					<label style="width:65px; text-align:right"> Email: </label>
+					<input type="email" name="email"></input></li>
+				</div>
+				<div class="inline field">
+					<label style="width:65px; text-align:right"> Password: </label>
+					<input type="password" name="password_digest"> </input></li>
+				</div>
+				<input class="ui button" type="submit" value="Login">
+			</form>
+			<a class="ui link" href="/password_resets/new"> forgot password? </a>
+		</div>
+
+	</div>
 </div>

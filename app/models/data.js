@@ -5,6 +5,7 @@ var moment = require('moment');
 var Application = require('./application');
 var db = require('../../lib/db');
 var util = require('../../lib/util');
+var dataRanges = require("../../schemas/dataRanges.js");
 
 
 
@@ -33,19 +34,19 @@ Data.prototype.postToDatabase = function(cb) {
 		this.params.device_id,
 		function(err){
 			console.log(err);
-			cb(err);
+			cb(err, null);
 		},
 		function(result){
 			self.decrypt(
 				function(err){
 					console.log(err);
-					cb(err);
+					cb(err, null);
 				}, 
 				function(){
 					p=self.params
 					self.sanitize(p,function(err, data){
 						if(err){
-							cb(err);
+							cb(err, null);
 						}else{
 						self.params=data;
 						var device = result[0];
@@ -53,22 +54,22 @@ Data.prototype.postToDatabase = function(cb) {
 							device,
 							function(err){
 								console.log(err);
-								cb(err);
+								cb(err, null);
 							},
 							function(){
 								db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4, $5, $6)', self.getSqlPostValues(), function (err, result) {
 									if (err) {
 										console.log(err);
-										return cb(err);  
+										return cb(err, null);  
 									}
 									else{
 										if(self.encryptedData == true){	
 											console.log('Successful post');
-											cb('Post successful');
+											cb(null, 'Post successful');
 										}
 										else{
 											console.log('Successful unencrypted post');
-											cb('Unencrypted post successful');
+											cb(null, 'Unencrypted post successful');
 										}
 										
 										// Update device location if necessary
@@ -124,7 +125,6 @@ Data.prototype.getSqlPostValues =  function(){
 	
 	vals[4] = data_param_keys;
 	vals[5] = data_param_values;
-	
 	return vals;
 }
 
@@ -196,15 +196,11 @@ Data.prototype.sanitize = function(params,cb) {
      }
 	 
 	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
-	 // then add it to the ei params
+	 // then add it to the sanitized data hash - these will be combined into a data keys & values array
 	 if(typeof ei_params[attr] != 'undefined'){
-		 ei_data[attr] = params[attr];
+		 sanitized_data[attr] = params[attr];
 	 }
     }
-	;
-	if(Object.keys(ei_data).length > 0){
-		sanitized_data['data'] = ei_data;
-	}
 	
 	//checking time stamp
 	if(typeof sanitized_data['created_at'] == 'undefined'){
@@ -216,9 +212,9 @@ Data.prototype.sanitize = function(params,cb) {
 				console.log(err);
 				cb(err, null);
 			}else{
-				sanitized_data['created_at'] = moment(date).format();
+				sanitized_data['created_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 				if(typeof sanitized_data['collected_at']=='undefined'){
-					sanitized_data['collected_at'] = moment(date).format();
+					sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
 				}
 				cb(null, sanitized_data);
 			}
@@ -228,11 +224,8 @@ Data.prototype.sanitize = function(params,cb) {
 
 Data.prototype.checkTimeStamp = function(t, callback) {  
     var self = this;
-
-        	console.log("IN TIMESTAMP\n");
         	db.query('SELECT * FROM data WHERE data_type=$1 AND device_id=$2', 
             [self.params.data_type,self.params.device_id], function (err, result) {
-            //console.log(t);
             if(result.rows[0] == null){
             	callback(1);
             } 
@@ -288,29 +281,86 @@ Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 			}
 		}
 		
-		if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
-			cbErr("Error: No Environmental Indicator data values have been provided.");
-		}
-		else if((typeof this.params['latitude'] == 'undefined' || typeof this.params['longitude'] == 'undefined')
+		if((typeof this.params['latitude'] == 'undefined' || typeof this.params['longitude'] == 'undefined')
 				&& (typeof device['latitude'] == 'undefined' || typeof device['longitude'] == 'undefined' )){
 			cbErr('Error: No locational data has been provided');
-			
 		}
 		else{
-			cbSuccess();
+			this.validateDataTypesAndRanges(cbErr, cbSuccess);
 		}
 	}
 },
 
-Data.prototype.addCustomfields = function() {
-    curr_schema = schema['data_params'][this.params.data_type];
+Data.prototype.constructDataArrayForPost = function(cbErr, cbSuccess){
+	var ei_data = {};
+	var ei_params = this.get_ei_params(this.params);
+	
     for (var attr in this.params) {
-        if (attr != "device_id" && attr != "data_type") {
+       
+	 // if the key is a key that is unique to a specific data type - water, air, soil, etc
+	 // then add it to the sanitized data hash and remove it from params
+	 if(typeof ei_params[attr] != 'undefined'){
+		 ei_data[attr] = this.params[attr];
+		 delete this.params[attr];
+	 }
+    }
+	
+	if(Object.keys(ei_data).length > 0){
+		this.params['data'] = ei_data;
+	}
+	
+	if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
+		cbErr("Error: No Environmental Indicator data values have been provided.");
+	}
+	else{
+		cbSuccess();
+	}
+	
+}
+
+Data.prototype.validateDataTypesAndRanges = function(cbErr, cbSuccess){
+	var data_type = this.params['data_type'];
+	var errEncountered = false;
+	
+	for(var param in this.params){
+		var value = this.params[param];
+		if(typeof dataRanges[param] != 'undefined'){
+			var typeWeWant = typeof dataRanges[param]['type'];
+			if(typeWeWant == 'number'){
+				value = Number(value);
+			}
+			if(typeof value != typeof dataRanges[param]['type'] || (typeof value == 'number' && isNaN(value))){
+				cbErr('Error: Parameter ' + param + ' must be of type ' + typeof dataRanges[param]['type']);
+				errEncountered = true;
+				break;
+			}
+		}
+		else if(typeof dataRanges[data_type][param] != 'undefined'){
+			var typeWeWant = typeof dataRanges[data_type][param]['type'];
+			if(typeWeWant == 'number'){
+				value = Number(value);
+			}
+			if(typeof value != typeof dataRanges[data_type][param]['type'] || (typeof value == 'number' && isNaN(value))){
+				cbErr('Error: Parameter ' + param + ' must be of type ' + typeof dataRanges[data_type][param]['type']);
+				errEncountered = true;
+				break;
+			}
+		}
+	}
+	
+	if(errEncountered == false){
+		this.constructDataArrayForPost(cbErr, cbSuccess);
+	}
+	
+},
+
+Data.prototype.addCustomfields=function(){
+    curr_schema=schema['data_params'][this.params.data_type];
+    for (var attr in this.params){
+        if(attr!="device_id" && attr!="data_type" && attr !="collected_at"){
             if(typeof curr_schema[attr] == 'undefined'){
                 console.log("ATTRIBUTE "+attr+" NOT DEFINED\n");
                 curr_schema[attr] = this.params[attr];
-                console.log(typeof curr_schema[attr]);
-                console.log(schema);
             }
         }
     }

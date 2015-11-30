@@ -4,10 +4,9 @@ var db = require('../../lib/db');
 
 var Device = function (data) {
     Application.call(this,data);
-    console.log("data is " + JSON.stringify(data));
     this.data = this.sanitize(data);
     console.log("sanitized data is " + JSON.stringify(this.data));
-    this.paramOrder = ['id','user_id', 'latitude', 'longitude','name','mode'];
+    this.paramOrder = ['id','user_id', 'latitude', 'longitude','name','mode','type_of_data','keys','units'];
 }
 
 Device.prototype = Object.create(Application.prototype);
@@ -43,14 +42,20 @@ Device.findByUser = function(user_id, cb) {
 Device.prototype.save = function(callback) {  
     var self = this;
     this.data = this.sanitize(this.data);
-        db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode) VALUES($1, $2, $3, $4, $5) returning *', self.getDataInArrayFormat(), function (err, result) {
+    if(this.data['user_id']!=undefined){
+        db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode,type_of_data, keys, units) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *', self.getSqlPostValues(), function (err, result) {
             if (err) {
-                console.log(err);
-                return callback(err);
+                /*view.renderView("/users/" + this.data.id, data, function(data) {
+                    return callback(data);
+                }); */
+                return callback(err);                   
+            }else{
+               return callback(null, result.rows[0]); 
             }
-                return callback(null, result.rows[0]);
-        });             
-            
+        }); 
+    }else{
+        callback(true);
+    }               
 }
 
 Device.prototype.update = function(callback) {  
@@ -61,23 +66,53 @@ Device.prototype.update = function(callback) {
                 console.log(err);
                 return callback(err);
             }
-                console.log("UPDATED CORRECTLY \n");
-                console.log(result.rows[0]);
+                //console.log("UPDATED CORRECTLY \n");
+                //console.log(result.rows[0]);
                 return callback(null, result.rows[0]);
         });             
             
 }
 
+Device.prototype.getSqlPostValues =  function(){
+    
+    var vals = [];
+    vals[0] = this.data['user_id'];
+    vals[1] = this.data['name'];
+    vals[2] = this.data['latitude'];
+    vals[3] = this.data['longitude'];
+    vals[4] = this.data['mode'];
 
-Device.prototype.getDataInArrayFormat = function() {
-    result = []
-    schema = schemas.device;
-    for (var attr in this.data) {
-        var index = this.paramOrder.indexOf(attr);
-        result.push(this.data[attr]);
-    }
-    return result;
+    vals[5] = this.data['type_of_data'];
+        if(this.data['keys']!=null){
+          
+            var data_param_size = this.data['keys'].length;
+            console.log("param size is "+data_param_size);
+            var data_param_keys = '{';
+            var data_param_units = '{';
+            var count = 1;
+            var ind=0
+            while(ind < data_param_size){
+                data_param_keys += this.data['keys'][ind];
+                data_param_units += this.data['units'][ind];
+        
+                if(count < data_param_size){
+                    data_param_keys += ',';
+                    data_param_units += ',';
+                    count++;
+                }
+                ind++;
+            }
+    
+            data_param_keys += '}';
+            data_param_units += '}';
+            vals[6] = data_param_keys;
+            vals[7] = data_param_units;
+        }
+    return vals;
 }
+
+
+
 
 Device.prototype.get = function(name) {  
     return this.data[name];
@@ -88,18 +123,48 @@ Device.prototype.set = function(name, value) {
 }
 
 Device.prototype.sanitize = function(data) {  
-    console.log("SANITIZING DATA NOW")
+    //console.log("SANITIZING DATA NOW")
     data = data || {};
     schema = schemas.device;
     sanitized_data = {};
-
-    for (var attr in data) {
-        //console.log("CURRENT ATTRIBUTE IN DATA IS "+attr);
-        if (schema[attr]==null) {
-            //console.log("FOUND SCHEMA");
-            sanitized_data[attr] = data[attr];
+    //sanitized_data['keys']=
+    var sanitize_keys_array=[];
+    var sanitize_units_array=[];
+        for (var attr in data) {
+            if (schema[attr]==null) {
+                sanitized_data[attr] = data[attr];
+            }else if(attr.match("keys")){ 
+                var ind = 0;
+                var count=0;
+                while(ind < data[attr].length){
+                    if(data[attr][ind]!=""){
+                        count++;
+                        sanitize_keys_array.push(data[attr][ind]);
+                    }
+                    ind++;
+                }
+                if(sanitize_keys_array.length==0){
+                    console.log("No measurements specified");
+                    return {};
+                }
+                sanitized_data[attr] = sanitize_keys_array;
+            }else if (attr.match("units")){
+                var ind = 0;
+                while(ind < data[attr].length){
+                    if(data[attr][ind]!=""){
+                        sanitize_units_array.push(data[attr][ind]);
+                    }
+                    ind++;
+                }
+                if(sanitize_units_array.length != sanitize_keys_array.length){
+                    console.log("number of keys not equal to number of values");
+                    return {};
+                }else{
+                    sanitized_data[attr] = sanitize_units_array;
+                }
+            }
+        
         }
-    }
     return sanitized_data;
 }
 

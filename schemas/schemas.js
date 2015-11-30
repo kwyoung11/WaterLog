@@ -22,16 +22,19 @@ schemas = {
         latitude: null,
         longitude: null,
         name: null,
-        mode: null
+        mode: null,
+        type_of_data: null,
+        keys:[],
+        units:[]
        },
     invitation: {
-    		id: null,
+    	id: null,
       	user_id: null,
         token: null,
         recipient_email: null
     },
 	data: {
-		/* 1 is used to mark a required field */
+		/* 1 is used to mark a required field in a data post*/
 		id: null,
 		device_id: 1,
 		data_type: 1,
@@ -41,7 +44,8 @@ schemas = {
 			water:{
 				pH: null,
 				temperature: null,
-				turbidity: null
+				turbidity: null,
+				water_flow: null
 			},
 			air:{
 				carbon_monoxide: null,

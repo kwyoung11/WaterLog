@@ -1,14 +1,14 @@
 <h1> Register a new device </h1>
 <script>
 function validateForm() { //cannot proceed without entering a nickname
-    var x = document.forms["myForm"]["devid"].value;
+    var x = document.forms["myForm"]["name"].value;
     if (x == null || x == "") {
-        alert("Must enter valid information");
+        alert("Must enter valid name");
         return false;
     }
 } //myForm needs to return to the my devices page which it doesn't right now
 </script>
-<form action="/devices" onsubmit="return validateForm()" method="POST"> 
+<form name = "myForm" action="/devices" onsubmit="return validateForm()" method="POST"> 
 		<ul>
 			<li> Name: <input type="text" name="name"></input></li>
 		</ul>
@@ -22,6 +22,34 @@ function validateForm() { //cannot proceed without entering a nickname
 		<select name="mode">
   		<option value="Arduino" selected="selected">Arduino device</option>
   		<option value="Manual">Mobile</option>
+		</select>
+		</li>
+		<ul>
+			<li> Data Measurement 1: <input type="text" name="keys"></input></li></br>
+			 Units: <input type="text" name="units"></input>
+		</ul>
+		<ul>
+			<li> Data Measurement 2: <input type="text" name="keys"></input></li></br>
+			Units: <input type="text" name="units"></input>
+		</ul>
+		<ul>
+			<li> Data Measurement 3: <input type="text" name="keys"></input></li></br>
+			Units: <input type="text" name="units"></input>
+		</ul>
+		<ul>
+			<li> Data Measurement 4: <input type="text" name="keys"></input></li></br>
+			Units: <input type="text" name="units"></input>
+		</ul>
+		<ul>
+			<li> Data Measurement 5: <input type="text" name="keys"></input></li></br>
+			Units: <input type="text" name="units"></input>
+		</ul>
+
+		<h2> Type of Data Collected </h2>
+		<select name="type_of_data">
+  		<option value="water" selected="selected">Water</option>
+  		<option value="air">Air</option>
+  		<option value="soil">Soil</option>
 		</select>
 		</ul>
 <input type="submit" value="Register">

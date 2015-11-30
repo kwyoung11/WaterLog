@@ -32,35 +32,40 @@ mobile_controller.prototype = {
 	input: function(params, callback) {
 		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		Device.findByUser(self.current_user.data.id, function(err, devices) {
-			var mobile_devices = devices.filter(function(device) {
-				return device.mode == 'Arduino';
+		// get devices for current user
+		if(this.current_user != null && this.current_user.data != null && this.current_user.data.id != null){
+			db.query('SELECT id FROM devices WHERE user_id = $1 AND mode = $2', [this.current_user.data.id, 'Manual'], function(err, result){
+				var devicesArr = [];
+				for(var row in result.rows){
+					var rowId = result.rows[row].id;
+					var item = {id: rowId};
+					devicesArr[row] = item;
+				}
+				params['devices'] = devicesArr;
+				view.renderView('mobile/input', params, function(data) {
+				  callback(data);
+				});
 			});
-
-			var mobile_devices = {'devices': mobile_devices};
-			util.merge(self.view_data, mobile_devices);
-
-			view.renderView('mobile/input', self.view_data, function(data) {
-		  	callback(data);
-			});	
-		});
-		
+		}
 	},
 
 	create: function(params, callback) {
 		var self = this;
-		console.log("params are: " + JSON.stringify(params));
-
+		
 		var mobile = new Mobile(params);
+		
 		params = mobile.data;
 		var data = new Data(params);
 		data.addCustomfields();
-		console.log("data is: " + data);
-    data.postToDatabase(function(data) {
-    	GLOBAL.flash.notice = "Data uploaded successfully.";
-		  view.renderView('/mobile/input', self.view_data, function(data) {
-		  	callback(data);
-		  });
+		data.postToDatabase(function(err, result) {
+			if(err){
+				console.log(err);
+				self.view_data.notice = "Error posting data.";
+				self.response_handler.redirectTo('/mobile/input');
+			}else{	
+				self.view_data.notice = 'Data post successful.';
+				self.response_handler.redirectTo('/mobile/input');	
+			}
 		});
 	}
 }

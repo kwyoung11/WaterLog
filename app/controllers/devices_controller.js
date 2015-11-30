@@ -40,15 +40,20 @@ devices_controller.prototype = {
 				});
 				
 			});
-
 			Device.findByUser(self.current_user.data.id, function(err, devices){
 				var resource_found = false;
-				for (device in devices) {
-					if (device.id == params['id']) {
+				console.log(devices);
+				console.log(devices[0]['id']);
+
+				for (var ind in devices) {
+					//console.log("device.id "+devices[ind]['id']+" params['id'] " +params['id']+ "\n");
+					if (devices[ind]['id'] == params['id']) {
 						resource_found = true;
 					}
 				}
+				//console.log("RESOURCE FOUND IS "+resource_found+"\n");
 				if (!resource_found) {
+					//console.log("IN BEFORE FILTER\n");
 					self.response_handler.serverError(404, "Resource not found");
 				}
 			});
@@ -86,7 +91,7 @@ devices_controller.prototype = {
 
 	show: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-
+		console.log("HERE\n");
 		Device.findById(params['id'], function(err, device_data) {
 				//console.log("DEVICE DATA\n");
 				//console.log(device_data);
@@ -108,13 +113,13 @@ devices_controller.prototype = {
 	// POST new user
 	create: function(params, callback) {
 		var self = this;
-		params['id'] = self.current_user.data.id;
+		params['user_id'] = self.current_user.data.id;
     	var device = new Device(params); // create new device object
     	device.save(function(err, dev) {
     		if (err) {
     			if (self.response_handler.format == 'json') {
     				self.response_handler.renderJSON(200, {'err_code': 21, 'err_msg': 'Error in creating device.'});
-					} else {
+				} else {
 						GLOBAL.flash.notice = 'There was an error registering your device';
 						self.response_handler.redirectTo('/users/' + self.current_user.data.id);	
 					}	
@@ -152,15 +157,19 @@ devices_controller.prototype = {
 						GLOBAL.flash.notice = 'There was an error registering your device';
 						self.response_handler.redirectTo('/devices/' + device.data.id);
 					}
-				
     		});
 		});
 	},
 
 	bulkupload: function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		view.renderView('devices/bulk_upload', params, function(data) {
-		  callback(data);
+		//var device = new Device(params);
+		Device.findById(params['id'], function(err, device_data) {
+			console.log("PASSING DEVICE_DATA FOR BULK UPLOAD");
+			console.log(device_data);
+			view.renderView('devices/bulk_upload', device_data, function(content) {
+		  		callback(content);
+			});
 		});
 	}
 

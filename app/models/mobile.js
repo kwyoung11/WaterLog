@@ -6,7 +6,6 @@ var Mobile = function (data) {
     Application.call(this,data);
     //console.log("data is " + JSON.stringify(data));
     this.data = this.sanitize(data);
-    console.log("sanitized data is " + JSON.stringify(this.data));
     //this.paramOrder = ['user_id', 'name', 'latitude', 'longitude'];
 }
 
@@ -29,7 +28,6 @@ Mobile.prototype.sanitize = function(params) {
         }else if(params[attr]!=""){
             //data not inputted for this field
             temp[attr] = params[attr];
-                    
         }
     }
             //console.log(temp);

@@ -101,6 +101,7 @@ password_resets_controller.prototype = {
 		User.find('password_reset_token', params['password_reset_token'], function(err, user) {
 			var date = new Date();
 			// reset_password_token expires after 2 hours
+                        console.log(Math.abs(date-user.data.password_reset_sent_at));
 			if (Math.abs(date - user.data.password_reset_sent_at) < 3600000) {
 				// update password
 				user.data.password_digest = params['password_digest'];

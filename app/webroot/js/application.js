@@ -97,4 +97,3 @@
         $scope.pageClass = 'page-contact';
         $scope.message = 'Contact us! JK. This is just a demo.';
     });
-

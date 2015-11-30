@@ -4,11 +4,11 @@ var keypair = require('keypair');
 var User = require('../app/models/user');
 var Device = require('../app/models/device');
 
-
+// encrypted test is not working right now due to insufficient key size.  The generation of long RSA keys was making the login sequence take too long.
 function runPostTest(encryptedOption, cb){
 	var path = 'http://127.0.0.1:3000/data/newData?';
 	
-	var user_gen_params = {'email' : 'fakeEmail' + User.generateKeyPair().private,
+	var user_gen_params = {'email' : 'fakeEmail#' + Math.random() * 10000,
 				'password_digest' : 'admin',
 				'is_admin' : false};
 				
