@@ -3,6 +3,7 @@ var crypto = require('crypto');
 var keypair = require('keypair');
 var User = require('../app/models/user');
 var Device = require('../app/models/device');
+var config = require('../config/config.js');
 
 // encrypted test is not working right now due to insufficient key size.  The generation of long RSA keys was making the login sequence take too long.
 function runPostTest(encryptedOption, cb){
@@ -40,8 +41,7 @@ function runPostTest(encryptedOption, cb){
 						'device_id': deviceAfterInsert.id
 					}
 					
-					/* currently deprecated
-					if(encryptedOption == true){
+					if(encryptedOption == true && typeof config.encryption_enabled != 'undefined' && config.encryption_enabled == true){
 						
 						var algorithm = 'aes-128-cbc';
 						var clearEncoding = 'utf8';
@@ -63,7 +63,6 @@ function runPostTest(encryptedOption, cb){
 						
 						
 					}
-					*/
 					
 					//send post request
 					var options = {

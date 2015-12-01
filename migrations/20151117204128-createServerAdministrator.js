@@ -4,7 +4,7 @@ var User = require('../app/models/user');
 
 exports.up = function(db, callback) {
 	db.runSql('', [], function(){
-		var params = {'email' : 'changeThis@changeThis.com',
+		var params = {'email' : 'admin@admin.com',
 					'password_digest' : 'admin',
 					'is_admin' : true};
 		var user = new User(params);

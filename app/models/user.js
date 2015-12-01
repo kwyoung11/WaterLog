@@ -6,6 +6,7 @@ var bcrypt = require('bcrypt');
 var Application = require('./application');
 var db = require('../../lib/db');
 var util = require('../../lib/util');
+var config = require('../../config/config.js');
 
 // constructor
 // @data is the params hash (e-mail and password)
@@ -16,10 +17,17 @@ var User = function (data) {
     this.data = this.sanitize(data);
 	
 	// change this to support encryption - 512
+	
+	var keyPairSize = 128;
+	if(typeof config.encryption_enabled != 'undefined' && config.encryption_enabled == true){
+		keyPairSize = 512;
+	}
+	console.log(keyPairSize);
+	
 	var pair = User.generateKeyPair(128);
 	this.data.public_key = pair.public;
 	this.data.private_key = pair.private;
-	var pair2 = User.generateKeyPair(128);
+	var pair2 = User.generateKeyPair(keyPairSize);
 	this.data.shared_private_key = pair2.private;
     this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'shared_private_key', 'email_confirmation_token', 'email_confirmed', 'is_admin', 'private_profile', 'invites_active'];
 }
