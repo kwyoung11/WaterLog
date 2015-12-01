@@ -3,6 +3,9 @@ echo "Installing dependencies..."
 
 NGINXCONFIG="server {
 listen 0.0.0.0:80 default_server;
+listen 0.0.0.0:443 ssl;
+ssl_certificate nginx.crt;
+ssl_certificate_key nginx.key;
 access_log /var/log/nginx/EnviroHub.log;
 root  /var/www/EnviroHub;
 
@@ -41,12 +44,15 @@ echo `$NGINXCONFIG >> /etc/nginx/sites-available/EnviroHub`
 echo `cd /etc/nginx/sites-enabled`
 echo `rm EnviroHub`
 echo `ln -s /etc/nginx/sites-enabled/EnviroHub EnviroHub`
+echo "Creating nginx security certificate and key..."
+echo `openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/nginx.key -out /etc/nginx/nginx.crt`
 echo `cd /var/www/EnviroHub`
 echo `touch /var/www/EnviroHub/database.json`
 echo "starting postgres server"
 echo `su postgres -c '/usr/lib/postgresql/9.1/bin/pg_ctl -D /var/lib/postgresql/9.1/main/ -o "-c config_file=/etc/postgresql/9.1/main/postgresql.conf" start &'`
 echo -e "Please provide the root user password so that we can create the necessary database tables: \c "
 read password
+echo `su - postgres -c "psql -U postgres -d postgres -c \"alter user postgres with password '$password';\""`
 STRING="{\"dev\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"$password\", \"driver\": \"pg\", \"port\": \"5432\"}}"
 echo $STRING >> /var/www/EnviroHub/database.json
 echo "creating database"
