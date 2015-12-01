@@ -98,7 +98,13 @@ users_controller.prototype.constructor = users_controller;
 		// create new user object, passing in the email and password_digest from the post data as params
     var user = new User(params); 
     User.find('is_admin', true, function (err, admin_user) {
-    	if (!admin_user.data.invites_active || params['invitation_token']) {
+    	console.log(admin_user.data.invites_active);
+    	console.log(params);
+    	console.log(params['invitation_token'] == 'undefined');
+    	console.log(params['invitation_token'] == undefined);
+    	console.log(admin_user.data.invites_active && params['invitation_token']);
+    	console.log(!admin_user.data.invites_active || (admin_user.data.invites_active && params['invitation_token'] != 'undefined'));
+    	if (!admin_user.data.invites_active || (admin_user.data.invites_active && params['invitation_token'] != 'undefined')) {
     		user.save(function(err, user) { // store user info in database
 
 					if (err) { // re-render login page, displaying any login errors
