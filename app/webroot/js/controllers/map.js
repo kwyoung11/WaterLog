@@ -12,7 +12,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
   angular.extend($scope, {
     //update this to change tile server
     defaults: {
-      tileLayer: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png",
+      tileLayer: "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png",
 
       tileLayerOptions: {
         opacity: 0.9,
