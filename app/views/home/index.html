@@ -1,16 +1,19 @@
+<div class="ui secondary grey inverted attached menu">
+	<div class="ui container">
+    {{#current_user}}
+      <p class="ui item inverted header" href="#"> Welcome, {{current_user.data.email}} </p>
+      <div class="right menu">
+  			<a class="item" href='/map'> <i class="ui marker icon"></i> Map </a>
+        <a href="/users/{{current_user.data.id}}" class="item "> <i class="ui world icon"></i> My Devices </a>
+  			<a class="item" href='/users/{{current_user.data.id}}/edit'> <i class="ui edit icon"></i> Edit Profile </a>
+        <a href="/logout" class="item "><i class="ui sign out icon"></i> Logout </a>
+      </div>
+    {{/current_user}}
+  </div>
+</div>
+
 <div class="ui attached segment">
   <div class="ui container">
-
-      {{#current_user}}
-        <div class="ui vertically fitted menu">
-          <p class="ui item inverted header" href="#"> Welcome, {{current_user.data.email}} </p>
-          <div class="right menu">
-            <a href="/users/{{current_user.data.id}}" class="item "> My Profile </a>
-            <a href="/logout" class="item "> Logout </a>
-          </div>
-        </div>
-      {{/current_user}}
-
       {{#notice}}
         <div class="ui message"> {{notice}} </div>
       {{/notice}}

@@ -1,6 +1,15 @@
-<h1> Info about {{name}}</h1>
+<div class="ui secondary grey inverted attached menu">
+  <div class="ui container">
+    <div class="right menu">
+      <a class="item" href='/'> <i class="ui home icon"></i> Home </a>
+      <a class="item" href='/map'> <i class="ui marker icon"></i> Map </a>
+      <a class="item" href="/logout"> <i class="ui sign out icon"></i> Logout </a>
+    </div>
+  </div>
+</div>
 <div class="ui secondary attached menu">
 	<div class="ui container">
+		<h1 class="ui medium header"> Info about {{name}}</h1>
 		<div class="header item"> Device: <strong> {{name}} </strong> </div>
 		<div class="right menu">
       <a class="item" href="/devices/{{id}}/edit"> <i class="ui edit icon"></i>Edit {{name}}</a>
@@ -17,29 +26,31 @@
     </div>
   </div>
 </div>
-<div class="ui attached segment" ng-app="deviceApp" ng-controller="deviceDetails">
+<div class="ui attached segment" id="chart" ng-app="deviceApp" ng-controller="deviceDetails">
   <div class="ui container">
     <div class="ui grid">
       <div class="ten wide column">
         <highchart id="chart1" config="chartConfig" class="span10"></highchart>
       </div>
       <div class="six wide column">
-        <div class="ui button" ng-click="swapChartType()"> Line or Bar </div>
+        <!--div class="ui button" ng-click="swapChartType()"> Line or Bar </div>
         <div class="ui button" ng-click="randomizeData()"> Randomize Data </div>
         <div class="ui button" ng-click="addpH()"> Add pH Data </div>
         <div class="ui button" ng-click="addTemperature()"> Add Temperature Data </div>
-        <div class="ui button" ng-click="addTurbidity()"> Add Turbidity Data </div>
-				<div class="form-group">
+        <div class="ui button" ng-click="addTurbidity()"> Add Turbidity Data </div-->
+				<!--div class="form-group">
             <label for="date-birth" class="control-label">Birth date:</label>
             <div class="control">
                 <input id="date-birth" class="form-control" type="date" ng-model="dateBirth">
             </div>
-        </div>
-				<div> Start Date:<input type="text" name="startDate"> </div>
-				<div> End Date:<input type="text" name="endDate"> </div>
-				<div> <input type="submit" value="submit"> </div>
+        </div-->
+				<div> Start Date:<input type="date" name="startDate" ng-model="dateStart"> </div>
+				<div> End Date:<input type="date" name="endDate" ng-model="dateEnd"> </div>
+				<div> <button ng-click="submit()" value = "submit"> Submit </button> </div>
       </div>
     </div>
+  </div>
+
   </div>
 </div>
 <script src="/js/services/DataService.js" charset="utf-8"> </script>

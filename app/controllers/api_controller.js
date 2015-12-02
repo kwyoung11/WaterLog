@@ -34,8 +34,6 @@ api_controller.prototype.constructor = api_controller;
 			var bot = latitude - (params.radius/69);
 			var right = longitude - (params.radius/54) + (2*(params.radius/54));
 			var left = longitude - (params.radius/54);
-			
-			console.log("SELECT * from devices WHERE longitude BETWEEN " + left + " AND " + right + " AND latitude BETWEEN " + bot + " AND " + top);
 			db.query("SELECT * from devices WHERE cast(longitude as double precision) BETWEEN $1 AND $2 AND cast(latitude as double precision) BETWEEN $3 AND $4", [left, right, bot, top], function(err, result) {
 				if (err) {
 					console.log(err);

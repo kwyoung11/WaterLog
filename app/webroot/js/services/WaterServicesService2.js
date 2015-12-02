@@ -16,15 +16,18 @@ var WaterServicesService = function($) {
 
     var today = new Date();
     var yestarday = new Date();
+    var todayStart = new Date();
+    todayStart.setDate(today.getDate() -2);
     yestarday.setDate(today.getDate() - 1);
 
     if (startDT === undefined || endDT === undefined ||
       !startDT.trim() || !endDT.trim()) {
-      startDT = yestarday.toJSON().slice(0, 10);
-      endDT = today.toJSON().slice(0, 10);
+      startDT = todayStart.toJSON().slice(0, 10);
+      endDT = yestarday.toJSON().slice(0, 10);
     }
 
     var url = externalWaterURL(state, parameterCd, startDT, endDT);
+  //  console.log(url);
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.send();

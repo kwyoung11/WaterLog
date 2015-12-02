@@ -1,3 +1,15 @@
+<div class="ui secondary grey inverted attached menu">
+	<div class="ui container">
+		<div class="header item"> My Account: {{current_user.data.email}} </div>
+		<div class="right menu">
+			<a class="item" href='/map'> <i class="ui marker icon"></i> Map </a>
+			<a href="/users/{{current_user.data.id}}" class="item "> <i class="ui world icon"></i> My Devices </a>
+			<a class="item" href="/logout"> <i class="ui sign out icon"></i> Logout </a>
+			<!-- <a class="item" href="/users/{{current_user.data.id}}/destroy"> <i class="ui remove icon"></i> Destroy </a> -->
+		</div>
+	</div>
+</div>
+
 <div class="ui attached segment">
 	<div class="ui container">
 		<div class="ui large header"> Edit Profile </div>

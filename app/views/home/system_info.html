@@ -1,3 +1,24 @@
+<div class="ui secondary grey inverted attached menu">
+	<div class="ui container">
+		{{#current_user}}
+			<div class="header item"> My Account: {{current_user.data.email}} </div>
+		{{/current_user}}
+		<div class="right menu">
+			<a class="item" href='/'> <i class="ui home icon"></i> Home </a>
+			<a class="item" href='/map'> <i class="ui marker icon"></i> Map </a>
+			{{#current_user}}
+				<a href="/users/{{current_user.data.id}}" class="item "> <i class="ui world icon"></i> My Devices </a>
+				<a class="item" href="/logout"> <i class="ui sign out icon"></i> Logout </a>
+			{{/current_user}}
+			{{^current_user}}
+				<a href="/login" class="item"> <i class="ui sign in icon"></i> Login </a>
+				<a href="/users/new" class="item"> <i class="ui add user icon"></i> Register </a>
+			{{/current_user}}
+			<!-- <a class="item" href="/users/{{current_user.data.id}}/destroy"> <i class="ui remove icon"></i> Destroy </a> -->
+		</div>
+	</div>
+</div>
+
 <div class="ui attached segment">
 	<div class="ui container">
 		<h3 class="ui red header"> System Features </h3>
