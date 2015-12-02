@@ -21,6 +21,25 @@
           <a class="ui huge inverted header" href="/"> EnviroHub </a>
         </div>
       </div>
+      
+      <div class="ui secondary grey inverted attached menu">
+        <div class="ui container">
+            <div class="right menu">
+              <a href='/map' class="item"> <i class="ui marker icon"></i> Map </a>
+              
+              {{#current_user}}
+              <a href="/users/{{current_user.data.id}}" class="item "> <i class="ui world icon"></i> My Devices </a>
+              <a class="item" href='/users/{{current_user.data.id}}/edit'> <i class="ui edit icon"></i> Edit Profile </a>
+              <a href="/logout" class="item "><i class="ui sign out icon"></i> Logout </a>
+              {{/current_user}}
+              {{^current_user}}
+              <a href="/login" class="item "><i class="ui sign in icon"></i> Login </a>
+              <a href="/users/new" class="item "><i class="ui add user icon"></i> Register </a>
+              {{/current_user}}
+            </div>
+        </div>
+      </div>
+
       {{{content_for_layout}}}
       <div class="push"></div>
     </div>

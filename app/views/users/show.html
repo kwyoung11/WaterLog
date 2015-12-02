@@ -1,13 +1,3 @@
-<div class="ui secondary grey inverted attached menu">
-	<div class="ui container">
-		<div class="header item"> My Account: {{current_user.data.email}}</div>
-		<div class="right menu">
-			<a class="item" href='/map'> <i class="ui marker icon"></i> Map </a>
-			<a class="item" href='/users/{{current_user.data.id}}/edit'> <i class="ui edit icon"></i> Edit Profile </a>
-			<a class="item" href="/logout"> <i class="ui sign out icon"></i> Logout </a>
-		</div>
-	</div>
-</div>
 <div class="ui padded attached segment">
 	<div class="ui container">
 		{{#notice}}

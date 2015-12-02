@@ -69,7 +69,7 @@ users_controller.prototype.show = function(params, callback) {
 		devices_obj['devices'].push(obj);
 	});
 	util.merge(self.view_data, devices_obj);
-
+	console.log(self.view_data);
 	view.renderView('users/show', self.view_data, function(content) {
 	  callback(content);
 	});
