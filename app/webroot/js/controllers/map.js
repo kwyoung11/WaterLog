@@ -5,87 +5,47 @@ mapModule.config(function($logProvider){
 });
 
 mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
-  // $scope.devices = DeviceDataService.devices.devices;
-  // $scope.serviceValue = DeviceDataService.value;
-  // console.log(DeviceDataService.value);
-
   angular.extend($scope, {
+    load: 0,
     //update this to change tile server
     defaults: {
-      tileLayer: "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png",
-
+      //tileLayer: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png",
+      //should point to 
+      //tileLayer: "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png",
+      //tileLayer: "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png",
       tileLayerOptions: {
         opacity: 0.9,
         detectRetina: true,
         reuseTiles: true,
       }
     },
-
+    tiles: {
+            //url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            //use if our's isn't fast enough
+            // url: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png"
+            //our tile server
+            url: "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png"
+        },
     center: {
       lat: 38.993,
       lng: -76.947,
       zoom: 16
     },
-    //layout for markers
-    // markers: {
-    //       main_marker: {
-    //           lat: 38.993,
-    //           lng: -76.947,
-    //           focus: true,
-    //           title: "Marker",
-    //           draggable: false,
-    //           icon: {
-    //               type: 'awesomeMarker',
-    //               html: '6'
-    //           },
-    //           label: {
-    //               message:"98 degrees",
-    //               options: {
-    //                   noHide: true
-    //               }
-    //           }
-    //       }
-    //   },
 
-    markers: {
-
-    },
-    events: {
-      marker: {
-        enable: ['click']
-      }
-    }
-  });
-
-    //1st succ attempt at changing markers
-    // for(i=0; i < $scope.devices.length; i++){
-    //     $scope.markers["device"+i] = {
-    //         lat:$scope.devices[i].lat,
-    //         lng:$scope.devices[i].lng,
-    //         focus: true,
-    //         title:$scope.devices[i].deviceName,
-    //         draggable: false,
-    //         icon: {
-    //             type: 'awesomeMarker',
-    //             html: $scope.devices[i].temp
-    //         }
-    //     };
+    markers: {},
+    //
+    // events: {
+    //   marker: {
+    //     enable: ['click']
+    //   }
     // }
-
-    // updateMap.displayPh = function (markers, date, userId){
-    //   console.log(WaterServicesService.getMultipleDeviceData());
-    // return {};
-    //};
+  });
 
     $scope.clearMap = function(){
       angular.extend($scope, {
         markers: {}
       });
     }
-    // $scope.markers = updateMap.clearMap();
-    //$scope.markers = updateMap.displayPh($scope.markers, 0, 0);
-
-
 
     var newMarkers = function(markers){
       var marks = $scope.markers;
@@ -115,6 +75,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
           draggable: false,
           icon: {
             type: 'awesomeMarker',
+            markerColor: 'blue',
             html: data[i].data
           }
         });
@@ -132,9 +93,19 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
       DeviceDataService.getturbData().then(mapData);
     }
 
+
+    // Date String Values from Scope Date input
+    var startDTString = function () {
+      return $scope.input_date.toJSON().slice(0, 10);
+    }
+    var endDTString = function () {
+      return $scope.input_date.toJSON().slice(0, 10);
+    }
+
+
     //fetches 3rd party ph -karl, and adds to map
     var addThridPartyph = function (){
-      WaterServicesService.getData('2015-11-18', '2015-11-18').then(function(data){
+      WaterServicesService.getData(startDTString(), endDTString()).then(function(data){
         var new_data = [];
         // console.log(data.multipleDeviceData)
         for (var i = 0; i < data.multipleDeviceData.length; i++){
@@ -153,61 +124,139 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
         }
         // console.log(new_data);
         newMarkers(new_data);
+        $scope.load --;
+        $scope.$apply();
       });
     }
     var addThridPartyTemperature = function (){
-      WaterServicesService.getData('2015-11-18', '2015-11-20', 01649500).then(function(data){
-        WaterServicesService.getData('2015-11-18', '2015-11-20').then(function(data){
+      WaterServicesService.getData(startDTString(), endDTString()).then(function(data){
+        var new_data = [];
+        for (var i = 0; i < data.multipleDeviceData.length; i++){
+          if (data.multipleDeviceData[i].data.temperature){
+            console.log(data.multipleDeviceData[i]);
+            console.log(data.multipleDeviceData[i].deviceID);
+            new_data.push({
+              lat: parseFloat(data.multipleDeviceData[i].lat),
+              lng: parseFloat(data.multipleDeviceData[i].lon),
+              name: data.multipleDeviceData[i].deviceID,
+              data: parseFloat(Math.round(data.multipleDeviceData[i].data.temperature * 1.8000 + 32.00)),
+              icon: {
+                type: 'awesomeMarker',
+                markerColor: 'red',
+                html: Math.round(data.multipleDeviceData[i].data.temperature * 1.8000 + 32.00)
+              }
+            });
+          }
+        }
+
+        newMarkers(new_data);
+        $scope.load --;
+        $scope.$apply();
+      });
+    }
+
+    var addThridPartyTurbidity = function (){
+
+        WaterServicesService.getData(startDTString(), endDTString()).then(function(data){
           var new_data = [];
-          console.log(data)
           for (var i = 0; i < data.multipleDeviceData.length; i++){
-            if (data.multipleDeviceData[i].data.temperature)
+            if (data.multipleDeviceData[i].data.turbidity)
               new_data.push({
                 lat: parseFloat(data.multipleDeviceData[i].lat),
                 lng: parseFloat(data.multipleDeviceData[i].lon),
                 name: data.multipleDeviceData[i].deviceID,
-                data: parseFloat(data.multipleDeviceData[i].data.temperature),
+                data: parseFloat(data.multipleDeviceData[i].data.turbidity),
                 icon: {
                   type: 'awesomeMarker',
-                  html: data.multipleDeviceData[i].data.temperature
+                  markerColor: 'red',
+                  html: data.multipleDeviceData[i].data.turbidity
                 }
               });
           }
-          // console.log(new_data);
           newMarkers(new_data);
+          $scope.load --;
+          $scope.$apply();
+        });
+
+    }
+
+    var addThridPartyWeatherTempF = function (){
+      WaterServicesService.getData(startDTString(), endDTString()).then(function(data){
+        var multipleDeviceData = data.multipleDeviceData;
+        // Call to Weather Service - After data - Date only goes back 3 weeks
+        WeatherService.getData(multipleDeviceData, startDTString(), endDTString(), true).then(function(response) {
+          var appendWeather = response;
+          multipleDeviceData = appendWeather.weatherData;
+
+          var new_data = [];
+          for (var i = 0; i < multipleDeviceData.length; i++){
+            if (multipleDeviceData[i].data.weatherTempF) {
+
+              new_data.push({
+                lat: parseFloat(multipleDeviceData[i].lat),
+                lng: parseFloat(multipleDeviceData[i].lon),
+                name: multipleDeviceData[i].deviceID,
+                data: parseFloat(data.multipleDeviceData[i].data.weatherTempF),
+                icon: {
+                  type: 'awesomeMarker',
+                  markerColor: 'red',
+                  html: multipleDeviceData[i].data.weatherTempF
+                }
+              });
+            }
+          }
+          newMarkers(new_data);
+          $scope.$apply();
+          $scope.load --;
         });
       });
     }
-    var addThridPartyTurbidity = function (){
-      WaterServicesService.getData('2015-11-18', '2015-11-20', 01649500).then(function(data){
-        console.log(data);
-      });
-    }
 
-    // //for redirecting on clicking marker on map
-    // $scope.$on('leafletDirectiveMarker.click', function(event, args){
-    //   //var markerName = args.leafletMarkerEvents.target.options.name;
-    //   $window.location.href = 'www.google.com/?q='+args.modelName; //modelName is marker's title field
-    // });
-    //
-    // //failed attempt at updating map by fetching data from control panel
+    //for redirecting on clicking marker on map
+    $scope.$on('leafletDirectiveMarker.click', function(event, args){
+      //var markerName = args.leafletMarkerEvents.target.options.name;
+      // window.location.href = 'http://vache.cs.umd.edu/devices/'+args.modelName; //modelName is marker's title field
+      $(angular.element('.fullscreen.modal')[0]).empty();
+      $(angular.element('.fullscreen.modal')[0]).append('<iframe allowfullscreen style="width:100%;height:100%" src="http://vache.cs.umd.edu/devices/'+ args.modelName + '"></iframe>');
+      var frame = $(angular.element('.fullscreen.modal')[0]).find('iframe');
+      frame.load(function(){
+        var contents = frame.contents();
+        var chart = contents.find('html body #chart');
+        contents.find('body *').hide();
+        chart.show();
+        chart.find('*').show();
+        $(angular.element('.fullscreen.modal')[0]).modal('show');
+      })
+    });
+
+    //failed attempt at updating map by fetching data from control panel
 
     $scope.submit = function(){
       $scope.clearMap();
       if($scope.deviceCategory === "pH"){
         addDeviceph();
+        $scope.load ++;
       } else if($scope.deviceCategory === "Turbidity"){
         addDeviceTurbidity();
+        $scope.load ++;
       } else if($scope.deviceCategory === "Temperature"){
         addDeviceTemperature();
+        $scope.load ++;
       }
 
       if ($scope.thirdParty === "pH"){
         addThridPartyph();
+        $scope.load ++;
       } else if($scope.thirdParty === "Turbidity"){
         addThridPartyTurbidity();
+        $scope.load ++;
       } else if($scope.thirdParty === "Temperature"){
         addThridPartyTemperature();
+        $scope.load ++;
+      } else if($scope.thirdParty === "weatherTempF"){
+        addThridPartyWeatherTempF();
+        $scope.load ++;
       }
+
     };
   });

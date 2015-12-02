@@ -3,13 +3,16 @@ var DataService = function ($){
   var turbidity = [1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5, 1009.6, 1010.2, 1013.1, 1016.9, 1018.2, 1016.7];
   var temperature = [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6];
 
-  var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=1");
+  //var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=1");
 
-  this.getpHData = function (){
+  this.getpHData = function (deviceID){
+
+    var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=" + deviceID);
     var deferred = $.Deferred();
     request.success(function(dt){
       var data = [];
       for (var i = 0; i < dt.length; i++){
+        
         data.push({time: dt[i].created_at, value: dt[i].values[0]});
       }
       deferred.resolve(data);
@@ -17,7 +20,8 @@ var DataService = function ($){
     return deferred;
   }
 
-  this.getTurbidityData = function (){
+  this.getTurbidityData = function (deviceID){
+    var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=" + deviceID);
     var deferred = $.Deferred();
     request.success(function(dt){
       var data = [];
@@ -29,7 +33,8 @@ var DataService = function ($){
     return deferred;
   }
 
-  this.getTemperatureData = function (){
+  this.getTemperatureData = function (deviceID){
+    var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=" + deviceID);
     var deferred = $.Deferred();
     request.success(function(dt){
       var data = [];
@@ -41,10 +46,68 @@ var DataService = function ($){
     return deferred;
   }
 
+    this.getTemperatureDataWithDates = function (deviceID, startDate, endDate){
+    var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=" + deviceID);
+    var deferred = $.Deferred();
+    request.success(function(dt){
+      var data = [];
+      for (var i = 0; i < dt.length; i++){
+        var d = new Date(dt[i].created_at);
+        var comparisonStart = d.getTime() >= startDate.getTime(); 
+        var comparisonEnd = d.getTime() <= endDate.getTime();
+        if( comparisonStart && comparisonEnd){
+          data.push({time: dt[i].created_at, value: dt[i].values[2]});
+        }
+      }
+      deferred.resolve(data);
+    });
+    return deferred;
+  }
+
+    this.getTurbidityDataWithDates = function (deviceID, startDate, endDate){
+    var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=" + deviceID);
+    var deferred = $.Deferred();
+    request.success(function(dt){
+      var data = [];
+      for (var i = 0; i < dt.length; i++){
+        var d = new Date(dt[i].created_at);
+        var comparisonStart = d.getTime() >= startDate.getTime(); 
+        var comparisonEnd = d.getTime() <= endDate.getTime();
+        if( comparisonStart && comparisonEnd){
+          data.push({time: dt[i].created_at, value: dt[i].values[1]});
+        }
+      }
+      deferred.resolve(data);
+    });
+    return deferred;
+  }
+
+  this.getpHDataWithDates = function (deviceID, startDate, endDate){
+
+    var request = $.get("http://vache.cs.umd.edu/api/devices?device_id=" + deviceID);
+    var deferred = $.Deferred();
+    request.success(function(dt){
+      var data = [];
+      for (var i = 0; i < dt.length; i++){
+        var d = new Date(dt[i].created_at);
+        var comparisonStart = d.getTime() >= startDate.getTime(); 
+        var comparisonEnd = d.getTime() <= endDate.getTime();
+        if( comparisonStart && comparisonEnd){
+          data.push({time: dt[i].created_at, value: dt[i].values[0]});
+        }
+      }
+      deferred.resolve(data);
+    });
+    return deferred;
+  }
+
   return {
     getpHData : getpHData,
     getTemperatureData : getTemperatureData,
-    getTurbidityData : getTurbidityData
+    getTurbidityData : getTurbidityData,
+    getTemperatureDataWithDates : getTemperatureDataWithDates, 
+    getTurbidityDataWithDates : getTurbidityDataWithDates,
+    getpHDataWithDates : getpHDataWithDates
   }
 
   // this.getTurbidityData = function(){

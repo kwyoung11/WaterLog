@@ -44,7 +44,7 @@ users_controller.prototype.constructor = users_controller;
 					}
 			});
 		} else {
-			cb(null);
+                  cb(null);
 		}
 	},
 
@@ -85,6 +85,7 @@ users_controller.prototype.constructor = users_controller;
 			if (user.data.is_admin) { 
 				self.view_data.admin = true;		
 			}
+                        console.log(self.view_data);
 			view.renderView('users/edit', self.view_data, function(data) {
 				return callback(data);
 			});	
@@ -98,12 +99,15 @@ users_controller.prototype.constructor = users_controller;
 		// create new user object, passing in the email and password_digest from the post data as params
     var user = new User(params); 
     User.find('is_admin', true, function (err, admin_user) {
+<<<<<<< Updated upstream
     	console.log(admin_user.data.invites_active);
     	console.log(params);
     	console.log(params['invitation_token'] == 'undefined');
     	console.log(params['invitation_token'] == undefined);
     	console.log(admin_user.data.invites_active && params['invitation_token']);
     	console.log(!admin_user.data.invites_active || (admin_user.data.invites_active && params['invitation_token'] != 'undefined'));
+=======
+>>>>>>> Stashed changes
     	if (!admin_user.data.invites_active || (admin_user.data.invites_active && params['invitation_token'] != 'undefined')) {
     		user.save(function(err, user) { // store user info in database
 

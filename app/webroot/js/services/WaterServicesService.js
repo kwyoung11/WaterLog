@@ -17,6 +17,7 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
     var parameterCd = '00010,00400';
     var state = 'md';
 
+/*
     var today = new Date();
     var yestarday = new Date();
     yestarday.setDate(today.getDate() - 1);
@@ -27,7 +28,10 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
       endDT = today.toJSON().slice(0, 10);
     }
 
+*/
     var url = externalWaterURL(state, parameterCd, startDT, endDT);
+    console.log('TESTING WATER SERVICE');
+    console.log(url);
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
     xhr.send();
@@ -62,12 +66,6 @@ enviroHubApp.service('WaterServicesService', function($q, $http) {
     }
     return deferred.promise;
 }
-
-
-
-
-
-
 
   /**
    * Get Device data from deviceID

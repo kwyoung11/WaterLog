@@ -16,13 +16,12 @@ var WeatherService = function($) {
     var coordinates = lat + "," + lon + ",";
 
     $.ajax({
-      url: "//api.worldweatheronline.com/free/v2/past-weather.ashx",
+      url: "//api.worldweatheronline.com/premium/v1/past-weather.ashx",
       method: "GET",
-      data: [],
-      params: {
+      data: {
         q: coordinates,
         tp: '24',
-        key: '6e653d4d87c35a3e7060129e747f7',
+        key: '6a84cb44929303c283f70d8c7f7ec',
         format: 'json',
         date: startDT,
         endDate: endDT
@@ -30,17 +29,16 @@ var WeatherService = function($) {
     }).success(function(data) {
       // Format Data and Get Data Objects
       weatherData = formatWeatherData(data);
+
       if (isMultipleDevices) {
         weatherData = getMultipleDeviceData(dataArray, weatherData);
       } else {
         weatherData = getSingleDeviceData(dataArray, weatherData);
       }
-
       // output Data
       var outputData = {
         'weatherData': weatherData
       };
-
       deferred.resolve(outputData);
 
     }).error(function() {
@@ -48,7 +46,7 @@ var WeatherService = function($) {
       deferred.reject(error);
     });
 
-    return deferred.promise;
+    return deferred;
   };
 
   /**
@@ -76,8 +74,10 @@ var WeatherService = function($) {
   * Return null if not found
   **/
   function getTemp(data, dateString) {
+    dateString = dateString.replace(/\b0(?=\d)/g, '');
     for (var i = 0; i < data.length; i++) {
-      if (data[i].date == dateString)
+      var dateString2 = data[i].date.replace(/\b0(?=\d)/g, '');
+      if (dateString2 == dateString)
         return data[i].temp;
     }
     return null;

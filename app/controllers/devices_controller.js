@@ -41,7 +41,7 @@ devices_controller.prototype.constructor = devices_controller;
 				});
 			});
 		} else {
-			cb(null);
+                  cb(null);
 		}
 	},
 
