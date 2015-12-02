@@ -28,48 +28,56 @@
 <div class="ui olive inverted attached message	">
 	<div class="ui container">
 		<div class="ui small header"> Privacy </div>
-		<div> All information a user collects from a device is private and is not visible to any other registered user. </div>
+		<div> A user can choose to install the server software that is running this website on a private server owned by them. This will grant them ownership of an administrator account, where they can choose to have their account be private and control the registration of other users via an invitation system. </div>
 	</div>
 </div>
 
 <div class="ui info attached message	">
 	<div class="ui container">
 		<div class="ui small header"> Installation: </div>
-		<div> To install on a private server, follow the instructions below </div>
+		<div> Tested on Debian 7 (Wheezy), but may be able to work on other Linux distros as well. To install, follow the instructions below: </div>
 		<ol class="ui ordered list">
-			<li> Download git on your machine </li>
-			<li> mkdir /var/www </li>
-			<li> cd /var/www </li>
-			<li> git clone https://github.com/kwyoung11/WaterLog.git /var/www/EnviroHub </li>
-			<li> cd EnviroHub </li>
-			<li> chmod +x installation_script.sh </li>
-			<li> ./installation_script.sh </li>
+			<li> $ apt-get install --yes git </li>
+			<li> $ mkdir /var/www </li>
+			<li> $ cd /var/www </li>
+			<li> $ git clone https://github.com/kwyoung11/WaterLog.git /var/www/EnviroHub </li>
+			<li> $ cd EnviroHub </li>
+			<li> $ chmod +x installation_script.sh </li>
+			<li> $ ./installation_script.sh </li>
 		</ol>
 		<div> This creates an administrator with credentials: email: admin@admin.com, password: admin </div>
 	</div>
 </div>
 
-<div class="ui green inverted attached message	">
+<div class="ui green inverted attached message">
 	<div class="ui container">
 		<div class="ui small header"> Public GET API </div>
-		<div> A user can select different features such as a certain data_type, time period, device and/or parameters when on EnviroHub.com. This sends an HTTP GET request to the server which then retrieves the data from the database and returns it to be displayed. </div>
+		<div> 
+			<p>GET - “/api/devices?location=&#60;lat,lon&#62;&radius=&#60;x&#62;” -- get devices within x mile radius of &#60;lat, lon&#62;</p>
+			<p>GET - “/api/devices?device_id=&#60;id&#62;” -- get all data records for device</p>
+			<p>ex: http://vache.cs.umd.edu/api/devices?device_id=1</p>
+			<p>GET - “/api/devices?device_id=&#60;id&#62;&start_time=2015-11-05T00:17:18>&end_time=2015-11-05T00:17:35” -- gets data records within specified time range for device, where datetime format is yyyy-mm-ddThh:mm:ss</p>
+			<p>GET - “/api/devices?device_id=&#60;id&#62;&latest_record=true” -- get latest record for device</p>
+			<p>GET - “/api/users?user_id=&#60;user_id&#62;” -- gets all user device info as well as user info</p>
+			<p>GET - “/api/users?user_id=&#60;user_id&#62;&date=&#60;date&#62;” -- gets all data from all devices for a specific user on the </p>specified date, where date format is yyyy-mm-dd (TODO) </p>
+		</div>
 	</div>
 </div>
 
 <div class="ui violet inverted attached message	">
 	<div class="ui container">
 		<div class="ui small header"> Security in Wireless Devices and POST API</div>
-		<div> The first part of the solution is to use digital signatures to ensure integrity and authenticity of the request. Each message is “signed” with the device’s private key given to it by EnviroHub.com. The signature should be generated using AES-128 bit encryption.  The Signing the message ensures non-repudiation meaning that the server knows where the message is coming from and there is no question who is sending the message; only the server and the particular device know the shared key.</div>
+		<div> The first part of the solution is to use digital signatures to ensure integrity and authenticity of the request. Each message is “signed” with the device’s private key given to it by EnviroHub.com. The signature should be generated using AES-128 bit encryption. The signing of the message ensures non-repudiation meaning that the server knows where the message is coming from and there is no question who is sending the message; only the server and the particular device know the shared key.</div>
 		<div> The second part of the solution is to use a symmetric shared secret key. There will be a unique secret key for every device that a user owns and each message will be encrypted on one side and decrypted on the other side using the same shared private key.  Data should be encrypted using RSA-SHA256.</div>
 		<div> Encryption should be enabled in the server configuration file if you wish to support encrypted POST requests.</div>
-		<div> Data posts should be sent to the following URL</div>
-		<div> &ltserver address&gt/data/newData</div>
-		<div> If making an unencrypted post, include any desired parameters JSON format in the post request.</div>
+		<div> Data posts should be sent to the following URL </div>
+		<div> http://vache.cs.umd.edu/data/newData</div>
+		<div> If making an unencrypted post, include any desired parameters in JSON format in the post request.</div>
 		<div> If making an encrypted post, these 3 parameters should be included in the post: device_id, signedData, unsignedData</div>
 	</div>
 </div>
 
-<div class="ui warning attached message	">
+<div class="ui warning attached message">
 	<div class="ui container">
 		<div class="ui small header"> Password Security </div>
 		<div> All user passwords will be encrypted using a one-way hash function using a randomly generated salt. The number of login attempts will be limited to 3 before the user will be locked out of their account for 15 minutes. </div>

@@ -41,24 +41,18 @@ devices_controller.prototype.constructor = devices_controller;
 				});
 			});
 		} else {
-                  cb(null);
+      cb(null);
 		}
-	},
-
-	devices_controller.prototype.before_action = function (action, params) {
-
 	}
 
 	//GET /devices/new
 	devices_controller.prototype.new = function(params, callback) {
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		var data = {'id': params['id']};
-		// console.log(params);
-			view.renderView('devices/new', data, function(data) {
-		  		callback(data);
-			});			
+		self.view_data.id = params['id'];
 		
-		
+		view.renderView('devices/new', self.view_data, function(data) {
+				callback(data);
+		});			
 	}
 
 	devices_controller.prototype.index = function(params, callback) {
@@ -98,8 +92,6 @@ devices_controller.prototype.constructor = devices_controller;
 	// POST new user
 	devices_controller.prototype.create = function(params, callback) {
 		var self = this;
-		console.log("HERE1");
-		console.log(self.current_user);
 		params['user_id'] = self.current_user.data.id;
     	var device = new Device(params); // create new device object
     	device.save(function(err, dev) {
@@ -152,8 +144,6 @@ devices_controller.prototype.constructor = devices_controller;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		//var device = new Device(params);
 		Device.findById(params['id'], function(err, device_data) {
-			console.log("PASSING DEVICE_DATA FOR BULK UPLOAD");
-			console.log(device_data);
 			view.renderView('devices/bulk_upload', device_data, function(content) {
 		  		callback(content);
 			});

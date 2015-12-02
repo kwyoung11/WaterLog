@@ -10,21 +10,24 @@
     <!-- load semantic -->
     <script src="/libs/semantic/dist/semantic.min.js"> </script>
     <link rel="stylesheet" href="/libs/semantic/dist/semantic2.min.css">
+    <link rel="stylesheet" href="/css/application.css">
 
   </head>
 
   <body>
-    <div class="ui inverted attached segment">
-    	<div class="ui container">
-  		  <a class="ui huge inverted header" href="/"> EnviroHub </a>
-    	</div>
+    <div class="wrapper">
+      <div class="ui inverted attached segment">
+        <div class="ui container">
+          <a class="ui huge inverted header" href="/"> EnviroHub </a>
+        </div>
+      </div>
+      {{{content_for_layout}}}
+      <div class="push"></div>
     </div>
 
-    {{{content_for_layout}}}
-
-    <div class="ui attached segment">
+    <div class="ui attached segment footer">
       <div class="ui container">
-        <a class="ui button" href="/home/system_info"> System Features</a>
+        <a class="ui button" href="/home/system_info"> Documentation </a>
       </div>
     </div>
   </body>
