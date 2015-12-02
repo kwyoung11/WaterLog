@@ -24,9 +24,11 @@
       
       <div class="ui secondary grey inverted attached menu">
         <div class="ui container">
+          {{#current_user}}
+          <div class="header item"> My Account: {{current_user.data.email}} </div>
+          {{/current_user}}
             <div class="right menu">
               <a href='/map' class="item"> <i class="ui marker icon"></i> Map </a>
-              
               {{#current_user}}
               <a href="/users/{{current_user.data.id}}" class="item "> <i class="ui world icon"></i> My Devices </a>
               <a class="item" href='/users/{{current_user.data.id}}/edit'> <i class="ui edit icon"></i> Edit Profile </a>
