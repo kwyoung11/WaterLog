@@ -1,2 +1,2 @@
-var config = {"angular_front_end":false,"encryption_enabled":false,"hostname":"Macintosh-3.local"}
+var config = {"hostname":"127.0.0.1"}
 module.exports = config;

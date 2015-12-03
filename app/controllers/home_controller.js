@@ -21,15 +21,13 @@ home_controller.prototype.constructor = home_controller;
 home_controller.prototype.index = function(params, callback) {
 	var callback = (typeof callback === 'function') ? callback : function() {};
 	var data = null;
-	console.log(this.view_data)	
+	
 	if (!this.view_data.current_user) {
 		view.renderView('map/index', this.view_data, function(data) {
-	  	callback(data);
+			callback(data);
 		});	
 	} else {
-		view.renderView('users/show', this.view_data, function(data) {
-	  	callback(data);
-		});	
+		this.response_handler.redirectTo('/users/' + this.current_user.data.id);
 	}
 	
 },
