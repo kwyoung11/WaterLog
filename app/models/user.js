@@ -10,7 +10,7 @@ var config = require('../../config/config.js');
 
 // constructor
 // @data is the params hash (e-mail and password)
-var User = function (data) {
+var User = function (data, opts) {
     Application.call(this, data);
 
     // remove unallowed parameters
@@ -29,6 +29,27 @@ var User = function (data) {
 	this.data.private_key = pair.private;
 	var pair2 = User.generateKeyPair(keyPairSize);
 	this.data.shared_private_key = pair2.private;
+
+    if (opts && opts['sync']) {
+        // create the user authentication token, which will be stored in a cookie
+        var token = crypto.randomBytes(64).toString('hex');
+        this.data.auth_token = token;
+    
+    
+        // create an e-mail confimation token.
+        var token = crypto.randomBytes(64).toString('hex');
+        this.data.email_confirmation_token = token;
+        this.data.email_confirmed = false;
+    
+        // generate a salt
+        this.data.salt = bcrypt.genSaltSync(10);
+           
+        // hash the user password with the salt
+        if (this.data.password_digest && this.data.salt) {
+            this.data.password_digest = bcrypt.hashSync(this.data.password_digest, this.data.salt);
+        }    
+    }
+
     this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'shared_private_key', 'email_confirmation_token', 'email_confirmed', 'is_admin', 'private_profile', 'invites_active'];
 }
 

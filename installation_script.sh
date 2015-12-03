@@ -10,9 +10,9 @@ access_log /var/log/nginx/EnviroHub.log;
 root  /var/www/EnviroHub;
 
   location / {
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header Host \$http_host;
     proxy_set_header  X-NginX-Proxy true;
 
     proxy_pass http://127.0.0.1:3000/;
@@ -32,7 +32,6 @@ echo `apt-get install --yes nodejs`
 echo `apt-get install --yes build-essential`
 echo "installing postgresql"
 echo `apt-get install --yes postgresql`
-echo `cd /var/www`
 echo "cloning EnviroHub into /var/www"
 echo `git clone https://github.com/kwyoung11/WaterLog.git /var/www/EnviroHub`
 echo "installing app dependencies"
@@ -40,13 +39,13 @@ echo `npm install --prefix /var/www/EnviroHub`
 echo "installing nginx"
 echo `apt-get install --yes nginx`
 echo `touch /etc/nginx/sites-available/EnviroHub`
-echo `$NGINXCONFIG >> /etc/nginx/sites-available/EnviroHub`
-echo `cd /etc/nginx/sites-enabled`
-echo `rm EnviroHub`
-echo `ln -s /etc/nginx/sites-enabled/EnviroHub EnviroHub`
+echo $NGINXCONFIG > /etc/nginx/sites-available/EnviroHub
+echo `rm /etc/nginx/sites-enabled/EnviroHub`
+echo `ln -s /etc/nginx/sites-available/EnviroHub /etc/nginx/sites-enabled`
+echo `rm /etc/nginx/sites-available/default`
 echo "Creating nginx security certificate and key..."
 echo `openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/nginx.key -out /etc/nginx/nginx.crt`
-echo `cd /var/www/EnviroHub`
+echo `service nginx restart`
 echo `touch /var/www/EnviroHub/database.json`
 echo "starting postgres server"
 echo `su postgres -c '/usr/lib/postgresql/9.1/bin/pg_ctl -D /var/lib/postgresql/9.1/main/ -o "-c config_file=/etc/postgresql/9.1/main/postgresql.conf" start &'`
