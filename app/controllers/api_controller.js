@@ -23,7 +23,33 @@ api_controller.prototype = Object.create(application_controller.prototype);
 api_controller.prototype.constructor = api_controller;
 
 /* api_controller prototype methods below */
-	
+api_controller.prototype.before_filter = function(params, cb) {
+	var self = this;
+	if (params(['user_id'])) {
+		User.findById(params['user_id'], function(err, user) {
+			if (user.data.is_admin && user.data.private_profile) {
+				cb([200, "This data is restricted. The user to which this data belongs to has chosen to keep their data private."], {'response_format': 'JSON'});
+				self.response_handler.renderJSON(200, "This data is restricted. The user to which this data belongs to has chosen to keep their data private.");		
+			} else {
+				cb(null);	
+			}
+		});
+	} else if (params['device_id']) {
+		Device.findById(params['device_id'], function(err, device) {
+			User.findById(device.data.user_id, function(err, user) {
+				if (user.data.is_admin && user.data.private_profile) {
+					cb([200, "This data is restricted. The user to which this data belongs to has chosen to keep their data private."], {'response_format': 'JSON'});
+				} else {
+					cb(null);		
+				}
+				
+			});	
+		});
+	} else {
+		cb([200, "Unrecognized API endpoint. See site documentation for API specifications."], {'response_format': 'JSON'});		
+	}
+}
+
 	api_controller.prototype.device = function (params, cb) {
 		var self = this;
 		var query_params;
