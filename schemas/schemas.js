@@ -14,7 +14,9 @@ schemas = {
         email_confirmed: null,
         private_profile: null,
         invites_active: null,
-		is_admin: null
+        failed_login_attempts: null,
+        last_failed_login: null,
+				is_admin: null
        },
     device: {
         id: null,

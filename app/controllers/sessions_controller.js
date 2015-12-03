@@ -40,8 +40,21 @@ sessions_controller.prototype.constructor = sessions_controller;
 				self.response_handler.renderJSON(200, {'err_code': 09, 'err_msg': 'Something went wrong. Please contact envirohubapp@gmail.com for help.'});
 				return cb(err);
 			} 
-			
+
+			if (user && user.data.failed_login_attempts == 3 && Math.abs(user.data.last_failed_login - new Date()/1000) >= 900) {
+				// reset failed_login_attempts and last_failed_login
+				user.update({'failed_login_attempts': 0});
+			} 
+				
 				if (user) {
+					console.log(user.data);
+					console.log(Math.abs(user.data.last_failed_login - new Date()/1000));
+					if (user.data.failed_login_attempts == 3 && Math.abs(user.data.last_failed_login - new Date()/1000) < 900) {
+						self.view_data.notice = "Too many failed login attempts. Try again in " + ((900 - Math.abs(user.data.last_failed_login - new Date()/1000)) / 60) + " minutes";
+						view.renderView("sessions/new", self.view_data, function(content) {
+							return cb(content);
+						}); 			
+					} else {
 						user.authenticate(params['password_digest'], function(err, authenticated) {
 							if (authenticated) {
 
@@ -57,15 +70,19 @@ sessions_controller.prototype.constructor = sessions_controller;
 							} else {
 								// there is a user with this e-mail, but the pwd is wrong
 								var data = {'err_code': 02, 'err_msg': 'Incorrect password.'};
-								if (self.response_handler.format == 'json') {
-									self.response_handler.renderJSON(200, data);
-								} else {
-									view.renderView("sessions/new", data, function(content) {
-										return cb(content);
-									}); 			
-								}
+								user.update({'failed_login_attempts': user.data.failed_login_attempts + 1, 'last_failed_login': new Date()/1000}, function() {
+									if (self.response_handler.format == 'json') {
+										self.response_handler.renderJSON(200, data);
+									} else {
+										view.renderView("sessions/new", data, function(content) {
+											return cb(content);
+										}); 			
+									}	
+								});
 							}
 						}); 
+					}
+						
 				} else {
 						// no user by that e-mail
 						var data = {'err_code': 01, 'err_msg': 'Incorrect email.'};

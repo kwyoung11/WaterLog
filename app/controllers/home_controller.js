@@ -34,10 +34,10 @@ home_controller.prototype.index = function(params, callback) {
 	
 },
 
-home_controller.prototype.info = function(params, callback) {
+home_controller.prototype.documentation = function(params, callback) {
 	var callback = (typeof callback === 'function') ? callback : function() {};
 		var data = null;
-		view.renderView('home/system_info', this.view_data, function(data) {
+		view.renderView('home/documentation', this.view_data, function(data) {
 		  callback(data);
 		});
 }

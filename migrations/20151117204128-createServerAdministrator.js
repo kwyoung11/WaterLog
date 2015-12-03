@@ -16,13 +16,17 @@ exports.up = function(db, callback) {
 					'password_digest' : 'admin',
 					'is_admin' : true};
 		var user = new User(params);
-		user.save(function(err, user) {throw true;});
+		user.save(function(err, user) {});
+		setTimeout(callback, 3000);
 };
 
 exports.down = function(db, callback) {
 	User.find('id', 1, function(err, user) {
-		user.destroy(user.data.id, function(result) {
-			throw true;
-		});
+		if (user) {
+			user.destroy(user.data.id, function(result) {
+				
+			});	
+		} 
 	});
+	setTimeout(callback, 3000);
 };
