@@ -4,21 +4,26 @@ var https  = require('https');
 var url   = require('url');
 var os = require('os');
 var fs = require('fs');
+var config = require('./config/config.js');
 
 GLOBAL.flash = {};
 
 var connection = {};
 if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == 'development') {
-  process.env.NODE_ENV = 'development';  
+  process.env.NODE_ENV = 'development';
+  config.hostname = '127.0.0.1';
   connection['port'] = 3000;
   connection['domain'] = '127.0.0.1';
 } else {
   process.env.NODE_ENV = 'production';
+  config.hostname = os.hostname();
   connection['port'] = process.env.PORT;
   connection['domain'] = '0.0.0.0';
 }
 
-//require custom dispatcher
+fs.writeFile("./config/config.js", "var config = " + JSON.stringify(config) + "\nmodule.exports = config;", function(){});
+
+// require custom dispatcher
 var dispatcher = require('./lib/dispatcher.js');
 
 console.log('Starting server @ http://127.0.0.1:' + connection['port'] + '/');

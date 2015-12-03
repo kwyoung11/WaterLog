@@ -43,7 +43,7 @@ api_controller.prototype.constructor = api_controller;
 				return self.response_handler.renderJSON(200, result.rows);
 			});
 
-		// get all data records for device	
+		// get all data records for device
 		} else if (!params.start_time && !params.latest_record) { 
 			db.query("SELECT * from data WHERE device_id = $1", [params.device_id], function(err, result) {
 				if (err) {

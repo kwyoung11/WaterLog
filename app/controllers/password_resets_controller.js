@@ -8,6 +8,7 @@ var util = require('../../lib/util');
 var User = require('../models/user');
 var application_controller = require('./application_controller');
 var mailer = require('../../lib/mailer');
+var config = require('../../config/config.js');
 
 /* constructor */
 var password_resets_controller = function(response_handler, req, cb) {
@@ -66,7 +67,7 @@ password_resets_controller.prototype.constructor = password_resets_controller;
     		user.update({'password_reset_token': password_reset_token, 'password_reset_sent_at': password_reset_sent_at}, function (err, user) {
     			var body = "Hey there," +
 					"<p>It looks like you forgot your password when trying to login to our app. Would you like to reset your password?</p>" +
-					"<p><a href=\"http://127.0.0.1:3000/password_resets/" + password_reset_token + "/edit\">Reset Password</a></p>" +
+					"<p><a href=\"http://" + config.hostname + ":3000/password_resets/" + password_reset_token + "/edit\">Reset Password</a></p>" +
 					"<p> If not, you can just ignore this email.<p>" +
 					"<p> EnviroHub</p>";
 					// send password reset email
