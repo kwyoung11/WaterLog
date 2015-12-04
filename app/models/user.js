@@ -206,7 +206,7 @@ User.prototype.update = function(obj, cb) {
             console.log("update error");
             return cb(err);  
         } 
-        cb(null, new User(result.rows[0]));
+        return cb(null, new User(result.rows[0]));
     });
 }
 

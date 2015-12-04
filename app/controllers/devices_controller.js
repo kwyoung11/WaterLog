@@ -47,10 +47,11 @@ devices_controller.prototype.constructor = devices_controller;
 
 	//GET /devices/new
 	devices_controller.prototype.new = function(params, callback) {
+		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		self.view_data.id = params['id'];
 
-		view.renderView('devices/new', this.view_data, function(data) {
+		view.renderView('devices/new', self.view_data, function(data) {
 				callback(data);
 		});			
 	}
