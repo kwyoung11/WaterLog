@@ -70,21 +70,23 @@ devices_controller.prototype.constructor = devices_controller;
 	}
 
 	devices_controller.prototype.show = function(params, callback) {
+		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		console.log("HERE\n");
 		Device.findById(params['id'], function(err, device_data) {
-				//console.log("DEVICE DATA\n");
-				//console.log(device_data);
-				view.renderView('devices/show', device_data, function(content) {
+				util.merge(self.view_data, device_data);
+				view.renderView('devices/show', self.view_data, function(content) {
 		  		callback(content);
 			});
 		});
 	}
 
 	devices_controller.prototype.edit = function(params, callback) {
+		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		Device.findById(params['id'], function(err, device_data) {
-			view.renderView('devices/edit', device_data, function(content) {
+			util.merge(self.view_data, device_data);
+			view.renderView('devices/edit', self.view_data, function(content) {
 		  	callback(content);
 			});			
 		});
@@ -142,10 +144,12 @@ devices_controller.prototype.constructor = devices_controller;
 	}
 
 	devices_controller.prototype.bulkupload = function(params, callback) {
+		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		//var device = new Device(params);
 		Device.findById(params['id'], function(err, device_data) {
-			view.renderView('devices/bulk_upload', device_data, function(content) {
+			util.merge(self.view_data, device_data);
+			view.renderView('devices/bulk_upload', self.view_data, function(content) {
 		  		callback(content);
 			});
 		});

@@ -41,7 +41,9 @@ mobile_controller.prototype.constructor = mobile_controller;
 				}
 				params['devices'] = devicesArr;
 				console.log(devicesArr);
-				view.renderView('mobile/input', params, function(data) {
+				
+				util.merge(self.view_data, params);
+				view.renderView('mobile/input', self.view_data, function(data) {
 				  callback(data);
 				});
 			});
