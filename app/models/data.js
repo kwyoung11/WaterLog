@@ -1,7 +1,6 @@
 var schemas = require("../../schemas/schemas.js");
 var crypto = require('crypto');
 var bcrypt = require('bcrypt');
-var moment = require('moment');
 var Application = require('./application');
 var db = require('../../lib/db');
 var util = require('../../lib/util');
@@ -57,7 +56,8 @@ Data.prototype.postToDatabase = function(cb) {
 								cb(err, null);
 							},
 							function(){
-								db.query('INSERT INTO Data (device_id, data_type, created_at,collected_at, keys, values) VALUES($1, $2, $3, $4, $5, $6)', self.getSqlPostValues(), function (err, result) {
+								console.log(self.getSqlPostValues());
+								db.query('INSERT INTO Data (device_id, data_type, created_at, collected_at, keys, values) VALUES($1, $2, to_timestamp($3), to_timestamp($4), $5, $6)', self.getSqlPostValues(), function (err, result) {
 									if (err) {
 										return cb(err, null);  
 									}
@@ -218,12 +218,13 @@ Data.prototype.sanitize = function(params,cb) {
 							console.log(err);
 							cb(err, null);
 						}else{
-							sanitized_data['created_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
+							sanitized_data['created_at'] = Math.floor(date.getTime()/1000);
 							if(typeof sanitized_data['collected_at']=='undefined'){
-								sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
+								sanitized_data['collected_at'] = Math.floor(date.getTime()/1000);
 							}
 							else{
-								sanitized_data['collected_at'] = moment(date.toLocaleString(), "MM-DD-YYYY HH:mm:ss a A");
+								var collected_at_date = new Date(sanitized_data['collected_at']);
+								sanitized_data['collected_at'] = Math.floor(collected_at_date.getTime()/1000);
 							}
 							cb(null, sanitized_data);
 						}
@@ -257,7 +258,7 @@ Data.prototype.checkTimeStamp = function(t, callback) {
                 }
             }
         }); 
-},
+}
 
 Data.prototype.get_custom_params = function(){
 	return schema['custom'];
