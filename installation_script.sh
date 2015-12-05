@@ -51,8 +51,10 @@ echo "starting postgres server"
 echo `su postgres -c '/usr/lib/postgresql/9.1/bin/pg_ctl -D /var/lib/postgresql/9.1/main/ -o "-c config_file=/etc/postgresql/9.1/main/postgresql.conf" start &'`
 echo -e "Please provide the root user password so that we can create the necessary database tables: \c "
 read password
-echo `su - postgres -c "psql -U postgres -d postgres -c \"alter user root with password '$password';\""`
-STRING="{\"dev\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"$password\", \"driver\": \"pg\", \"port\": \"5432\"}, \"prod\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"$password\", \"driver\": \"pg\", \"port\": \"5432\"}}"
+cat $password>temp.txt
+chmod 777 temp.txt
+echo `su postgres -c "psql -U postgres -d postgres -c \"alter user root with password '$(cat temp.txt)';\""`
+STRING="{\"dev\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"$(cat temp.txt)\", \"driver\": \"pg\", \"port\": \"5432\"}, \"prod\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"$(cat temp.txt)\", \"driver\": \"pg\", \"port\": \"5432\"}}"
 echo $STRING > /var/www/EnviroHub/database.json
 echo "creating database"
 echo `sudo -u postgres createuser root -s`
