@@ -6,11 +6,11 @@
         var deviceInformation = {};
         var request = $.Deferred();
 
-        $.get("http://vache.cs.umd.edu/api/device?location=36.1,25.1&radius=10000")
+        $.get("/api/device?location=36.1,25.1&radius=10000")
         .success(function(response){
           for (var i = 0; i < response.length; i++){
             deviceInformation[response[i].id] = response[i];
-            var x = $.get("http://vache.cs.umd.edu/api/devices", { device_id: response[i].id, latest_record: true });
+            var x = $.get("/api/devices", { device_id: response[i].id, latest_record: true });
             requests.push(x);
           }
 
