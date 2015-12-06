@@ -56,7 +56,6 @@ Data.prototype.postToDatabase = function(cb) {
 								cb(err, null);
 							},
 							function(){
-								console.log(self.getSqlPostValues());
 								db.query('INSERT INTO Data (device_id, data_type, created_at, collected_at, keys, values) VALUES($1, $2, to_timestamp($3), to_timestamp($4), $5, $6)', self.getSqlPostValues(), function (err, result) {
 									if (err) {
 										return cb(err, null);  

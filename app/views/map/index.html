@@ -32,6 +32,11 @@
           <input  ng-model="input_date" type="date" name="time" min="2010-01-01" max="2015-12-31" required="true" ng-required="true">
         </div>
         <br />
+        <div class="inline field">
+          <label style="width:60px; text-align:right"> Zipcode: </label>
+          <input ng-model="zipcode" type="text" name="zipcode">
+        </div>
+        <br />
         <button ng-click="submit()" class="ui button" type="submit" id="submit" > Submit </button>
         <div class="ui button" ng-click="clearMap()"> Clear Map </div>
       </form>
@@ -69,3 +74,4 @@
 <script src="libs/semantic/dist/semantic.min.js" charset="utf-8"> </script>
 <script src="/libs/semantic/dist/semantic2.min.css" charset="utf-8"> </script>
 <script src="/js/services/DataService.js" charset="utf-8"> </script>
+<script src="/js/services/zipcodeToLatLongService.js" charset="utf-8"> </script>

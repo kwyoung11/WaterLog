@@ -24,7 +24,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
             //use if our's isn't fast enough
             // url: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png"
             //our tile server
-            url: "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png"
+            url: "/osm_tiles/{z}/{x}/{y}.png"
         },
     center: {
       lat: 38.993,
@@ -113,7 +113,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
             new_data.push({
               lat: parseFloat(data.multipleDeviceData[i].lat),
               lng: parseFloat(data.multipleDeviceData[i].lon),
-              name: data.multipleDeviceData[i].deviceID,
+              name: data.multipleDeviceData[i].deviceID+"thirdParty",
               data: parseFloat(data.multipleDeviceData[i].data.PH),
               icon: {
                 type: 'awesomeMarker',
@@ -138,7 +138,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
             new_data.push({
               lat: parseFloat(data.multipleDeviceData[i].lat),
               lng: parseFloat(data.multipleDeviceData[i].lon),
-              name: data.multipleDeviceData[i].deviceID,
+              name: data.multipleDeviceData[i].deviceID+"thirdParty",
               data: parseFloat(Math.round(data.multipleDeviceData[i].data.temperature * 1.8000 + 32.00)),
               icon: {
                 type: 'awesomeMarker',
@@ -164,7 +164,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
               new_data.push({
                 lat: parseFloat(data.multipleDeviceData[i].lat),
                 lng: parseFloat(data.multipleDeviceData[i].lon),
-                name: data.multipleDeviceData[i].deviceID,
+                name: data.multipleDeviceData[i].deviceID+"thirdParty",
                 data: parseFloat(data.multipleDeviceData[i].data.turbidity),
                 icon: {
                   type: 'awesomeMarker',
@@ -195,7 +195,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
               new_data.push({
                 lat: parseFloat(multipleDeviceData[i].lat),
                 lng: parseFloat(multipleDeviceData[i].lon),
-                name: multipleDeviceData[i].deviceID,
+                name: multipleDeviceData[i].deviceID+"thirdParty",
                 data: parseFloat(data.multipleDeviceData[i].data.weatherTempF),
                 icon: {
                   type: 'awesomeMarker',
@@ -216,23 +216,29 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
     $scope.$on('leafletDirectiveMarker.click', function(event, args){
       //var markerName = args.leafletMarkerEvents.target.options.name;
       // window.location.href = 'http://vache.cs.umd.edu/devices/'+args.modelName; //modelName is marker's title field
-      $(angular.element('.fullscreen.modal')[0]).empty();
-      $(angular.element('.fullscreen.modal')[0]).append('<iframe allowfullscreen style="width:100%;height:100%" src="http://vache.cs.umd.edu/devices/'+ args.modelName + '"></iframe>');
-      var frame = $(angular.element('.fullscreen.modal')[0]).find('iframe');
-      frame.load(function(){
-        var contents = frame.contents();
-        var chart = contents.find('html body #chart');
-        contents.find('body *').hide();
-        chart.show();
-        chart.find('*').show();
-        $(angular.element('.fullscreen.modal')[0]).modal('show');
-      })
+      if(args.modelName.indexOf("thirdParty") != -1){
+        $(angular.element('.fullscreen.modal')[0]).empty();
+        $(angular.element('.fullscreen.modal')[0]).append('<iframe allowfullscreen style="width:100%;height:100%" src="/devices/'+ args.modelName + '"></iframe>');
+        var frame = $(angular.element('.fullscreen.modal')[0]).find('iframe');
+        frame.load(function(){
+          var contents = frame.contents();
+          var chart = contents.find('html body #chart');
+          contents.find('body *').hide();
+          chart.show();
+          chart.find('*').show();
+          $(angular.element('.fullscreen.modal')[0]).modal('show');
+        })
+      }
     });
 
     //failed attempt at updating map by fetching data from control panel
 
     $scope.submit = function(){
       $scope.clearMap();
+      aZipcode = convertZipcodeToLatLong($scope.zipcode);
+      $scope.center.lat = parseFloat(aZipcode.lat);
+      $scope.center.lng = parseFloat(aZipcode.long);
+    
       if($scope.deviceCategory === "pH"){
         addDeviceph();
         $scope.load ++;
@@ -259,4 +265,5 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
       }
 
     };
+    
   });
