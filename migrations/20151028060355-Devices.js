@@ -9,7 +9,8 @@ exports.up = function(db, callback) {
 		longitude: 'string',
 		name: 'string',
 		mode: 'string',
-		type_of_data: 'string'
+		type_of_data: 'string',
+		wireless_device: 'boolean'
 		
 	}, function(){});
 

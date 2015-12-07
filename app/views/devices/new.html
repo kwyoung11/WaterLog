@@ -13,10 +13,17 @@
 
 
     <form class="ui form" name = "myForm" action="/devices" onsubmit="return validateForm()" method="POST">
-      <div class="one inline fields">
+      <div class="two inline fields">
         <div class="field">
           <label for="name" style="width: 135px;"> Name </label> <input type="text" name="name"></input>
         </div>
+		<div class="field">
+			<label for="wireless_device" style="width: 135px;"> Wireless Device: </label>
+    		<select name="wireless_device">
+				<option value=false selected="selected">No</option>
+				<option value=true>Yes</option>
+    		</select>
+		</div>
       </div>
       <div class="two inline fields">
         <div class="field">
@@ -34,6 +41,7 @@
       		<option value="Manual">Mobile</option>
     		</select>
       </div>
+	  
       <div class="field">
     		<label style="width: 135px;"> Type of Data Collected </label>
     		<select name="type_of_data">
