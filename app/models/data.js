@@ -56,7 +56,7 @@ Data.prototype.postToDatabase = function(cb) {
 								cb(err, null);
 							},
 							function(){
-								db.query('INSERT INTO Data (device_id, data_type, created_at, collected_at, keys, values) VALUES($1, $2, to_timestamp($3), to_timestamp($4), $5, $6)', self.getSqlPostValues(), function (err, result) {
+								db.query('INSERT INTO Data (device_id, data_type, created_at, collected_at, keys, values, units) VALUES($1, $2, to_timestamp($3), to_timestamp($4), $5, $6, $7)', self.getSqlPostValues(device), function (err, result) {
 									if (err) {
 										return cb(err, null);  
 									}
@@ -94,7 +94,7 @@ Data.prototype.postToDatabase = function(cb) {
 }
 
 
-Data.prototype.getSqlPostValues =  function(){
+Data.prototype.getSqlPostValues =  function(device){
 	
 	var vals = [];
 	vals[0] = this.params['device_id'];
@@ -123,6 +123,7 @@ Data.prototype.getSqlPostValues =  function(){
 	
 	vals[4] = data_param_keys;
 	vals[5] = data_param_values;
+	vals[6] = device.units;
 	return vals;
 }
 
