@@ -10,7 +10,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
     //update this to change tile server
     defaults: {
       //tileLayer: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png",
-      //should point to 
+      //should point to
       //tileLayer: "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png",
       //tileLayer: "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png",
       tileLayerOptions: {
@@ -24,7 +24,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
             //use if our's isn't fast enough
             // url: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png"
             //our tile server
-            url: "/osm_tiles/{z}/{x}/{y}.png"
+            url: tileServerLocationURL
         },
     center: {
       lat: 38.993,
@@ -238,7 +238,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
       aZipcode = convertZipcodeToLatLong($scope.zipcode);
       $scope.center.lat = parseFloat(aZipcode.lat);
       $scope.center.lng = parseFloat(aZipcode.long);
-    
+
       if($scope.deviceCategory === "pH"){
         addDeviceph();
         $scope.load ++;
@@ -265,5 +265,5 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
       }
 
     };
-    
+
   });

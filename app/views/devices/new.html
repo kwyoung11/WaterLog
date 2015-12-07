@@ -1,57 +1,99 @@
-<h1> Register a new device </h1>
-<script>
-function validateForm() { //cannot proceed without entering a nickname
-    var x = document.forms["myForm"]["name"].value;
-    if (x == null || x == "") {
-        alert("Must enter valid name");
-        return false;
-    }
-} //myForm needs to return to the my devices page which it doesn't right now
-</script>
-<form name = "myForm" action="/devices" onsubmit="return validateForm()" method="POST"> 
-		<ul>
-			<li> Name: <input type="text" name="name"></input></li>
-		</ul>
-		<ul>
-			<li> Latitude: <input type="text" name="latitude"></input></li>
-		</ul>
-		<ul>
-			<li> Longitude: <input type="text" name="longitude"></input></li>
-		</ul>
-		<ul>
-		<select name="mode">
-  		<option value="Arduino" selected="selected">Arduino device</option>
-  		<option value="Manual">Mobile</option>
-		</select>
-		</li>
-		<ul>
-			<li> Data Measurement 1: <input type="text" name="keys"></input></li></br>
-			 Units: <input type="text" name="units"></input>
-		</ul>
-		<ul>
-			<li> Data Measurement 2: <input type="text" name="keys"></input></li></br>
-			Units: <input type="text" name="units"></input>
-		</ul>
-		<ul>
-			<li> Data Measurement 3: <input type="text" name="keys"></input></li></br>
-			Units: <input type="text" name="units"></input>
-		</ul>
-		<ul>
-			<li> Data Measurement 4: <input type="text" name="keys"></input></li></br>
-			Units: <input type="text" name="units"></input>
-		</ul>
-		<ul>
-			<li> Data Measurement 5: <input type="text" name="keys"></input></li></br>
-			Units: <input type="text" name="units"></input>
-		</ul>
+<div class="ui attached segment">
+  <div class="ui container">
+    <h1 class="ui dividing header"> Register a new device </h1>
+    <script>
+    function validateForm() { //cannot proceed without entering a nickname
+        var x = document.forms["myForm"]["name"].value;
+        if (x == null || x == "") {
+            alert("Must enter valid name");
+            return false;
+        }
+    } //myForm needs to return to the my devices page which it doesn't right now
+    </script>
 
-		<h2> Type of Data Collected </h2>
-		<select name="type_of_data">
-  		<option value="water" selected="selected">Water</option>
-  		<option value="air">Air</option>
-  		<option value="soil">Soil</option>
-		</select>
-		</ul>
-<input type="submit" value="Register">
-</form>
 
+    <form class="ui form" name = "myForm" action="/devices" onsubmit="return validateForm()" method="POST">
+      <div class="one inline fields">
+        <div class="field">
+          <label for="name" style="width: 135px;"> Name </label> <input type="text" name="name"></input>
+        </div>
+      </div>
+      <div class="two inline fields">
+        <div class="field">
+          <label for="latitude" style="width: 135px;"> Latitude </label> <input type="text" name="latitude"></input>
+        </div>
+        <div class="field">
+          <label for="longitude" style="width: 135px;"> Longitude </label> <input type="text" name="longitude"></input>
+        </div>
+      </div>
+      <div class="two inline fields">
+      <div class="field">
+        <label for="mode" style="width: 135px;"> Type </label>
+    		<select name="mode">
+      		<option value="Arduino" selected="selected">Arduino device</option>
+      		<option value="Manual">Mobile</option>
+    		</select>
+      </div>
+      <div class="field">
+    		<label style="width: 135px;"> Type of Data Collected </label>
+    		<select name="type_of_data">
+      		<option value="water" selected="selected">Water</option>
+      		<option value="air">Air</option>
+      		<option value="soil">Soil</option>
+    		</select>
+      </div>
+      </div>
+      <div class="ui two inline fields">
+        <div class="field">
+        	<label style="width: 135px;"> Data Measurement 1: </label>
+          <input type="text" name="keys"></input>
+        </div>
+        <div class="field">
+          <label style="width: 135px;">  Units:</label>
+          <input type="text" name="units"></input>
+    		</div>
+      </div>
+      <div class="ui two inline fields">
+        <div class="field">
+        	<label style="width: 135px;"> Data Measurement 2: </label>
+          <input type="text" name="keys"></input>
+        </div>
+        <div class="field">
+          <label style="width: 135px;"> Units: </label>
+          <input type="text" name="units"></input>
+    		</div>
+      </div>
+      <div class="ui two inline fields">
+        <div class="field">
+        	<label style="width: 135px;"> Data Measurement 3: </label>
+          <input type="text" name="keys"></input>
+        </div>
+        <div class="field">
+          <label style="width: 135px;"> Units: </label>
+          <input type="text" name="units"></input>
+    		</div>
+      </div>
+      <div class="ui two inline fields">
+        <div class="field">
+        	<label style="width: 135px;"> Data Measurement 4: </label>
+          <input type="text" name="keys"></input>
+        </div>
+        <div class="field">
+          <label style="width: 135px;"> Units: </label>
+          <input type="text" name="units"></input>
+    		</div>
+      </div>
+      <div class="ui two inline fields">
+        <div class="field">
+        	<label style="width: 135px;"> Data Measurement 5: </label>
+          <input type="text" name="keys"></input>
+        </div>
+        <div class="field">
+          <label style="width: 135px;"> Units: </label>
+          <input type="text" name="units"></input>
+    		</div>
+      </div>
+      <input class="ui button" type="submit" value="Register">
+    </form>
+  </div>
+</div>
