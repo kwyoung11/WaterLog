@@ -1,5 +1,5 @@
 <h1>File Upload for Device {{id}}</h1>
-<h2>each file must be a text document and must be in format {{keys}},unix_time_stamp|[next_entry]</h2>
+<h2>each file must be a text document and must be in format {{keys}},unix_time_stamp[newline][next_entry]</h2>
 <input type="file" id="fileinput" />
 <script type="text/javascript">
   function readSingleFile(evt) {
@@ -16,7 +16,7 @@
         var str='{{keys}}';
         var arr = str.split(','); 
         var num_params= {{keys.length}};
-        var data_sets=contents.split('|');
+        var data_sets=contents.split('\n');
         if(data_sets.length ==1){ //there was no | anywhere so the array is of size 1 since nothing was split
           alert("File not in the correct format\n");
           return;

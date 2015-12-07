@@ -16,3 +16,8 @@ html, body {
 .footer, .push {
 	height: 4em;
 }
+
+#latest_data {
+	margin-top: 50px;
+	border: 1px solid gray;
+}
