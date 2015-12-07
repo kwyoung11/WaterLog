@@ -29,7 +29,6 @@
             }
             request.resolve(latest_device_data);
           });
-
         });
         // for(i = 0; i < device.value.length; i++){
         //    console.log(device.value[i].values[0]);
