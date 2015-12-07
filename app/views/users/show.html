@@ -1,3 +1,4 @@
+
 <div class="ui padded attached segment">
 	<div class="ui container">
 		{{#notice}}
@@ -19,6 +20,9 @@
 					<div class="content">
 						<div class="header"> {{name}} </div>
 			 			latitude: {{latitude}}, longitude: {{longitude}}
+						{{#wireless_device}}
+							<i class="ui green circle icon"></i>
+						{{/wireless_device}}
 					</div>
 				</a>
 			{{/devices}}
