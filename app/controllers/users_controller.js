@@ -69,7 +69,6 @@ users_controller.prototype.show = function(params, callback) {
 		devices_obj['devices'].push(obj);
 	});
 	util.merge(self.view_data, devices_obj);
-	console.log(self.view_data);
 	view.renderView('users/show', self.view_data, function(content) {
 	  callback(content);
 	});
@@ -173,7 +172,6 @@ users_controller.prototype.create = function(params, callback) {
 // PATCH/PUT /users/1
 users_controller.prototype.update = function(params, callback) {
 	var self = this;
-	console.log("in update function");
 	var user = User.findById(params['id'], function(err, user) {
 		if (params['email'] != user.data.email) { // user changed their e-mail
 			// generate new confirmation token

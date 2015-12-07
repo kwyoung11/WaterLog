@@ -102,35 +102,27 @@ Data.prototype.postToDatabase = function(cb) {
 
 
 Data.prototype.getSqlPostValues =  function(device){
-	
+	var self = this;
 	var vals = [];
 	vals[0] = this.params['device_id'];
 	vals[1] = this.params['data_type'];
 	vals[2] = this.params['created_at'];
 	vals[3] = this.params['collected_at'];
 	// EI data parameters
-	var data_param_size = Object.keys(this.params['data']).length;
-	var data_param_keys = '{';
-	var data_param_values = '{';
-	var count = 1;
 	
+	var units = [];
+	var keys = [];
+	var values = [];
 	for(var attr in this.params['data']){
-		data_param_keys += attr;
-		data_param_values += this.params['data'][attr];
-		
-		if(count < data_param_size){
-			data_param_keys += ',';
-			data_param_values += ',';
-			count++;
-		}
+		keys.push(attr);
+		values.push(this.params['data'][attr]);
+		// get position of attribute to determine position of corresponding unit
+		var pos = self.keys.indexOf(attr);
+		units.push(self.units[pos]);
 	}
-	
-	data_param_keys += '}';
-	data_param_values += '}';
-	
-	vals[4] = data_param_keys;
-	vals[5] = data_param_values;
-	vals[6] = this.params['units'];
+	vals[4] = keys;
+	vals[5] = values;
+	vals[6] = units;
 	return vals;
 }
 
@@ -211,13 +203,7 @@ Data.prototype.sanitize = function(params,cb) {
 					 if(sanitized_data['data'] == null){
 						 sanitized_data['data'] = {};
 					 }
-					 if(sanitized_data['units'] == null){
-						 sanitized_data['units'] = [];
-					 }
-					 // get position of attribute to determine position of corresponding unit
-					 var pos = self.keys.indexOf(attr);
 					 sanitized_data['data'][attr] = params[attr];
-					 sanitized_data['units'].push(self.units[pos]);
 				 }
 				}
 				
