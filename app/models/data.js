@@ -6,8 +6,6 @@ var db = require('../../lib/db');
 var util = require('../../lib/util');
 var dataRanges = require("../../schemas/dataRanges.js");
 
-
-
 // constructor
 // params are all the params posted with the request
 var Data = function (params) {  
@@ -26,6 +24,15 @@ Data.prototype.constructor = Data;
 
 Data.prototype.params = {};
 
+Data.find = function(device_id, cb) {
+	db.query("SELECT * FROM data WHERE device_id = $1 ORDER BY created_at DESC", [device_id], function(err, result) {
+		if (err) {
+			return cb(err);
+		}
+		console.log(result);
+		return cb(null, result);
+	});
+}
 
 Data.prototype.postToDatabase = function(cb) {
 	var self = this;

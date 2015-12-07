@@ -9,6 +9,7 @@ var db = require('../../lib/db');
 var crypto = require('crypto');
 var util = require('../../lib/util');
 var Device = require('../models/device');
+var Data = require('../models/data');
 var User = require('../models/user');
 var application_controller = require('./application_controller');
 
@@ -72,12 +73,26 @@ devices_controller.prototype.constructor = devices_controller;
 	devices_controller.prototype.show = function(params, callback) {
 		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
-		console.log("HERE\n");
+		
 		Device.findById(params['id'], function(err, device_data) {
-				util.merge(self.view_data, device_data);
-				view.renderView('devices/show', self.view_data, function(content) {
-		  		callback(content);
-			});
+				Data.find(device_data.id, function(err, result) {
+					util.merge(self.view_data, device_data);
+					var obj = [];
+					for (j = 0; j < result.rows.length; j++) {
+						obj[j] = {};
+						obj[j]['other_data'] = result.rows[j];
+						for (i = 0; i < result.rows[j].keys.length; i++) {
+							obj[j][result.rows[j].keys[i]] = result.rows[j].values[i];
+						}
+					}
+					util.merge(self.view_data, {'device_data': [obj]});
+					console.log("VIEW DATA IS: ");
+					console.log(self.view_data);
+					view.renderView('devices/show', self.view_data, function(content) {
+		  			callback(content);
+					});
+				});
+				
 		});
 	}
 
