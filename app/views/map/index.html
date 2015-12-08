@@ -1,12 +1,15 @@
 <!--div class="ui internally celled grid  text-center centered" -->
-<div class="ui padded attached segment" ng-app="mapApp" ng-controller="mapController">
+<div class="ui padded attached segment" ng-class="{loading: load != 0}" ng-app="mapApp" ng-controller="mapController">
   <div class="ui divided stackable grid">
+		<script type="text/javascript">
+			var user_id = {{current_user.data.id}};
+		</script>
     <div class="five wide column">
       <h1 class="ui centered dividing header top attached inverted secondary red segment"> CONTROL PANEL </h1>
       <form  map-from class="ui form bottom attached padded red segment" >
         <select ng-model="deviceCategory" class="ui simple search dropdown">
           <option value="">Device Visualization Category</option>
-          <option value="pH" selected>PH</option>
+          <option value="pH">PH</option>
           <option value="Temperature"> Temperature </option>
           <!--option value="Turbidity">Turbidity</option-->
         </select>
@@ -65,13 +68,5 @@
 <script src="/js/services/WaterServicesService2.js" charset="utf-8"> </script>
 <script src="/js/services/WeatherService.js" charset="utf-8"> </script>
 <script src="/js/controllers/map.js" charset="utf-8"> </script>
-
-
-
-<link rel="stylesheet" href="libs/semantic/dist/semantic2.min.css"/>
-<link rel="stylesheet" href="libs/semantic/dist/semantic.css"/>
-<script src="/libs/jquery/dist/jquery.min.js" charset="utf-8"> </script>
-<script src="libs/semantic/dist/semantic.min.js" charset="utf-8"> </script>
-<script src="/libs/semantic/dist/semantic2.min.css" charset="utf-8"> </script>
-<script src="/js/services/DataService.js" charset="utf-8"> </script>
 <script src="/js/services/zipcodeToLatLongService.js" charset="utf-8"> </script>
+<script src="/js/services/TileServerLocation.js" charset="utf-8"> </script>

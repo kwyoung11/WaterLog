@@ -1,6 +1,6 @@
 <div class="ui secondary attached menu">
 	<div class="ui container">
-		<h1 class="ui medium header"> Info about {{name}}</h1>
+		<!-- <h1 class="ui medium header"> Info about {{name}}</h1> -->
 		<div class="header item"> Device: <strong> {{name}} </strong> </div>
 		<div class="right menu">
       <a class="item" href="/devices/{{id}}/edit"> <i class="ui edit icon"></i>Edit {{name}}</a>
@@ -35,16 +35,23 @@
                 <input id="date-birth" class="form-control" type="date" ng-model="dateBirth">
             </div>
         </div-->
-				<div> Start Date:<input type="date" name="startDate" ng-model="dateStart"> </div>
-				<div> End Date:<input type="date" name="endDate" ng-model="dateEnd"> </div>
-				<div> <button ng-click="submit()" value = "submit"> Submit </button> </div>
-        <div id="latest_data"> <h3> Latest recordings </h3>
-          {{#device_data}} <ul>
-                {{#.}} 
-                      <li> pH: {{ph}}, temperature: {{temperature}}, {{#other_data}} collected: {{created_at}}{{/other_data}}</li>
-                      
-                {{/.}}
-              {{/device_data}}</div>
+				<form class="ui form" ng-submit="submit()">
+					<div class="field">
+						<label > Start Date: </label>
+						<input type="date" name="startDate" ng-model="dateStart" required="true">
+					</div>
+					<div class="field">
+						<label > End Date: </label>
+						<input type="date" name="endDate" ng-model="dateEnd" required="true">
+					</div>
+					<button class="ui button" value = "submit"> Submit </button>
+				</form>
+        <!-- <div id="latest_data"> <h3> Latest recordings </h3>
+        	{{#device_data}} <ul>
+            {{#.}}
+              <li> pH: {{ph}}, temperature: {{temperature}}, {{#other_data}} collected: {{created_at}}{{/other_data}}</li>
+            {{/.}}
+          {{/device_data}}</div> -->
       </div>
     </div>
   </div>

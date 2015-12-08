@@ -44,7 +44,9 @@ api_controller.prototype.before_filter = function(action, params, cb) {
 				
 			});	
 		});
-	} else {
+	} else if (params['radius']) {
+	  return cb(null);
+        } else {
 		return cb([200, "Unrecognized API endpoint. See site documentation for API specifications."], {'response_format': 'JSON'});		
 	}
 }

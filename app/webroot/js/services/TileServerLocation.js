@@ -1,0 +1,1 @@
+var tileServerLocationURL = "http://virulent.cs.umd.edu/osm_tiles/{z}/{x}/{y}.png";

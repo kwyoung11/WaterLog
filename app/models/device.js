@@ -44,7 +44,7 @@ Device.prototype.save = function(callback) {
     this.data = this.sanitize(this.data);
     console.log("HERE2");
     if(this.data['user_id']!=undefined){
-        db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode,type_of_data, keys, units) VALUES($1, $2, $3, $4, $5,$6,$7,$8) returning *', self.getSqlPostValues(), function (err, result) {
+        db.query('INSERT INTO devices (user_id, name, latitude, longitude, mode,type_of_data, keys, units, wireless_device) VALUES($1, $2, $3, $4, $5,$6,$7,$8,$9) returning *', self.getSqlPostValues(), function (err, result) {
             if (err) {
                 /*view.renderView("/users/" + this.data.id, data, function(data) {
                     return callback(data);
@@ -109,6 +109,7 @@ Device.prototype.getSqlPostValues =  function(){
             vals[6] = data_param_keys;
             vals[7] = data_param_units;
         }
+		vals[8] = this.data['wireless_device'];
     return vals;
 }
 

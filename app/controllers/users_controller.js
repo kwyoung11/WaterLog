@@ -64,14 +64,65 @@ users_controller.prototype.show = function(params, callback) {
 	// load user data here
 	Device.findByUser(params['id'], function(err, devices) {
 		
-	var devices_obj = {'devices': []};
-	devices.forEach(function(obj) {
-		devices_obj['devices'].push(obj);
-	});
-	util.merge(self.view_data, devices_obj);
-	view.renderView('users/show', self.view_data, function(content) {
-	  callback(content);
-	});
+		var deviceIds = [];
+		var str = "";
+		for(var device in devices){
+			deviceIds.push(devices[device].id);
+			str += devices[device].id + ', '
+		}
+		
+		var pos = str.lastIndexOf(',');
+		str = str.substring(0,pos);
+		
+		var now = new Date();
+		var thirtyMinutesAgo = addMinutes(now, -30);
+		
+		if(deviceIds.length == 0){
+			deviceIds.push(-1);
+		}
+		
+		var queryData = 'SELECT id, device_id from data WHERE';
+		if(deviceIds.length > 0){
+			queryData += ' device_id IN (' + deviceIds.toString() + ') AND';
+		}
+		queryData += ' collected_at > to_timestamp($1)';
+		db.query(queryData,
+			[Math.floor(thirtyMinutesAgo.getTime()/1000)], 
+			function(err, data_result){
+				if(err){
+					return callback(err)
+				}
+				else{
+					
+					// flag all inactive and active devices for display on the SHOW page
+					for(var row1 in devices){
+						var device = devices[row1]
+						var wirelessDevice = device.wireless_device;
+						var recentData = false;
+						for(var row2 in data_result.rows){
+							var data = data_result.rows[row2];
+							if(data.device_id == device.id && wirelessDevice){
+								device.activeWirelessDevice = true;
+								recentData = true;
+							}
+						}
+						if(wirelessDevice && !recentData){
+							device.inactiveWirelessDevice = true;
+						}
+					}
+					
+					var devices_obj = {'devices': []};
+					devices.forEach(function(obj) {
+						devices_obj['devices'].push(obj);
+					});
+					util.merge(self.view_data, devices_obj);
+					view.renderView('users/show', self.view_data, function(content) {
+					  callback(content);
+					});
+				}
+			}
+		);
+		
 		
 	});
 	
@@ -281,6 +332,10 @@ users_controller.prototype.confirm_email = function(params, callback) {
 			
 		}
 	});
+}
+
+function addMinutes(date, minutes) {
+	return new Date(date.getTime() + minutes*60000);
 }
 
 module.exports = users_controller;
