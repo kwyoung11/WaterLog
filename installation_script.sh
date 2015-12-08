@@ -154,7 +154,7 @@ cd /home/osm/tiles
 
 echo "Enter the state you want tiles of in lowercase (i.e. "maryland", "west_virginia")"
 
-read password
+read state
 
 su osm -c 'wget http://download.geofabrik.de/north-america/us/'$state'-latest.osm.pbf;'
 
