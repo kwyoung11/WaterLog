@@ -44,7 +44,7 @@ schemas = {
 		collected_at:null,
 		data_params: {
 			water:{
-				pH: null,
+				ph: null,
 				temperature: null,
 				turbidity: null,
 				water_flow: null

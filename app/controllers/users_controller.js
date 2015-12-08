@@ -84,7 +84,8 @@ users_controller.prototype.edit = function(params, callback) {
 		if (user.data.is_admin) { 
 			self.view_data.admin = true;
 		}
-
+		console.log("HELLLLLLLLOOOOOOO");
+		console.log(self.view_data);
 		view.renderView('users/edit', self.view_data, function(data) {
 			return callback(data);
 		});	

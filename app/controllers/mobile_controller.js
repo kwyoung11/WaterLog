@@ -32,7 +32,7 @@ mobile_controller.prototype.constructor = mobile_controller;
 		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		// get devices for current user
-		if(this.current_user != null && this.current_user.data != null && this.current_user.data.id != null){
+		if(this.current_user != null && this.current_user.data != null && this.current_user.data.id != null) {
 			db.query('SELECT id, name, type_of_data, keys, units FROM devices WHERE user_id = $1 AND mode = $2', [this.current_user.data.id, 'Manual'], function(err, result){
 				var devicesArr = [];
 				for(var row in result.rows){
@@ -40,7 +40,7 @@ mobile_controller.prototype.constructor = mobile_controller;
 					devicesArr[row] = item;
 				}
 				params['devices'] = devicesArr;
-				console.log(devicesArr);
+				console.log(params);
 				
 				util.merge(self.view_data, params);
 				view.renderView('mobile/input', self.view_data, function(data) {
