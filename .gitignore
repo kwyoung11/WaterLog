@@ -4,3 +4,4 @@ server.key.org
 server.csr
 server.key
 server.crt
+logs

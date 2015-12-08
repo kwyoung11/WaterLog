@@ -192,7 +192,6 @@ Data.prototype.sanitize = function(params,cb) {
 			}
 			else{
 				for (var attr in params) {
-		   
 				 // if the key in the data hash exists in the user schema hash
 				 if (typeof schema[attr] != 'undefined') {
 				  // then add it to the sanitized_data hash

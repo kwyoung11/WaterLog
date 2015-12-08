@@ -8,6 +8,7 @@ var crypto = require('crypto');
 var util = require('../../lib/util');
 var Data = require('../models/data');
 var application_controller = require('./application_controller');
+var fs = require('fs');
 
 /* constructor */
 var data_controller = function(response_handler, req, cb) {
@@ -23,6 +24,11 @@ data_controller.prototype.new = function(params, callback) {
 		var self = this;
 		var data_model = new Data(params);
 
+		fs.appendFile("./logs/log.txt", JSON.stringify(data_model) + "\n\n", function(err) {
+			if (err) throw err;
+			console.log("saved to file!");
+		});
+		
 		data_model.postToDatabase(function(err, result){
 			
 			if(err != null){
