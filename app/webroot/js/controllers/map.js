@@ -20,12 +20,12 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
       }
     },
     tiles: {
-            //url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            //use if our's isn't fast enough
-            // url: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png"
-            //our tile server
-            url: tileServerLocationURL
-        },
+      //url: "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+      //use if our's isn't fast enough
+      // url: "http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png"
+      //our tile server
+      url: tileServerLocationURL
+    },
     center: {
       lat: 38.993,
       lng: -76.947,
@@ -33,7 +33,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
     },
 
     markers: {},
-    //
+    // 
     // events: {
     //   marker: {
     //     enable: ['click']
@@ -81,6 +81,7 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
         });
       }
       newMarkers(markers);
+      $scope.load --;
     }
     //fetches device ph, and adds to map
     var addDeviceph = function (){
@@ -93,6 +94,23 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
       DeviceDataService.getturbData().then(mapData);
     }
 
+    DeviceDataService.getAllDevices().then(function(data){
+      $scope.load ++;
+      var dt = [];
+      for (var i = 0; i < data.length; i++){
+        dt.push({
+          data:'•',
+          lat: parseFloat(data[i].latitude),
+          lon: parseFloat(data[i].longitude),
+          name: data[i].name
+        });
+      }
+      mapData(dt);
+    });
+
+    DeviceDataService.getData().then(function(data){
+      // $scope.load ++;
+    });
 
     // Date String Values from Scope Date input
     var startDTString = function () {
@@ -133,8 +151,6 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
         var new_data = [];
         for (var i = 0; i < data.multipleDeviceData.length; i++){
           if (data.multipleDeviceData[i].data.temperature){
-            console.log(data.multipleDeviceData[i]);
-            console.log(data.multipleDeviceData[i].deviceID);
             new_data.push({
               lat: parseFloat(data.multipleDeviceData[i].lat),
               lng: parseFloat(data.multipleDeviceData[i].lon),
@@ -232,13 +248,13 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
     });
 
     //failed attempt at updating map by fetching data from control panel
-
     $scope.submit = function(){
       $scope.clearMap();
       aZipcode = convertZipcodeToLatLong($scope.zipcode);
-      $scope.center.lat = parseFloat(aZipcode.lat);
-      $scope.center.lng = parseFloat(aZipcode.long);
-
+      if (aZipcode != undefined){
+        $scope.center.lat = parseFloat(aZipcode.lat);
+        $scope.center.lng = parseFloat(aZipcode.long);
+      }
       if($scope.deviceCategory === "pH"){
         addDeviceph();
         $scope.load ++;
@@ -263,7 +279,6 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
         addThridPartyWeatherTempF();
         $scope.load ++;
       }
-
     };
 
   });

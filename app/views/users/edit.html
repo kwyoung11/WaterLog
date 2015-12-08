@@ -21,7 +21,7 @@
 					<div class="ui small dividing header"> Privacy </div>
 					<div class="field">
 						<div class="ui checkbox">
-							<input type="checkbox" name="invites_active"></input>
+							<input type="checkbox" name="invites_active" value="{{current_user.data.invites_active}}"></input>
 							<label> Activate invitation-only registration system </label>
 						</div>
 					</div>
@@ -38,3 +38,6 @@
 		</div>
 	</div>
 </div>
+<script>
+console.log("HELLO");
+console.log(JSON.stringify(4, null, {{current_user}}));</scrtip>
