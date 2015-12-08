@@ -20,9 +20,12 @@
 					<div class="content">
 						<div class="header"> {{name}} </div>
 			 			latitude: {{latitude}}, longitude: {{longitude}}
-						{{#wireless_device}}
+						{{#activeWirelessDevice}}
 							<i class="ui green circle icon"></i>
-						{{/wireless_device}}
+						{{/activeWirelessDevice}}
+						{{#inactiveWirelessDevice}}
+							<i class="ui red circle icon"></i>
+						{{/inactiveWirelessDevice}}
 					</div>
 				</a>
 			{{/devices}}
