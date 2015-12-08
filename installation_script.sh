@@ -139,6 +139,7 @@ cp /var/www/EnviroHub/Configurations/datasource-settings.xml.inc /home/osm/src/m
 cp /var/www/EnviroHub/Configurations/renderd.conf /usr/local/etc/renderd.conf
 cp /var/www/EnviroHub/Configurations/mod_tile /etc/apache2/conf.d/mod_tile
 cp /var/www/EnviroHub/Configurations/default /etc/apache2/sites-available/default
+cp /var/www/EnviroHub/Configurations/TileServerLocation.js /var/wwww/EnviroHub/app/webroot/js/services/TileServerLocation.js
 
 #add in configuration files
 #settings.xml.inc
@@ -163,6 +164,8 @@ su osm -c 'osm2pgsql --slim -d gis -C 1000 --number-processes 3 ~/tiles/'$state'
 
 mkdir /var/run/renderd
 chmod 777 /var/run/renderd
+mkdir /var/lib/mod_tile
+chmod 777 /var/lib/mod_tile
 
 /etc/init.d/apache2 restart
 
