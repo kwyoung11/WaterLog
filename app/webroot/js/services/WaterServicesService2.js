@@ -139,9 +139,9 @@ var WaterServicesService = function($) {
       var statisticCode = parameterElements.options.option[0].optionCode;
 
       var parameterSystemName = '';
-      if (parameterCode == '00010') {
+      if (parameterCode == '00400') {
         parameterSystemName = 'PH';
-      } else if (parameterCode == '00400') {
+      } else if (parameterCode == '00010') {
         parameterSystemName = 'temperature';
       } else if (parameterCode == '00000') {
         parameterSystemName = 'turbidity';

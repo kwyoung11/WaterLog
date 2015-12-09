@@ -298,7 +298,6 @@ Data.prototype.enforceRequiredParameters = function(device, cbErr, cbSuccess){
 },
 
 Data.prototype.constructDataArrayForPost = function(cbErr, cbSuccess) {
-	
 	if(typeof this.params['data'] == 'undefined' || Object.keys(this.params['data']).length <= 0){
 		cbErr("Error: No Environmental Indicator data values have been provided.");
 	}
