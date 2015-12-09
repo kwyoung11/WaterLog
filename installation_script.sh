@@ -48,11 +48,11 @@ echo `service nginx restart`
 echo `touch /var/www/EnviroHub/database.json`
 echo "starting postgres server"
 echo `su postgres -c '/usr/lib/postgresql/9.1/bin/pg_ctl -D /var/lib/postgresql/9.1/main/ -o "-c config_file=/etc/postgresql/9.1/main/postgresql.conf" start &'`
-echo -e "Please provide the root user password so that we can create the necessary database tables: \c "
-read password
+#echo -e "Please provide the root user password so that we can create the necessary database tables: \c "
+#read password
 echo `sudo -u postgres createuser root -s`
-echo `su - postgres -c "psql -U postgres -d postgres -c \"alter user root with password '$password';\""`
-STRING="{\"dev\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"$password\", \"driver\": \"pg\", \"port\": \"5432\"}, \"prod\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"$password\", \"driver\": \"pg\", \"port\": \"5432\"}}"
+echo `su - postgres -c "psql -U postgres -d postgres -c \"alter user root with password 'U223dda3Xqpp&^Aen';\""`
+STRING="{\"dev\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"U223dda3Xqpp&^Aen\", \"driver\": \"pg\", \"port\": \"5432\"}, \"prod\": {\"host\": \"localhost\",\"user\": \"root\",\"database\": \"envirohub\",\"password\": \"U223dda3Xqpp&^Aen\", \"driver\": \"pg\", \"port\": \"5432\"}}"
 echo $STRING > /var/www/EnviroHub/database.json
 echo "creating database"
 echo `createdb envirohub`
@@ -153,14 +153,14 @@ cp /var/www/EnviroHub/Configurations/TileServerLocation.js /var/wwww/EnviroHub/a
 su osm -c 'mkdir /home/osm/tiles;'
 cd /home/osm/tiles
 
-echo "Enter the state you want tiles of in lowercase (i.e. "maryland", "west_virginia")"
+#echo "Enter the state you want tiles of in lowercase (i.e. "maryland", "west_virginia")"
 
-read state
+#read state
 
-su osm -c 'wget http://download.geofabrik.de/north-america/us/'$state'-latest.osm.pbf;'
+su osm -c 'wget http://download.geofabrik.de/north-america/us/maryland-latest.osm.pbf;'
 
 echo "Importing maps into postgres database"
-su osm -c 'osm2pgsql --slim -d gis -C 1000 --number-processes 3 ~/tiles/'$state'-latest.osm.pbf;'
+su osm -c 'osm2pgsql --slim -d gis -C 1000 --number-processes 3 ~/tiles/maryland-latest.osm.pbf;'
 
 mkdir /var/run/renderd
 chmod 777 /var/run/renderd
