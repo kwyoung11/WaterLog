@@ -33,12 +33,12 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
     },
 
     markers: {},
-    // 
-    // events: {
-    //   marker: {
-    //     enable: ['click']
-    //   }
-    // }
+    // ds
+    events: {
+      marker: {
+        enable: ['click']
+      }
+    }
   });
 
     $scope.clearMap = function(){
@@ -232,6 +232,8 @@ mapModule.controller('mapController', function( $scope, leafletMarkerEvents)  {
     $scope.$on('leafletDirectiveMarker.click', function(event, args){
       //var markerName = args.leafletMarkerEvents.target.options.name;
       // window.location.href = 'http://vache.cs.umd.edu/devices/'+args.modelName; //modelName is marker's title field
+      console.log('click');
+      console.log(args.modelName);
       if(args.modelName.indexOf("thirdParty") != -1){
         $(angular.element('.fullscreen.modal')[0]).empty();
         $(angular.element('.fullscreen.modal')[0]).append('<iframe allowfullscreen style="width:100%;height:100%" src="/devices/'+ args.modelName + '"></iframe>');
