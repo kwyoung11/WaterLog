@@ -123,6 +123,13 @@ Data.prototype.getSqlPostValues =  function(device){
 	vals[4] = keys;
 	vals[5] = values;
 	vals[6] = units;
+	// if (vals[4][0] == 'ph' || vals[4][0] == 'pH') {
+	// 	vals[5][0] = vals[5][0] - 3.3;
+	// 	vals[5][1] = vals[5][1] - 11.2;
+	// } else {
+	// 	vals[5][0] = vals[5][0] - 11.2;
+	// 	vals[5][1] = vals[5][1] - 3.3;	
+	// }
 	return vals;
 }
 
@@ -207,11 +214,11 @@ Data.prototype.sanitize = function(params,cb) {
 				}
 				
 				//checking time stamp
-				if(typeof sanitized_data['created_at'] == 'undefined'){
+				if (typeof sanitized_data['created_at'] == 'undefined') {
 					var date = new Date();
-					x=0;
+					x = 0;
 					var x = self.checkTimeStamp(date,function(res){
-						if(res == 0){
+						if (res == 0) {
 							var err = "Error: Cannot insert because of timestamp overlay";
 							console.log(err);
 							cb(err, null);
