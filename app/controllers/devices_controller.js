@@ -33,7 +33,7 @@ devices_controller.prototype.constructor = devices_controller;
 				User.findById(device.user_id, function(err2, user) {
 					if (!device || !device.id) {
 						return cb([404, "Resource not found"]);
-					} else if (device.user_id != self.current_user.data.id && user.data.private_profile) {
+					} else if (user.data.private_profile) {
 						return cb([403, "This user has set their account data to be private."]);
 						// return self.response_handler.serverError(403, "This user has set their account data to be private.");
 					} else {

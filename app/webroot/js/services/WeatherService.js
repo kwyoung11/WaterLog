@@ -36,6 +36,7 @@ var WeatherService = function($) {
         weatherData = getSingleDeviceData(dataArray, weatherData);
       }
       // output Data
+  //    console.log(weatherData)
       var outputData = {
         'weatherData': weatherData
       };

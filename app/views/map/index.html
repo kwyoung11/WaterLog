@@ -1,5 +1,6 @@
 <!--div class="ui internally celled grid  text-center centered" -->
-<div class="ui padded attached segment" ng-class="{loading: load != 0}" ng-app="mapApp" ng-controller="mapController">
+<!-- <div class="ui padded attached segment" ng-class="{loading: load != 0}" ng-app="mapApp" ng-controller="mapController"> -->
+<div class="ui padded attached segment" ng-app="mapApp" ng-controller="mapController">
   <div class="ui divided stackable grid">
 		<script type="text/javascript">
 			var user_id = {{current_user.data.id}};
@@ -46,7 +47,7 @@
       <img class="ui small right floated image" ng-src="/libs/img/Legend.jpg" alt="Legend" />
     </div>
     <div class="eleven wide column">
-      <leaflet lf-center="center" tiles="tiles" markers="markers" height="580px" width="100%"></leaflet>
+      <leaflet lf-center="center" tiles="tiles" markers="markers" height="580px" width="100%" event-broadcast="events"></leaflet>
     </div>
   </div>
 

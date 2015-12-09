@@ -6,21 +6,27 @@ var response_handler = require('./response_handler');
 var util = require('./util');
 var qs = require('querystring');
 var application_controller = require('../app/controllers/application_controller');
-var config = require('../config/config.json')
+var config = require('../config/config.js')
 
 this.dispatch = function(req, res) {
-  // allow cross-origin requests
-  // res.header("Access-Control-Allow-Origin", "*");
-  // res.header("Access-Control-Allow-Headers", "X-Requested-With");
+ // fs.writeFile('../logs/log.txt', req, function(err) {
 
+ // if (err) throw err;
+  //});
+  // allow cross-origin requests  
+  // if (typeof res.header != 'undefined' && res.header != null){
+	 //  res.header("Access-Control-Allow-Origin", "*");
+	 //  res.header("Access-Control-Allow-Headers", "X-Requested-With");  
+  // }
+  
+  
   // two ways to specify format: in request header, or appended to URL (e.g., .json)
   var format = req.headers.accept.indexOf('application/json') >= 0 ? 'json' : 'html';
-  console.log(req.headers.accept.indexOf('application/json'));
-  console.log(req.headers);
-  format = req.url.split(".")[1] == 'json' ? 'json' : 'html';
+  if (typeof arr != 'undefined' && arr[arr.length-1] == "json") {
+    format = 'json';
+  }
   // set up response object
   responseHandler = new response_handler(res, format);
-
   var requestedUrl = url.parse(req.url, true);
   var parts, action, controller_name, format, theURL;
   var parameters = {};
@@ -76,6 +82,10 @@ this.dispatch = function(req, res) {
           });
         }
 
+        break;
+
+      case "map": 
+        callController(controller_name, "index", parameters);
         break;
 
       case "users":
@@ -176,13 +186,7 @@ this.dispatch = function(req, res) {
             parameters['id'] = parts[2];
             callController(controller_name, action, parameters);
 
-          // devices#show
-          } else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)/) && req.method == "GET") {
-            action = "show";
-            parameters['id'] = parts[2];
-            callController(controller_name, action, parameters);
-
-            // devices#update
+          // devices#update
           } else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)\/update/) && req.method == "POST") {
             action = "update";
             parameters['id'] = parts[2];
@@ -190,10 +194,21 @@ this.dispatch = function(req, res) {
               util.merge(parameters, post);
               callController(controller_name, action, parameters);
             });
+
+           // devices#destroy
+          } else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)\/delete/) && req.method == "POST") {
+            action = "destroy";
+            parameters['id'] = parts[2];
+            callController(controller_name, action, parameters);
+
+          // devices#show  
+          }else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)/) && req.method == "GET") {
+            action = "show";
+            parameters['id'] = parts[2];
+            callController(controller_name, action, parameters);
             // devices#create
           } else if (requestedUrl.pathname.match(/\/devices/) && req.method == "POST") {
             action = "create";
-            parameters['id'] = parts[2];
             util.extractPostData(req, function(post) {
               util.merge(parameters, post);
               callController(controller_name, action, parameters);
@@ -204,12 +219,6 @@ this.dispatch = function(req, res) {
             action = "index";
             parameters['id'] = parts[2];
             callController(controller_name, action, parameters);
-
-          // devices#destroy
-          } else if (requestedUrl.pathname.match(/\/devices\/([0-9]+)\/delete/) && req.method == "POST") {
-            action = "destroy";
-            parameters['id'] = parts[2];
-            callController(controller_name, action, parameters);
           }
 
           break;
@@ -218,19 +227,18 @@ this.dispatch = function(req, res) {
         if (requestedUrl.pathname.match("/data/newData") && req.method == "POST") {
         action = "new";
         util.extractPostData(req, function(post) {
-              util.merge(parameters, post);
-              callController(controller_name, action, parameters);
-              });
-          /*var query = requestedUrl.query;
-          for (var key in query) {
-            if (query[key]) {
-              parameters[key] = query[key];
-            }
-          }
-          callController(controller_name, action, parameters);
-          */
+              util.merge(parameters,post);
+              callController(controller_name, action, parameters); 
+              });    
         }
         break;
+
+      case "home":
+        if (requestedUrl.pathname.match("/home/documentation") && req.method == "GET") {
+          action = "documentation"; 
+          callController(controller_name, action, parameters);
+        }
+      break;
 
       case "login":
        if (req.method == "GET") {
@@ -256,22 +264,18 @@ this.dispatch = function(req, res) {
         break;
 
       case "mobile":
-        if (requestedUrl.pathname.match(/\/mobile\/([0-9]+)\/input/) && req.method == "GET") {
+        if (requestedUrl.pathname.match(/\/mobile\/input/) && req.method == "GET") {
             action = "input";
-            parameters['id']=parts[2];
             callController(controller_name, action, parameters);
-          }else if (requestedUrl.pathname.match(/\/mobile\/([0-9]+)\/[(a-z)]+\/create/) && req.method == "POST") {
+        } else if (requestedUrl.pathname.match(/\/mobile\/create/) && req.method == "POST") {
             action = "create";
-            parameters['device_id'] = parts[2];
-            parameters['data_type'] = parts[3];
+            // parameters['device_id'] = parts[2];
+            // parameters['data_type'] = parts[3];
             util.extractPostData(req, function(post) {
               util.merge(parameters, post);
-              console.log("PRINTING ALL POST DATA\n");
-              console.log(parameters);
               callController(controller_name, action, parameters);
             });
           }
-
 
       break;
 
@@ -310,33 +314,38 @@ this.dispatch = function(req, res) {
   function callController(controller_name, action, parameters) {
     console.log("action is " + action);
     console.log("format is " + format);
-
+    var filter_response;
     // only executing registered actions
     var controller = controllers[controller_name];
     // route to appropriate controller method, otherwise load an asset file
     if (controller) {
-    controller = new controller(responseHandler, req, function() {
-      if (typeof controller.before_filter == 'function') {
-        controller.before_filter(action, parameters);
-      }
-
-      if (typeof controller[action] == 'function') {
-      try {
-      controller[action](parameters, function(content, opts) {
-
-        if (content) {
-        responseHandler.renderHtml(content);
-        } else {
-        responseHandler.serverError(404);
-        }
+      controller = new controller(responseHandler, req, function() {
+        controller.before_filter(action, parameters, function(err, opts) {
+          if (err) {
+            if (opts['response_format'] == 'JSON') {
+              responseHandler.renderJSON(err[0], err[1]);  
+            } else {
+              responseHandler.serverError(err[0], err[1]);  
+            }
+          } else {
+            if (typeof controller[action] == 'function') {
+              try {
+                controller[action](parameters, function(content, opts) {
+                  if (content) {
+                    responseHandler.renderHtml(content);
+                  } else {
+                    responseHandler.serverError(404);
+                  }
+  
+                });
+              } catch (error) {
+                console.log(error);
+              }
+            }
+            GLOBAL.flash.notice = '';
+          }
+        });
       });
-      } catch (error) {
-      console.log(error);
-      }
-    }
-    GLOBAL.flash.notice = '';
-    });
-
     } else { // its an asset file
     responseHandler.renderWebroot(requestedUrl);
   }
