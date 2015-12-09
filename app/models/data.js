@@ -63,6 +63,7 @@ Data.prototype.postToDatabase = function(cb) {
 								cb(err, null);
 							},
 							function(){
+								console.log(self.params);
 								db.query('INSERT INTO Data (device_id, data_type, created_at, collected_at, keys, values, units) VALUES($1, $2, to_timestamp($3), to_timestamp($4), $5, $6, $7)', self.getSqlPostValues(device), function (err, result) {
 									if (err) {
 										return cb(err, null);  
@@ -228,7 +229,7 @@ Data.prototype.sanitize = function(params,cb) {
 								sanitized_data['collected_at'] = Math.floor(date.getTime()/1000);
 							}
 							else{
-								var collected_at_date = new Date(sanitized_data['collected_at']);
+								var collected_at_date = new Date(sanitized_data['collected_at'] * 1000);
 								sanitized_data['collected_at'] = Math.floor(collected_at_date.getTime()/1000);
 							}
 							cb(null, sanitized_data);
