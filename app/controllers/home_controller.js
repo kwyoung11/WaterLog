@@ -40,5 +40,13 @@ home_controller.prototype.documentation = function(params, callback) {
 		});
 }
 
+home_controller.prototype.advert = function(params, callback) {
+	var callback = (typeof callback === 'function') ? callback : function() {};
+	
+	view.renderView('home/advert', this.view_data, function(data) {
+	  callback(data);
+	});	
+}
+
 
 module.exports = home_controller;
