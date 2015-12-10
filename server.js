@@ -48,10 +48,18 @@ http.createServer(function (req, res) {
                  req.connection.remoteAddress +
                 ' for href: ' + url.parse(req.url).href
     );
-  
-	
+  var requestedUrl = url.parse(req.url, true);
+	if (requestedUrl.pathname.match("/home/about") && req.method == "GET") {
+    fs.readFile("./app/views/home/advert.html", function(err, content) {
+      if (err) throw err;
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.end(content, 'utf-8');
+    });
+  } else {
+    dispatcher.dispatch(req, res);        
+  }
   // dispatch our request
-  dispatcher.dispatch(req, res);
+  
 
   } catch (err) {
       //handle errors gracefully
