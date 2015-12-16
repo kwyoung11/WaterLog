@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title> Enviro Hub </title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.6/semantic.min.js"></script>
+    
+  </head>
+  <body>
+
+    <div class="ui attached inverted segment">
+      <div class="ui container">
+        <div class="sub header">
+          <a href="vache.cs.umd.edu"> <h2 onMouseOver="this.style.color='#00BFFF'"
+   onMouseOut="this.style.color='#fff'" style="display: inline-block; margin-top: 3px; color: #fff;"> EnviroHub </h2></a> </div>
+          A Low Cost Environmental Monitoring Toolkit
+          <a class="ui right floated icon button" style="margin-top: -15px;" href="https://github.com/kwyoung11/WaterLog">
+          <i class="ui code icon"> </i> Source Code
+        </a>  
+      </div>
+        
+    </div>
+
+    <div class="ui attached segment" style="border: none;">
+      <div class="ui container grid">
+        <div class="centered row">
+          <div class="ui shape">
+            <div class="sides">
+              <div class="active side">
+                <div class="content">
+                  <img class="ui large image" src="/images/valid1.jpg" style="height: 253px;" alt="" />
+                </div>
+              </div>
+              <div class="side">
+                <div class="content">
+                  <div class="center">
+                    <img class="ui large image" src="/images/valid2.jpg" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="side">
+                <div class="content">
+                  <div class="center">
+                    <img class="ui large image" src="/images/valid3.jpg" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="side">
+                <div class="content">
+                  <div class="center">
+                    <img class="ui large image" src="/images/valid4.jpg" style="height: 255px;" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="side">
+                <div class="content">
+                  <div class="center">
+                    <img class="ui large image" src="/images/valid5.jpg" alt="" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui attached segment" style="border: none;">
+      <div class="ui container">
+        <h1 class="ui large dividing header"> About </h1>
+        <div class="content">
+          EnviroHub was developed by a team of 16 students at University of Maryland College Park. The product was created in Associate Professor Jim Purtilo’s course, CMSC 435 - Software Engineering. In this course, students learned and experienced principles and practices of professional software development that they will carry on to their professional lives after graduation.
+        </div>
+      </div>
+    </div>
+
+    <div class="ui attached segment" style="border: none;">
+      <div class="ui container">
+        <h3 class="ui dividing header"> Project </h3>
+        <p class="content">
+          EnviroHub is a low-cost environmental monitoring toolkit that allows users to accurately gather and view a variety of environmental indicators. Similar systems can cost thousands of dollars [1], which was the motivation for this product. The software was designed with a public API in order to enable users to create and integrate their own environmental data devices. All of the code is open source to encourage expansion and improvement of the product. EnviroHub makes it simple and straightforward for users to see registered device locations on our website. Users can click on their device on a map and see all recent data recorded by that device. Data from any specific device is visualized via a graph so that users can see changes and trends over time and identify any issues with local environmental quality metrics. Data charts can be filtered by start and end dates and display a log of the latest recordings from the device. The currently developed hardware was designed and assembled with affordable and publicly accessible parts. The device created in this course was Arduino-centric.
+        </p>
+
+        <p class="content"> Major features of the software include a wireless POST API endpoint for devices to send data wirelessly to, a GET API for querying the server for data and devices, HTTPS support, user and device management, the ability to specify custom parameters for your device, the ability to compare device data to integrated data from sources such as the USGS and weather services, the ability to easily see trends in data charted across time, as well as privacy and security. </p>
+
+        <p class="content">
+          An EnviroHub web server can be easily installed on Debian/linux machines via an installation script. We thought that it was important to allow users to install our system on their own machines for privacy and security reasons. We know that data security and integrity is important for our users.
+        </p>
+      </div>
+    </div>
+
+    <div class="ui attached segment" style="border: none;">
+      <div class="ui container">
+        <h3 class="ui dividing header"> Hardware </h3>
+        <div class="ui stackable grid">
+          <div class="five wide column">
+            <div class="ui shape">
+              <div class="sides">
+                <div class="active side">
+                  <div class="content">
+                    <img class="ui medium image" src="/images/image1.jpg" alt="" />
+                  </div>
+                </div>
+                <div class="side">
+                  <div class="content">
+                    <div class="center">
+                      <img class="ui medium image" src="/images/image2.jpg" alt="" />
+                    </div>
+                  </div>
+                </div>
+                <div class="side">
+                  <div class="content">
+                    <div class="center">
+                      <img class="ui medium image" src="/images/image3.jpg" alt="" />
+                    </div>
+                  </div>
+                </div>
+                <div class="side">
+                  <div class="content">
+                    <div class="center">
+                      <img class="ui medium image" src="/images/image4.jpg" alt="" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="eleven wide column">
+            <div class="content">
+              <div class="center">
+                <p class="content"> The device created in this course cost $275 with a $6/month mobile data plan, and is capable of monitoring pH and temperature of waterways, and submitting the recorded data wirelessly to the server. The system is designed to be extendable, so that other Arduino compatible sensors can be purchased and integrated. With user and device registration on the EnviroHub website, Envirohub will then be capable of collecting and displaying data from the recordings wirelessly sent by the device. </p>
+
+                <p class="content"> We decided to design the device in a light-weight fashion: instead of driving a fence post into the streambed and securing a PVC pipe to it that would house our sensors and datalogger, we decided to go a more light-weight, easily maintainable route. With this floating, minimal design, you could easily move the device from location to location wihout much hassle, and maintenance is made significantly easier. </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui attached segment" style="border: none;">
+      <div class="ui container">
+        <div class="ui header"> The Team </div>
+      </div>
+    </div>
+    <img class="ui fluid image" src="/images/team.png" alt="" />
+    <div class="ui attached segment">
+      <div class="ui container">
+        <small> In order from left to right </small>
+        <ul class="ui list">
+          <li> Billy </li>
+          <li> Kevin </li>
+          <li> Karl </li>
+          <li> John </li>
+          <li> Brian </li>
+          <li> Darshan </li>
+          <li> Kyle </li>
+          <li> Rae </li>
+          <li> Eric </li>
+          <li> Peter </li>
+          <li> Christine </li>
+          <li> Baris <small> - not in picture </small> </li>
+          <li> Mara <small> - not in picture </small> </li>
+          <li> Nick <small> - not in picture </small> </li>
+          <li> Danny <small> - not in picture </small> </li>
+          <li> Steve <small> - not in picture </small> </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ui attached segment" style="border: none;">
+      <div class="ui container">
+        <div class="ui dividing header">
+          References
+        </div>
+        <div class="content">
+          <ul class="ui ordered list">
+            <li class="item">
+              <a href="http://www.nature.nps.gov/water/vitalsigns/comparison.cfm">
+                http://www.nature.nps.gov/water/vitalsigns/comparison.cfm
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ui attached inverted clearing segment" style="border: none;">
+      <div class="ui container">
+        Copyright <i class="ui copyright icon"></i> 2015 EnviroHub All Rights Reserved.
+        <a class="ui right floated icon button" href="https://github.com/kwyoung11/WaterLog">
+          <i class="ui code icon"> </i> Source Code
+        </a>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      function f(){
+        var x = Math.floor((Math.random() * 2) + 1);
+        switch (x) {
+          case 1:
+            $('.shape').shape('flip right');
+            break;
+          default:
+            $('.shape').shape('flip over');
+        }
+      }
+
+      setInterval(f, 3000);
+    </script>
+
+  </body>
+</html>
