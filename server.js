@@ -20,6 +20,8 @@ if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == 'development') 
   connection['port'] = process.env.PORT;
   connection['domain'] = '0.0.0.0';
 }
+config.hostname = 'evh.herokuapp.com';
+
 
 fs.writeFile("./config/config.js", "var config = " + JSON.stringify(config) + "\nmodule.exports = config;", function(){});
 
