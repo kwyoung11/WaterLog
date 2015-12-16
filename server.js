@@ -69,7 +69,7 @@ http.createServer(function (req, res) {
       res.writeHead(500);
       res.end('Internal Server Error');
     }
-  }).listen(3000, '127.0.0.1', function() {
+  }).listen(process.env.PORT || 5000, '127.0.0.1', function() {
     //runs when our server is created
     console.log('Server running at http://127.0.0.1:' + connection['port'] + '/');
   });

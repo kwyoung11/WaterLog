@@ -5,3 +5,6 @@ server.csr
 server.key
 server.crt
 logs
+.DS_STORE
+npm-debug.log
+/*.env
