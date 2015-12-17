@@ -17,11 +17,9 @@ if (process.env.NODE_ENV == undefined || process.env.NODE_ENV == 'development') 
 } else {
   process.env.NODE_ENV = 'production';
   config.hostname = os.hostname();
-  connection['port'] = process.env.PORT;
+  connection['port'] = process.env.PORT || 5000;
   connection['domain'] = '0.0.0.0';
 }
-config.hostname = 'evh.herokuapp.com';
-
 
 fs.writeFile("./config/config.js", "var config = " + JSON.stringify(config) + "\nmodule.exports = config;", function(){});
 
@@ -69,7 +67,7 @@ http.createServer(function (req, res) {
       res.writeHead(500);
       res.end('Internal Server Error');
     }
-  }).listen(process.env.PORT || 5000, '0.0.0.0', function() {
+  }).listen(connection['port'], connection['domain'], function() {
     //runs when our server is created
     console.log('Server running at http://127.0.0.1:' + connection['port'] + '/');
   });

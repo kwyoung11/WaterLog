@@ -31,7 +31,7 @@ devices_controller.prototype.constructor = devices_controller;
 		if (["show", "edit", "update", "destroy"].indexOf(action) >= 0) {
 			Device.findById(params['id'], function(err1, device) {
 				User.findById(device.user_id, function(err2, user) {
-					if (!device || !device.id) {
+					if (!device || !device.data.id) {
 						return cb([404, "Resource not found"]);
 					} else if (user.data.private_profile) {
 						return cb([403, "This user has set their account data to be private."]);
@@ -75,8 +75,8 @@ devices_controller.prototype.constructor = devices_controller;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		
 		Device.findById(params['id'], function(err, device_data) {
-				Data.find(device_data.id, function(err, result) {
-					util.merge(self.view_data, device_data);
+				Data.find(device_data.data.id, function(err, result) {
+					util.merge(self.view_data, device_data.data);
 					var obj = [];
 					for (j = 0; j < result.rows.length; j++) {
 						obj[j] = {};
@@ -100,7 +100,7 @@ devices_controller.prototype.constructor = devices_controller;
 		var self = this;
 		var callback = (typeof callback === 'function') ? callback : function() {};
 		Device.findById(params['id'], function(err, device_data) {
-			util.merge(self.view_data, device_data);
+			util.merge(self.view_data, device_data.data);
 			view.renderView('devices/edit', self.view_data, function(content) {
 		  	callback(content);
 			});			
@@ -132,13 +132,9 @@ devices_controller.prototype.constructor = devices_controller;
 
 	devices_controller.prototype.update = function(params, callback) {
 		var self = this;
-		Device.findById(params['id'], function(err, data) {
-			data['name'] = params['name'];
-			data['latitude'] = params['latitude'];
-			data['longitude'] = params['longitude'];
-
-			var device = new Device(data);
-    		device.update(function(err, dev) {
+		console.log(params);
+		Device.findById(params['id'], function(err, device) {
+    		device.update(params, function(err, device) {
     			if (err) {
     				if (self.response_handler.format == 'json') {
     					self.response_handler.renderJSON(200, {'err_code': 21, 'err_msg': 'Error in updating device.'});
@@ -149,9 +145,9 @@ devices_controller.prototype.constructor = devices_controller;
     			}
 
     			if (self.response_handler.format == 'json') {
-    				self.response_handler.renderJSON(200, dev);
+    				self.response_handler.renderJSON(200, device);
 					} else {
-						GLOBAL.flash.notice = 'There was an error registering your device';
+						GLOBAL.flash.notice = 'Device updated succesfully';
 						self.response_handler.redirectTo('/devices/' + device.data.id);
 					}
     		});

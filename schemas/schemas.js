@@ -27,7 +27,8 @@ schemas = {
         mode: null,
         type_of_data: null,
         keys:[],
-        units:[]
+        units:[],
+        ignore_post_requests: null,
        },
     invitation: {
     	id: null,

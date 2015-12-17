@@ -21,24 +21,21 @@ data_controller.prototype = Object.create(application_controller.prototype);
 data_controller.prototype.constructor = data_controller;
 
 data_controller.prototype.new = function(params, callback) {
-		var self = this;
-		var data_model = new Data(params);
-		fs.appendFile("./logs/log.txt", JSON.stringify(data_model) + "\n\n", function(err) {
-			if (err) throw err;
-			console.log("saved to file!");
-		});
-		data_model.postToDatabase(function(err, result){
-			
-			if(err != null){
-				var myJson = JSON.stringify(err);
-				self.response_handler.renderJSON(myJson, myJson);
-			}
-			else{
-				var myJson = JSON.stringify(result);
-				self.response_handler.renderJSON(myJson, myJson);
-			}
-			
-		});
-	};
+	var self = this;
+	var data_model = new Data(params);
+	fs.appendFile("./logs/log.txt", JSON.stringify(data_model) + "\n\n", function(err) {
+		if (err) throw err;
+	});
+
+	data_model.postToDatabase(function(err, result) {
+		if (err != null) {
+			var myJson = JSON.stringify(err);
+			self.response_handler.renderJSON(myJson, myJson);
+		} else {
+			var myJson = JSON.stringify(result);
+			self.response_handler.renderJSON(myJson, myJson);
+		}
+	});
+};
 
 module.exports = data_controller;

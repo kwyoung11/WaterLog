@@ -35,7 +35,7 @@ api_controller.prototype.before_filter = function(action, params, cb) {
 		});
 	} else if (params['device_id']) {
 		Device.findById(params['device_id'], function(err, device) {
-			User.findById(device.user_id, function(err, user) {
+			User.findById(device.data.user_id, function(err, user) {
 				if (user.data.is_admin && user.data.private_profile) {
 					return cb([200, "This data is restricted. The user to which this data belongs to has chosen to keep their data private."], {'response_format': 'JSON'});
 				} else {

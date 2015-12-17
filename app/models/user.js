@@ -30,26 +30,6 @@ var User = function (data, opts) {
 	var pair2 = User.generateKeyPair(keyPairSize);
 	this.data.shared_private_key = pair2.private;
 
-    if (opts && opts['sync']) {
-        // create the user authentication token, which will be stored in a cookie
-        var token = crypto.randomBytes(64).toString('hex');
-        this.data.auth_token = token;
-    
-    
-        // create an e-mail confimation token.
-        var token = crypto.randomBytes(64).toString('hex');
-        this.data.email_confirmation_token = token;
-        this.data.email_confirmed = false;
-    
-        // generate a salt
-        this.data.salt = bcrypt.genSaltSync(10);
-           
-        // hash the user password with the salt
-        if (this.data.password_digest && this.data.salt) {
-            this.data.password_digest = bcrypt.hashSync(this.data.password_digest, this.data.salt);
-        }    
-    }
-
     this.paramOrder = ['email', 'password_digest', 'auth_token', 'salt', 'password_reset_token', 'password_reset_sent_at', 'public_key', 'private_key', 'shared_private_key', 'email_confirmation_token', 'email_confirmed', 'is_admin', 'private_profile', 'invites_active'];
 }
 
@@ -204,7 +184,7 @@ User.prototype.update = function(obj, cb) {
     db.query('UPDATE users SET '+update_string+' WHERE id=$'+user_id_placeholder + ' returning *', result, function (err, result) {
         if (err) {
             console.log("update error");
-            return cb(err);  
+            return cb(err);
         } 
         return cb(null, new User(result.rows[0]));
     });

@@ -1,2 +1,2 @@
-var config = {"hostname":"evh.herokuapp.com","angular_front_end":false}
+var config = {"hostname":"127.0.0.1"}
 module.exports = config;
